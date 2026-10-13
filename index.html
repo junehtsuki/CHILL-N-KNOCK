@@ -1,24 +1,262 @@
-function selectRole(role) {
-  document.getElementById("result").textContent =
-    "คุณเลือก " + role;
-}
-body {
-  font-family: Arial, sans-serif;
-  background: #F5F1FA;
-  color: #352348;
-  text-align: center;
-  padding: 40px 20px;
-}
 
-button {
-  display: block;
-  width: 100%;
-  max-width: 320px;
-  margin: 12px auto;
-  padding: 15px;
-  background: #654A84;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#352348">
+  <title>CHILL N' KNOCK — Prototype</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f0f7;
+      color: #2f2340;
+    }
+
+    .app {
+      max-width: 460px;
+      min-height: 100dvh;
+      margin: auto;
+      background: #fff;
+      padding: 28px 20px;
+    }
+
+    .brand {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      margin: 10px 0 5px;
+    }
+
+    .muted {
+      color: #6d6675;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-top: 30px;
+    }
+
+    button {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #d9d0e1;
+      background: #faf8fc;
+      padding: 16px;
+      border-radius: 14px;
+      margin: 8px 0;
+      font: inherit;
+      cursor: pointer;
+      color: #30213f;
+    }
+
+    button:focus-visible {
+      outline: 3px solid #8b6fb2;
+    }
+
+    .primary {
+      background: #583b78;
+      color: white;
+      border-color: #583b78;
+      text-align: center;
+      font-weight: 650;
+    }
+
+    .back {
+      background: none;
+      border: 0;
+      padding: 10px 0;
+      color: #583b78;
+    }
+
+    .panel {
+      padding: 14px;
+      background: #f4f0f7;
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      font-size: 12px;
+      color: #665b70;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <div class="brand">CHILL N' KNOCK</div>
+
+    <div class="muted">
+      Nightlife service concept · Bangkok
+    </div>
+
+    <p class="tag">
+      ต้นแบบเพื่อการศึกษา
+      ยังไม่มีการจองโต๊ะหรือรับงานจริง
+    </p>
+
+    <!-- หน้าเลือกบทบาท -->
+    <section id="roles">
+      <h2>เลือกบทบาท</h2>
+
+      <button data-role="customer">
+        คนเที่ยว (Nightlife User)
+      </button>
+
+      <button data-role="runner">
+        ผู้รับงาน (Table Runner)
+      </button>
+    </section>
+
+    <!-- หน้าเลือกบริการ -->
+    <section id="services" hidden>
+
+      <button class="back" id="back">
+        ← กลับไปเลือกบทบาท
+      </button>
+
+      <h2 id="role-title"></h2>
+
+      <p class="muted">
+        เลือกประเภทบริการเพื่อดูขั้นตอนจำลอง
+      </p>
+
+      <button data-service="A">
+        A — ช่วยจองโต๊ะล่วงหน้า
+      </button>
+
+      <button data-service="B">
+        B — ช่วยต่อคิว Walk-in
+      </button>
+
+      <!-- รายละเอียดบริการ -->
+      <div id="detail" class="panel" hidden>
+
+        <strong id="service-title"></strong>
+
+        <p
+          class="muted"
+          id="service-description">
+        </p>
+
+        <button
+          class="primary"
+          id="simulate">
+        </button>
+
+        <p
+          class="muted"
+          id="result"
+          role="status"
+          aria-live="polite">
+        </p>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // อ้างอิงส่วนต่าง ๆ ของหน้าจอ
+    const roles = document.getElementById('roles');
+    const services = document.getElementById('services');
+    const detail = document.getElementById('detail');
+
+    // เก็บบทบาทและบริการที่เลือก
+    let role = null;
+    let service = null;
+
+    // เมื่อเลือกบทบาท
+    document.querySelectorAll('[data-role]').forEach(button => {
+      button.addEventListener('click', () => {
+
+        role = button.dataset.role;
+
+        roles.hidden = true;
+        services.hidden = false;
+        detail.hidden = true;
+
+        document.getElementById('role-title').textContent =
+          role === 'customer'
+            ? 'สำหรับคนเที่ยว'
+            : 'สำหรับผู้รับงาน';
+      });
+    });
+
+    // เมื่อเลือกบริการ A หรือ B
+    document.querySelectorAll('[data-service]').forEach(button => {
+      button.addEventListener('click', () => {
+
+        service = button.dataset.service;
+        detail.hidden = false;
+
+        document.getElementById('service-title').textContent =
+          service === 'A'
+            ? 'บริการ A: ช่วยจองล่วงหน้า'
+            : 'บริการ B: ช่วยต่อคิว Walk-in';
+
+        document.getElementById('service-description').textContent =
+          role === 'customer'
+            ? (
+                service === 'A'
+                  ? 'ตัวอย่างขั้นตอนส่งคำขอช่วยจองล่วงหน้า โดยต้องรอเงื่อนไขและการยืนยันจากร้าน'
+                  : 'ตัวอย่างขั้นตอนส่งคำขอให้ผู้รับงานช่วยต่อคิว โดยขึ้นกับกฎของร้าน'
+              )
+            : (
+                service === 'A'
+                  ? 'ตัวอย่างขั้นตอนพิจารณารับงานช่วยจองล่วงหน้า ตามเงื่อนไขร้าน'
+                  : 'ตัวอย่างขั้นตอนพิจารณารับงานต่อคิว Walk-in ตามเงื่อนไขร้าน'
+              );
+
+        document.getElementById('simulate').textContent =
+          role === 'customer'
+            ? 'ทดลองส่งคำขอ'
+            : 'ทดลองตอบรับงาน';
+
+        document.getElementById('result').textContent = '';
+      });
+    });
+
+    // ทดลองกดส่งคำขอหรือรับงาน
+    document.getElementById('simulate').addEventListener('click', () => {
+      document.getElementById('result').textContent =
+        'แสดงขั้นตอนจำลองเท่านั้น — ไม่มีการส่งข้อมูลหรือยืนยันบริการจริง';
+    });
+
+    // กลับไปหน้าเลือกบทบาท
+    document.getElementById('back').addEventListener('click', () => {
+      roles.hidden = false;
+      services.hidden = true;
+      detail.hidden = true;
+
+      role = null;
+      service = null;
+    });
+
+    // ลงทะเบียน Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('./sw.js')
+          .catch(error =>
+            console.warn('Service Worker:', error)
+          );
+      });
+    }
+  </script>
+</body>
+</html>
