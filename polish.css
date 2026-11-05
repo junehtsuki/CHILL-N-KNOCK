@@ -1,0 +1,1654 @@
+/* CHILL N’ KNOCK UI consistency – original layout, accessible cream & burgundy. */
+:root{--bg:#FAF7F2;--bg2:#FFFDFC;--card:#FFFFFF;--card2:#FBF2F0;--cream:#FFF1E6;--ink:#321E29;--muted:#6E5D66;--wine:#881638;--red:#AD2250;--hot:#A41F4B;--gold:#7A4A18;--line:#E8D8DE;--green:#1D7655;--shadow:0 10px 30px rgba(73,28,45,.1)}
+html,body{background:#EEE7E5;color:var(--ink)}
+.phone,.screen{background:var(--bg);color:var(--ink)}
+.phone{box-shadow:0 14px 60px rgba(34,12,27,.14)}
+.screen{padding-bottom:140px}
+/* Core UI controls. */
+.top,.back-header{background:var(--bg)}
+.top .brand-name,.back-header h1,.top .location-label{color:var(--ink)}
+.location-label,.brand-tag{color:#765D66}
+.circle-btn{background:#F9E8EB;color:#60283E;border-color:#ECD4DD}
+.circle-btn:hover,.quick-btn:hover{background:#F7DFE7}
+.quick-btn{background:#FFF8F7;color:#553342;border:1px solid #F0DDE2;min-width:82px;box-shadow:0 2px 10px #4f233008}
+.quick-btn .qi{color:#A41D4B}
+.quick-btn.active{background:#F7DCE4;border-color:#D68BA7}
+.section-bar h2{color:#321C29}
+.section-bar .eyebrow,.eyebrow{color:#A51D4D}
+.inline-link,.accent{color:#9E1949}
+.hint,.v-sub,.footer-small,.back-header small{color:#715F6A}
+.v-name,.wide-title{color:#361C29}
+.venue-tile{position:relative;color:#321C29;flex-shrink:0}
+.venue-tile-btn{display:block;width:100%;padding:0;text-align:left;background:transparent;border:none;color:var(--ink)}
+.venue-tile .photo{height:218px;border-radius:15px;position:relative}
+.venue-tile .photo .image-tag,.photo-note{font-size:10px;color:#FFF2F5;background:#301624a8;border-radius:9px;padding:4px 7px;display:inline-block}
+.tile-heart{position:absolute;right:11px;top:10px;border:0;border-radius:50%;width:32px;height:32px;background:#fff9;color:#FFF;display:grid;place-items:center}
+.tile-heart.is-active{color:#FC87AC;background:#521B3B}
+.venue-tile .v-name{font-size:14px;font-weight:850;margin:11px 0 4px;letter-spacing:.01em}
+.venue-tile .v-sub{font-size:11px;line-height:1.6}
+.venue-wide{display:flex;align-items:stretch;border:1px solid #E8D8DE;padding:9px;background:#FFF;border-radius:17px;color:#321E29;box-shadow:0 3px 14px #4d21300c;gap:4px;min-height:125px}
+.wide-click{display:flex;flex:1;gap:13px;min-width:0;background:transparent;border:none;text-align:left;color:inherit;padding:0}
+.venue-wide .image{height:108px;width:108px;flex-shrink:0;border-radius:12px}
+.venue-wide .wide-info{padding:8px 2px;gap:6px}
+.wide-title{font-size:15px;font-weight:850;line-height:1.1}
+.wide-sub{font-size:12px;color:#6B5360;line-height:1.6}
+.wide-status{display:inline-flex;align-items:center;color:#30684F;background:#E5F5ED;font-weight:800;border-radius:15px;font-size:9px;width:fit-content;padding:4px 7px}
+.wide-details{color:#9A1948;font-size:10px;font-weight:850;background:transparent;border:0;display:flex;gap:2px;align-items:flex-end;white-space:nowrap;padding:0 2px 9px}
+.searchbox,.searchbox input{background:#fff!important;color:#39232D!important}
+.searchbox{border-color:#E6D7DD!important}
+.searchbox input::placeholder{color:#8C7C84!important}
+.filter-btn{background:#F7E4EA!important;color:#9A1B45!important;border-color:#E9CDD7!important}
+.chip{background:#fff;color:#5E4551;border:1px solid #E6D5DD}
+.chip.active{background:#8E1C43;color:#fff;border-color:#8E1C43}
+.chip.line-active{border-color:#A7224E;background:#FBE8EF;color:#8E1A40}
+.search-meta,.micro{color:#76616C}
+/* Details: eliminate dark foreground on dark tiles and invisible active tab. */
+.stat{background:#FFF;border:1px solid #E7D5DC;min-width:0}
+.stat b{color:#4D2337;font-size:14px;overflow-wrap:anywhere}
+.stat span{color:#725C69;font-size:10px;line-height:1.5}
+.info-tabs{border-color:#E5D5DD}
+.info-tabs button{color:#796470;font-size:12px}
+.info-tabs button.active{color:#8B153F;border-color:#A41F4B}
+.info-copy{color:#35232D;font-size:13px;line-height:1.85;padding:0 0 20px}
+.info-copy h3{font-size:16px;letter-spacing:0;color:#3C1F2D}
+.info-copy p{color:#69545F!important;font-size:13px;line-height:1.85!important}
+.info-copy b{color:#35232D}
+.info-copy .tag-list{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 20px}
+.info-copy .hint{color:#76636D!important}
+.info-copy .gallery-place{height:180px;border-radius:13px;margin:10px 0}
+.source-link{display:inline-flex;align-items:center;gap:5px;border:1px solid #DEB5C3;background:#FFFAFB;border-radius:12px;padding:11px;color:#8F1B44;font-size:12px;font-weight:750;margin-bottom:22px}
+.info-copy .line{background:#E6D9DB}
+.pill.outline{background:#FFFAFA;color:#6A4555;border-color:#EAD5DC}
+/* Sticky booking bar, always visible above bottom navigation. */
+.floating-cta{background:linear-gradient(180deg,#FAF7F2F5,#FFF9F8);border-top:1px solid #EADDE2;bottom:79px;box-shadow:0 -6px 20px #2E172210;padding:10px 17px max(10px,env(safe-area-inset-bottom))}
+.floating-cta .micro{color:#8A576A}
+.floating-cta strong{color:#542B3D}
+.floating-cta .btn{min-width:0;min-height:48px;white-space:nowrap}
+.venue-screen{padding-bottom:205px}
+.bottom-nav{background:#FFFAF8;box-shadow:0 -2px 18px #42222d10}
+.bottom-nav button{color:#7A6C77;font-size:10px}
+.bottom-nav button.active{color:#941C47}
+.bottom-nav button.active .nav-icon:after{background:#E06585}
+/* Forms, controls and option cards. */
+.btn{background:linear-gradient(120deg,#850E39,#B72456);color:#fff;border-radius:12px}
+.btn.ghost,.btn.outline{background:#fff;color:#88173E;border:1px solid #DDB8C7}
+.btn.soft{background:#F9E4EB;color:#832040}
+.btn.danger{background:#A13045;color:#fff}
+.field,.fieldoption{background:#fff;color:#35232D;border:1px solid #DCCAD3;border-radius:12px;box-shadow:0 2px 10px #30171d08}
+.field-label{color:#4D2C3B}
+.field::placeholder{color:#91828A}
+select.field{appearance:none;-webkit-appearance:none;padding-right:38px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%238B2048' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center!important}
+.form-card,.subtle-card,.request-card,.metric,.job-card{background:#fff;color:#36232D;border-color:#E8D8DE}
+.form-card b,.request-card b,.metric b,.job-card h3,.service-option strong{color:#3B2030}
+.service-option{background:#FFF;border:1px solid #E9D8DE;color:#361E29;border-radius:16px;min-height:116px}
+.service-option p{color:#765F6C}
+.service-option.selected{background:#FBEAF0;border-color:#B92756;box-shadow:0 0 0 1px #B9275618}
+.service-mark{background:#F5DCE6!important;color:#901D45!important}
+.service-option .radio{border-color:#AF889B}
+.service-option.selected .radio{border-color:#B52F61}
+.service-fee{margin-top:8px;color:#8F2451;font-size:11px;font-weight:650}
+.service-next{margin:20px 0 22px}
+.choice{background:#fff;color:#583745;border-color:#E2CCD5}
+.choice.active{background:#8D1843;color:white;border-color:#8D1843}
+.safety,.notice-card{background:#FAEFDF;border:1px solid #E5CBA9;color:#674728}
+.safety span{color:#674728}
+.safety svg{color:#B78238}
+.progress-steps i{background:#E8D6DE}
+.progress-steps i.filled{background:#A31D4B}
+.review-row{padding:9px 0;border-bottom:1px solid #EBDCE1;gap:12px;font-size:12px}
+.review-row strong{text-align:right;color:#492333;max-width:65%}
+.queue-panel{background:#FFF;border:1px solid #E7C6D1;border-radius:15px;margin-top:14px;padding:16px;font-size:12px;color:#46293A}
+.queue-panel p{font-size:11px;color:#6C5762;line-height:1.7;margin:9px 0 0}
+.queue-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+.queue-grid>div{background:#FBF0F2;border-radius:12px;padding:13px 8px}
+.queue-grid span{font-size:10px;color:#725361;display:block}
+.queue-grid b{font-size:19px;color:#8C1A42;display:block;margin-top:4px}
+.runner-pick{display:flex;gap:9px;width:100%;background:#FFF;text-align:left;border:1px solid #ECD8DF;border-radius:12px;padding:10px;margin:10px 0;color:#321D27;align-items:center}
+.runner-pick.selected{background:#FFF4F7;border-color:#B72453}
+.runner-avatar{height:38px;width:38px;background:#F3E2E8;display:grid;place-items:center;border-radius:50%;color:#8B1D45;flex-shrink:0}
+.runner-pick b{font-size:12px;display:block}
+.runner-pick small{display:block;font-size:10px;color:#775F6C;line-height:1.6}
+.runner-pick .radio{display:block;width:16px;height:16px;border:2px solid #AA8492;border-radius:50%;margin:8px 4px 0 auto}
+.runner-pick.selected .radio{border:5px solid #A71B48}
+.deposit-details{margin:16px 0 0;border-top:1px solid #ECDDE3;padding-top:13px}
+.deposit-details summary{color:#871A43;font-size:12px;font-weight:800;cursor:pointer}
+.deposit-details p{color:#69545D;font-size:11px;line-height:1.8}
+/* Profile, role registration and back button. */
+.profile-hero{background:linear-gradient(130deg,#F2D6DC,#FFF3EE);border-color:#E6CED9}
+.profile-hero h2{color:#361F2B}
+.profile-hero .eyebrow{color:#A12253}
+.profile-hero .hint{color:#785F6A}
+.avatar{color:#fff}
+.role-card{background:#fff!important;color:#3F2030!important;border:1px solid #E8C8D5!important}
+.role-card p{color:#765F69!important}
+.partner-entry{color:#8E1745!important}
+.menu-row{color:#4B2A39}
+.qa-panel{background:#FFF6E8;border:1px dashed #C99250;border-radius:14px;padding:14px;margin-top:17px;font-size:12px;color:#6C4425}
+.qa-panel p{font-size:11px;margin:8px 0}
+.qa-buttons{display:flex;gap:7px}
+.qa-buttons button{background:#8A1E42;color:white;border:0;border-radius:10px;flex:1;padding:10px 6px;font-size:11px}
+.auth-screen{background:#FFF9F5;color:#35212B}
+.auth-screen .field{color:#3A202B}
+.auth-social .social-btn{display:flex;align-items:center;justify-content:center;color:#36202D;background:#fff;min-height:47px}
+.sheet{background:#FFFAF8;color:#402431;border-color:#E9D1D9}
+.sheet .modal-text{color:#67525D}
+.sheet .menu-row{color:#57303F}
+/* Nightlife image elements keep white text intentionally. */
+.hero,.hero h1,.hero .hero-kicker,.detail-cover,.detail-cover .detail-bottom h1{color:#FFF}
+.hero p,.detail-cover .detail-bottom p{color:#F9ECF0}
+.detail-cover .circle-btn{background:#FFF1;color:#4B2033;border:1px solid #FFF5}
+/* Desktop: a mobile-width app, without the old dark decorative sidebar. */
+#desktop-side{display:none!important}
+@media(min-width:600px){body{padding:24px 0;background:linear-gradient(120deg,#F3E9E5,#EEDCE1)}.phone{min-height:calc(100dvh - 48px);border-radius:27px;border:1px solid #E8D3D8}.bottom-nav{border-radius:0 0 24px 24px}.floating-cta{border-radius:0}}
+@media(max-width:375px){.hero h1{font-size:60px}.detail-cover .detail-bottom h1{font-size:51px}.venue-wide .image{width:88px}.wide-details{font-size:9px}.stat{padding:10px 6px}.stat b{font-size:12px}.stat span{font-size:9px}}
+/* Keep overlays, booking CTA and navigation OUTSIDE animated screen containers. */
+.screen{animation:none!important}
+.phone>.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:448px;z-index:30}
+.phone>.floating-cta{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);width:100%;max-width:448px;z-index:29}
+.phone>.overlay{position:fixed;inset:0;z-index:50}
+.select-overlay{position:fixed;inset:0;z-index:90;background:#20101B88;display:flex;justify-content:center;align-items:flex-end}
+.select-dialog{width:100%;max-width:448px;max-height:68dvh;overflow:auto;background:#FFF9F8;border-radius:22px 22px 0 0;padding:14px 18px 26px;box-shadow:0 -8px 35px #30121D44;color:#3D2632}
+.select-handle{width:42px;height:5px;border-radius:10px;background:#DEC8D2;margin:0 auto 18px}
+.select-options{display:grid;gap:6px;margin-top:16px}
+.select-options button{background:#FFF;border:1px solid #EADAE1;border-radius:11px;text-align:left;padding:14px;color:#492B3B;font-size:13px}
+.select-options button.selected{border-color:#AD2955;background:#FBE5EE;font-weight:800}
+/* Ensure genuine nightclub search stays legible without dark cards. */
+.search-meta span{font-size:11px;color:#755F6A}
+@media(min-width:600px){.select-overlay{left:calc(50% - 224px);right:calc(50% - 224px)}}
+/* Text on true dark/media backgrounds remains WHITE for WCAG-style contrast. */
+.feature-banner,.feature-banner h3,.feature-banner .micro,.wallet,.wallet b,.wallet p,.event-poster,.event-poster strong,.event-poster .poster-big,.event-poster .poster-type,.event-poster .poster-bottom{color:#FFFFFF!important}
+.feature-banner p,.wallet p{color:#FFDFE8!important}
+.event-poster .cover-tag{color:#FFFFFF}
+.detail-cover .detail-bottom p,.detail-cover .detail-bottom h1{color:#FFFFFF!important}
+.role-card svg,.menu-row svg{color:#912247}
+.input-hint,.review-row .hint{color:#725C69}
+
+/* FIX 03 · Typography from former baseline.css (no frame-size overrides).
+   Source for app sizing: original dark CHILL_N_KNOCK/styles.css.
+   Do NOT reintroduce width:100%;max-width:100% on #app / .phone. */
+:root {
+  --headline: 'Kanit', 'Noto Sans Thai', sans-serif;
+  --body: 'DM Sans', 'Noto Sans Thai', system-ui, sans-serif;
+}
+html, body {
+  background: #EEE9E8 !important;
+  color: var(--ink);
+  font-family: var(--body);
+}
+body, button, input, select, textarea { font-family: var(--body); }
+h1,h2,h3,h4,.body-title,.brand-name,.section-bar h2,
+.hero h1,.feature-banner h3,.display,.s-title,.detail-bottom h1,
+.back-header h1,.wide-title,.poster-big,.auth-screen h1,
+.auth-brand b,.welcome-brand b { font-family: var(--headline) !important; }
+/* Existing approved visual fit for Kanit headings. */
+.hero h1 { font-size: 59px; line-height: .99; letter-spacing: -.03em; }
+.hero .decor { font-size: 185px; }
+.detail-bottom h1 { font-size: 58px; line-height: 1.03; }
+.s-title { font-size: 29px; line-height: 1.16; }
+.display { font-size: 47px; line-height: 1.06; }
+.section-bar h2 { font-size: 23px; line-height: 1.2; letter-spacing: 0; }
+.feature-banner h3 { font-size: 23px; line-height: 1.12; }
+.brand-name,.auth-brand b,.welcome-brand b { letter-spacing: -.018em; line-height: 1.06; }
+.bottom-nav button { font-size: 11px; line-height: 1.25; }
+@media (max-width: 375px) {
+  .hero h1 { font-size: 52px; }
+  .detail-bottom h1 { font-size: 50px; }
+  .section-bar h2 { font-size: 21px; }
+  .bottom-nav button { font-size: 10px; }
+}
+
+/* Keep approved Baseline v1.0 frame cosmetics; original styles.css owns sizing. */
+.phone { border-radius: 0; }
+@media (min-width: 850px) {
+  .phone { box-shadow: 0 0 0 1px #DFCFCF, 0 12px 48px #4D26301C; }
+}
+@media (max-width: 849px) {
+  .phone { box-shadow: none; }
+}
+
+/* ========================================
+   FIX 04 — HOME & VENUE DETAIL
+   ======================================== */
+
+
+/* 1. ชื่อหน้าที่ไม่ใช่ Home */
+.page-top-title {
+  font-family: var(--headline);
+  color: #321E29;
+  font-size: 19px;
+  line-height: 1.2;
+  font-weight: 650;
+}
+
+
+/* 2. ปุ่มหมวดหมู่พื้นดำ ไอคอนชมพู */
+.quick-btn,
+.quick-btn.active {
+  background: #211B25;
+  color: #FFF2F6;
+  border-color: #46313E;
+}
+
+.quick-btn .qi {
+  color: #F19AB5;
+}
+
+.quick-btn:hover,
+.quick-btn:focus-visible {
+  background: #392637;
+}
+
+
+/* 3. เว้นระยะขอบการ์ดร้านและโปสเตอร์ Home */
+.screen:has(> .hero) > .section > .scroll-x {
+  margin-inline: 14px;
+  padding: 0 8px 10px !important;
+  scroll-padding-inline: 8px;
+}
+
+
+/* 4. ปุ่มย้อนกลับ หัวใจ และแชร์ ให้มองเห็นชัด */
+.detail-cover .detail-top .circle-btn {
+  background: #FFF9F6;
+  color: #542336;
+  border: 1px solid #F0D6DF;
+  box-shadow: 0 3px 12px rgba(23, 8, 19, .22);
+}
+
+.detail-cover .detail-top .circle-btn svg {
+  stroke-width: 2;
+}
+
+.detail-cover .detail-top .circle-btn:hover {
+  background: #F7E0E9;
+}
+
+
+/* 5. ลดช่องว่างท้ายหน้า Home */
+.screen:has(> .hero) {
+  padding-bottom: 96px;
+}
+
+.screen:has(> .hero) > .section.pad:last-child {
+  margin-top: 20px;
+}
+
+.screen:has(> .hero) > .section.pad:last-child .footer-small {
+  margin: 12px 0 0;
+  line-height: 1.5;
+}
+/* ============================================================
+   CHILL N’ KNOCK Content Fix v1.1 — narrowly scoped additions
+   ============================================================ */
+.cnk-explore-card{background:#fff;border:1px solid #ead6df;border-radius:19px;overflow:hidden;margin:12px 0 16px;color:#321e29;box-shadow:0 4px 15px #5025390b}
+.cnk-explore-photo{height:176px;position:relative;overflow:hidden}
+.cnk-cover-link{position:absolute;inset:0;background:transparent;border:0;width:100%;height:100%;z-index:1}
+.cnk-explore-heart{position:absolute;top:12px;right:12px;background:#FFF9F6F2;border:1px solid #fff5;border-radius:50%;width:36px;height:36px;display:grid;place-items:center;color:#8E1D48;z-index:2}
+.cnk-explore-heart.is-saved{background:#FBE0EA}
+.cnk-explore-info{padding:14px 16px 15px}
+.cnk-explore-title-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.cnk-explore-title-row strong{font-size:21px;color:#321e29;font-family:var(--headline)}
+.cnk-explore-source{font-size:10px;font-weight:700;border-radius:30px;background:#E4F4E9;color:#1D6B43;padding:5px 8px;white-space:nowrap}
+.cnk-explore-source.pending{background:#F9ECDD;color:#8E5720}
+.cnk-explore-meta{display:flex;align-items:center;gap:7px;color:#67515D;margin:5px 0;font-size:13px}
+.cnk-explore-meta svg{color:#A31D50}
+.cnk-explore-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:14px;padding-top:10px;border-top:1px solid #F1E5E9;color:#492F3E;font-size:12px}
+.cnk-explore-bottom small{display:block;color:#846E79;font-size:10px;margin-top:3px}
+.cnk-explore-bottom button{color:#961B4A;background:transparent;border:0;display:inline-flex;gap:4px;align-items:center;font-weight:800;white-space:nowrap;font-size:12px}
+.cnk-research-note{color:#77616B;font-size:11px}
+.cnk-filter-warning{font-size:11px;border-radius:9px;background:#FFF0E3;color:#844C2B;padding:9px 11px;margin:10px 0}
+.cnk-source-note{font-size:11px!important;color:#806A74!important;background:#FFF5F6;border:1px solid #F0E1E5;border-radius:10px;padding:10px 12px}
+.cnk-subheading{margin-top:20px}
+.cnk-research-review{padding:12px 0;border-bottom:1px solid #EBDDE3}
+.cnk-research-review p{margin:0 0 5px;font-size:13px}
+.cnk-research-review small{color:#7D6672;font-size:10px}
+.cnk-research-meta{padding:12px 0;border-bottom:1px solid #E7D6DE}
+.cnk-research-meta p{margin:5px 0 0}
+.cnk-venue-line{gap:12px}
+.cnk-venue-line>div{flex:1;min-width:0;overflow-wrap:anywhere}
+.cnk-research-sources{margin:20px 0 9px;font-size:12px}
+.cnk-research-sources>div{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.cnk-research-sources a{display:inline-flex;align-items:center;gap:5px;border:1px solid #E6CAD4;background:#fff;color:#8B1D49;border-radius:9px;padding:8px 10px;font-size:11px;text-decoration:none}
+.cnk-photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:13px 0}
+.cnk-gallery-item{position:relative;overflow:hidden;min-width:0;border-radius:13px;background:#F3E8EA}
+.cnk-gallery-item img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
+.cnk-gallery-item span{display:none;position:absolute;bottom:0;left:0;right:0;background:#2F1D29B5;color:#fff;padding:5px 7px;font-size:10px}
+.cnk-gallery-item.is-placeholder span{display:block}
+.cnk-filter-sheet{padding-bottom:28px;max-height:88dvh}
+.cnk-filter-sheet .sheet-heading h2{font-size:25px;line-height:1.2}
+.cnk-filter-stack{display:grid;gap:10px;margin:12px 0 24px}
+.cnk-filter-option{width:100%;border:1px solid #E9D9DF;background:#fff;color:#3D2531;display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:15px;text-align:left;min-height:58px}
+.cnk-filter-option.selected{border-color:#B52152;background:#FBE8EF}
+.cnk-filter-radio{width:19px;height:19px;border:2px solid #B28B9C;border-radius:50%;flex:none}
+.cnk-filter-option.selected .cnk-filter-radio{border:5px solid #B22554}
+.cnk-filter-chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0 10px;scrollbar-width:none}
+.cnk-filter-chips .chip{white-space:nowrap;flex:none}
+.cnk-filter-actions{display:flex;gap:10px;margin-top:21px}
+.cnk-filter-actions .btn{flex:1;min-width:0;padding:12px 8px}
+.cnk-runner-section h3{font-size:19px;margin:0 0 6px}
+.cnk-runner-row{width:100%;display:flex;gap:10px;align-items:center;padding:11px 10px;margin:9px 0;background:#fff;border:1px solid #ECD7DF;color:#3C2632;border-radius:13px;text-align:left}
+.cnk-runner-row.selected{background:#FFF2F6;border-color:#B92756}
+.cnk-runner-row:disabled{opacity:.63;cursor:not-allowed}
+.cnk-runner-avatar{width:48px;height:48px;flex:none;overflow:hidden;border-radius:50%;border:1px solid #DFC7D1}
+.cnk-runner-avatar svg{display:block;width:100%;height:100%}
+.cnk-runner-data{display:grid;gap:3px;min-width:0;flex:1}
+.cnk-runner-data strong{font-size:13px}
+.cnk-runner-data small{font-size:10px;color:#846F79}
+.cnk-runner-data .cnk-status-ready{color:#277746;font-weight:700}
+.cnk-runner-data .cnk-status-busy{color:#AA6C29;font-weight:700}
+.cnk-runner-side{display:grid;justify-items:center;gap:8px;flex:none}
+.cnk-runner-side b{color:#961B4A;font-size:13px}
+.cnk-runner-radio{height:17px;width:17px;border:2px solid #B2939F;border-radius:50%}
+.cnk-runner-row.selected .cnk-runner-radio{border:5px solid #B62955}
+.cnk-calendar{background:#FFF;border:1px solid #E8D2DA;border-radius:17px;padding:13px;margin:8px 0 16px;color:#412536}
+.cnk-calendar-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.cnk-calendar-head strong{font-size:15px;color:#6D2040}
+.cnk-calendar-head button{border:0;width:30px;height:30px;border-radius:50%;font-size:21px;background:#F8E8EE;color:#8E2048;margin-left:5px}
+.cnk-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cnk-calendar-weekdays{color:#89737E;font-size:11px;text-align:center;margin-bottom:7px}
+.cnk-calendar-day{position:relative;min-width:0;min-height:36px;border:1px solid #EDDCE3;background:#FFF9FA;border-radius:9px;color:#4D2A3C;font-size:13px}
+.cnk-calendar-day.selected{background:#921B47;color:#FFF;border-color:#921B47;font-weight:800}
+.cnk-calendar-day:disabled{opacity:.35}
+.cnk-calendar-event-dot{position:absolute;right:0;top:-4px;background:#BD2B60;color:#fff;border-radius:50%;height:13px;width:13px;font-size:8px;line-height:13px}
+.cnk-calendar-key{color:#965477;font-size:11px;margin-top:13px}
+.cnk-calendar-events{border-top:1px solid #F0DEE5;padding-top:10px;margin-top:12px}
+.cnk-calendar-events>strong{display:block;font-size:13px;margin-bottom:7px}
+.cnk-calendar-events>button{border:0;background:transparent;display:flex;text-align:left;align-items:center;gap:11px;padding:10px 0;width:100%;color:#422536;border-bottom:1px solid #F0E3E8}
+.cnk-calendar-events>button small{display:block;color:#7A6570;font-size:10px;margin-top:3px}
+.cnk-event-date{background:#F9E5EC;color:#98214C;border-radius:9px;min-width:38px;text-align:center;font-size:16px;font-weight:800;padding:5px}
+.cnk-event-date small{color:#98214C!important}
+
+/* Keep the approved, balanced venue-detail tab alignment. */
+.venue-screen .info-tabs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+.venue-screen .info-tabs button {text-align:center;padding:0 0 12px}
+
+/* =========================================
+   CHILL N' KNOCK — v1.1 SELECTIVE FIXES
+   ========================================= */
+
+
+/* คะแนนร้าน Explore */
+.cnk-research-score {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 8px 0 2px;
+  color: #53303d;
+}
+
+.cnk-research-score b {
+  color: #a21d4f;
+  font-size: 16px;
+}
+
+.cnk-research-score small {
+  font-size: 10px;
+  color: #82717b;
+}
+
+
+/* เมนูและรีวิว ให้มีกรอบจางๆ */
+.cnk-menu-card,
+.cnk-review-card {
+  background: #fff;
+  border: 1px solid #ecd9e1;
+  border-radius: 14px;
+  padding: 15px 16px;
+  margin: 9px 0;
+  color: #3c2630;
+  box-shadow: 0 2px 8px #5125350a;
+}
+
+.cnk-menu-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.cnk-menu-card strong {
+  flex: 1;
+  font-weight: 700;
+  line-height: 1.55;
+  font-size: 13px;
+}
+
+.cnk-menu-card span {
+  flex: none;
+  color: #9c1a48;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 800;
+  max-width: 43%;
+}
+
+.cnk-review-card {
+  font-size: 13px;
+  line-height: 1.75;
+  background: #fffcfc;
+}
+
+.cnk-reviews-section h3 span {
+  font-size: 14px;
+  color: #a62152;
+  white-space: nowrap;
+}
+
+
+/* Filter ไม่กระพริบเวลาเลือก */
+.cnk-filter-option,
+.cnk-filter-chips button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: none !important;
+  animation: none !important;
+}
+
+.cnk-filter-option:active,
+.cnk-filter-chips button:active {
+  transform: none !important;
+}
+
+
+/* Event Detail */
+.cnk-event-panel {
+  border: 1px solid #ecd9e1;
+  border-radius: 15px;
+  background: white;
+  padding: 17px;
+  margin: 13px 0 18px;
+  color: #3e2732;
+}
+
+.cnk-event-panel h3 {
+  margin: 0 0 12px;
+}
+
+.cnk-event-panel p {
+  font-size: 13px;
+  color: #68515e;
+  line-height: 1.75;
+}
+
+.cnk-event-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 18px;
+  color: #844056;
+  font-size: 12px;
+}
+
+.cnk-event-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.cnk-event-tabs button {
+  text-align: center;
+}
+
+.cnk-event-tier {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee0e5;
+  font-size: 12px;
+}
+
+.cnk-event-cta {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 448px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fffbf9;
+  z-index: 28;
+  border-top: 1px solid #e9d4dc;
+}
+
+.cnk-event-cta .btn {
+  font-size: 12px;
+  padding: 10px 6px;
+  min-width: 0;
+}
+
+.cnk-event-screen {
+  padding-bottom: 210px;
+}
+
+
+/* เลือกบัตรอีเวนต์ */
+.cnk-ticket-page {
+  padding-top: 20px;
+  padding-bottom: 130px;
+}
+
+.cnk-ticket-event {
+  border: 1px solid #eddae1;
+  background: #fff;
+  padding: 16px;
+  border-radius: 15px;
+  margin: 17px 0;
+}
+
+.cnk-ticket-event p {
+  font-size: 12px;
+  color: #725b68;
+}
+
+.cnk-ticket-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  width: 100%;
+  gap: 14px;
+  background: white;
+  border: 1px solid #ecd9e1;
+  border-radius: 14px;
+  margin: 10px 0;
+  padding: 14px;
+  color: #3c2432;
+}
+
+.cnk-ticket-option.selected {
+  border-color: #ad2453;
+  background: #fbe8ef;
+}
+
+.cnk-ticket-option small {
+  display: block;
+  font-size: 11px;
+  color: #735a67;
+  margin-top: 5px;
+}
+
+.cnk-ticket-option > b {
+  color: #8d1a44;
+  white-space: nowrap;
+}
+
+.cnk-ticket-qty,
+.cnk-ticket-total {
+  margin: 20px 0;
+  background: #fff3f6;
+  border-radius: 12px;
+  padding: 13px;
+}
+
+.cnk-ticket-success {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 20px auto;
+  background: #8b2246;
+  color: #fff;
+  font-size: 45px;
+}
+
+
+/* My Nights */
+.cnk-my-night {
+  padding-bottom: 110px;
+}
+
+.cnk-night-heading {
+  align-items: flex-start;
+  gap: 15px;
+  margin: 10px 0 15px;
+}
+
+.cnk-night-heading h1 {
+  font: 700 28px/1.2 var(--headline);
+  margin: 0;
+}
+
+.cnk-night-heading p {
+  color: #816e77;
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+.cnk-night-tabs {
+  display: flex;
+  gap: 7px;
+  margin: 16px 0;
+}
+
+.cnk-night-tabs button {
+  flex: 1;
+  border: 0;
+  background: #f9e9ed;
+  color: #5d4551;
+  border-radius: 24px;
+  padding: 11px 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cnk-night-tabs button.active {
+  background: #8d1740;
+  color: #fff;
+}
+
+.cnk-night-booking {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 94px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #eddae1;
+  border-radius: 15px;
+  padding: 10px;
+  margin: 12px 0;
+  color: #3e2632;
+}
+
+.cnk-night-thumb {
+  height: 110px;
+  border-radius: 10px;
+}
+
+.cnk-night-booking strong,
+.cnk-night-booking small,
+.cnk-night-link {
+  display: block;
+}
+
+.cnk-night-booking strong {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.cnk-night-booking small {
+  font-size: 11px;
+  color: #765e69;
+  line-height: 1.5;
+}
+
+.cnk-night-booking small svg {
+  vertical-align: middle;
+}
+
+.cnk-night-badge {
+  border-radius: 15px;
+  background: #ffe3eb;
+  color: #9d2150;
+  font-size: 10px;
+  padding: 5px 8px;
+  display: inline-block;
+}
+
+.cnk-night-link {
+  margin-top: 5px;
+  font-size: 11px;
+  color: #28855e;
+  font-weight: 800;
+}
+
+.cnk-my-night > h3 {
+  font-size: 15px;
+  margin: 25px 0 12px;
+}
+
+.cnk-night-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cnk-night-tools button {
+  background: #fbe8ee;
+  border: 0;
+  border-radius: 15px;
+  padding: 16px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  color: #8e1b47;
+  min-height: 146px;
+}
+
+.cnk-night-tools b {
+  font-size: 14px;
+  color: #532a3a;
+}
+
+.cnk-night-tools small {
+  color: #765e6a;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.cnk-night-tools button > svg:last-child {
+  align-self: flex-end;
+}
+
+.cnk-night-empty,
+.cnk-night-ticket,
+.cnk-night-next {
+  background: #fff;
+  border: 1px solid #efdee4;
+  border-radius: 13px;
+  padding: 16px;
+  color: #65515d;
+  font-size: 12px;
+}
+
+.cnk-night-next {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cnk-night-next button {
+  margin-left: auto;
+  border: 1px solid #b23b63;
+  color: #9b214b;
+  background: white;
+  border-radius: 9px;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
+/* Profile — Font Size */
+.cnk-font-choice {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e8d5dc;
+  color: #4c2b39;
+  border-radius: 13px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  text-align: left;
+}
+
+.cnk-font-choice.selected {
+  border-color: #ac2050;
+  background: #fde9f0;
+  color: #8d1843;
+}
+
+:root {
+  --cnk-font-mult: 1;
+}
+
+:root[data-cnk-font="large"] {
+  --cnk-font-mult: 1.13;
+}
+
+:root[data-cnk-font="xlarge"] {
+  --cnk-font-mult: 1.27;
+}
+
+:root[data-cnk-font] :is(
+  .info-copy,
+  .hint,
+  .cnk-menu-card strong,
+  .cnk-review-card,
+  .cnk-explore-meta,
+  .cnk-night-booking small,
+  .menu-row,
+  .cnk-event-panel p
+) {
+  font-size: calc(13px * var(--cnk-font-mult));
+  line-height: 1.7;
+}
+
+/* ====================================
+   FIX 07 — MY NIGHTS / RIDE / EVENTS
+   ==================================== */
+
+/* MY NIGHTS */
+
+.mn-page .pad {
+  padding-bottom: 112px;
+}
+
+.mn-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 9px;
+  margin: 20px 0 16px;
+}
+
+.mn-header h1 {
+  font: 700 30px/1.18 var(--headline);
+  margin: 0;
+  color: #391f2e;
+}
+
+.mn-header p {
+  font-size: 11px;
+  color: #816975;
+  margin: 5px 0 0;
+  line-height: 1.4;
+}
+
+.mn-header .row {
+  gap: 6px;
+}
+
+.mn-header .circle-btn {
+  width: 38px;
+  height: 38px;
+  flex: none;
+}
+
+.mn-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin: 12px 0 15px;
+}
+
+.mn-tabs button {
+  border: 0;
+  background: #fae9ed;
+  color: #4a3340;
+  border-radius: 30px;
+  padding: 9px 5px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mn-tabs button.active {
+  background: #941741;
+  color: #fff;
+}
+
+.mn-booking {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 0;
+  border: 1px solid #edd6df;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff9f8;
+  color: #35202e;
+  margin: 0 0 15px;
+}
+
+.mn-booking-cover {
+  height: 177px;
+  border-radius: 0;
+  padding: 13px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+  color: white;
+}
+
+.mn-booking-cover:before {
+  background: linear-gradient(
+    180deg,
+    #0b051121 0%,
+    #1d0717a8 76%,
+    #140712eb 100%
+  );
+}
+
+.mn-badge {
+  background: #fff2f4;
+  color: #a92352;
+  border-radius: 18px;
+  padding: 5px 10px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mn-cover-bottom {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  position: relative;
+  padding-right: 34px;
+}
+
+.mn-cover-bottom strong {
+  font: 800 26px/1.1 var(--headline);
+  color: white;
+}
+
+.mn-cover-bottom span {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 10px;
+  color: white;
+}
+
+.mn-cover-bottom i {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background: white;
+  color: #8e1d44;
+}
+
+.mn-booking-foot {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 12px 14px;
+  background: #fff8f8;
+}
+
+.mn-booking-foot > span {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  background: #fde7ed;
+  color: #9c1e4b;
+}
+
+.mn-booking-foot b {
+  display: block;
+  font-size: 12px;
+  color: #3c2732;
+}
+
+.mn-booking-foot small {
+  font-size: 10px;
+  color: #866a76;
+  display: block;
+  margin-top: 2px;
+}
+
+.mn-subtitle {
+  font: 700 19px/1.25 var(--headline);
+  color: #452736;
+  margin: 23px 0 13px;
+}
+
+.mn-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mn-tools button {
+  min-height: 146px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px;
+  border: 0;
+  border-radius: 14px;
+  text-align: left;
+  background: linear-gradient(
+    145deg, #fff0f3, #fbd3dd
+  );
+  color: #a41c4c;
+}
+
+.mn-tools b {
+  font-size: 17px;
+  color: #541f35;
+}
+
+.mn-tools small {
+  font-size: 11px;
+  color: #6f4f5d;
+  line-height: 1.35;
+}
+
+.mn-tool-arrow {
+  margin-top: auto;
+  margin-left: auto;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #a21d4d;
+  color: white;
+  display: grid;
+  place-items: center;
+}
+
+.mn-empty {
+  background: white;
+  border: 1px solid #ecd8e0;
+  border-radius: 14px;
+  padding: 22px 12px;
+  color: #806976;
+  font-size: 12px;
+  text-align: center;
+}
+
+.mn-ticket {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #efdde3;
+  border-radius: 12px;
+  margin-top: 7px;
+  color: #543443;
+  font-size: 12px;
+}
+
+.mn-next {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 13px;
+  background: #fcf0f1;
+  border-radius: 12px;
+  color: #7d5967;
+}
+
+.mn-next > span {
+  flex: 1;
+  min-width: 0;
+}
+
+.mn-next b,
+.mn-next small {
+  display: block;
+}
+
+.mn-next b {
+  font-size: 12px;
+  color: #452937;
+}
+
+.mn-next small {
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+.mn-next button {
+  background: white;
+  color: #961c49;
+  border: 1px solid #b42a53;
+  border-radius: 9px;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+
+/* RIDE HOME */
+
+.mn-ride-page .pad {
+  padding-top: 18px;
+  padding-bottom: 115px;
+}
+
+.mn-provider {
+  border: 1px solid #efdae2;
+  border-radius: 14px;
+  background: white;
+  padding: 14px;
+  margin: 0 0 14px;
+  box-shadow: 0 5px 13px #51253510;
+}
+
+.mn-provider-row {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 13px;
+}
+
+.mn-provider-row > div:first-child {
+  border-right: 1px solid #ead8dd;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.mn-grab-logo {
+  color: #03a84e;
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+.mn-line-logo {
+  display: flex;
+  gap: 5px;
+  color: #2b2b2b;
+  align-items: center;
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+.mn-line-logo span {
+  color: white;
+  background: #19bd67;
+  border-radius: 8px;
+  padding: 8px 6px;
+  font-weight: 800;
+}
+
+.mn-provider p {
+  margin: 0;
+}
+
+.mn-provider p b {
+  font-size: 12px;
+  color: #452a39;
+}
+
+.mn-provider p small {
+  display: block;
+  color: #705966;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.mn-provider .btn {
+  min-height: 39px;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 9px;
+}
+
+.mn-ride-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  border-radius: 12px;
+  background: #fee8ed;
+  padding: 12px;
+  margin: 12px 0;
+  color: #6a3348;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.mn-ride-note svg {
+  color: #a52452;
+  margin-top: 2px;
+}
+
+.mn-ride-note b {
+  color: #872048;
+}
+
+
+/* EVENT DETAIL */
+
+.ev-ref-page,
+.ev-ticket-page,
+.ev-success-page {
+  padding-bottom: 175px;
+}
+
+.ev-ref-hero {
+  height: 355px;
+  padding: 15px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 0 0 20px 20px;
+  color: white;
+}
+
+.ev-ref-hero:before {
+  background: linear-gradient(
+    180deg,
+    #200a1630 0%,
+    #27102335 35%,
+    #180817ee 100%
+  );
+}
+
+.ev-ref-hero .circle-btn {
+  background: #fff8f4;
+  color: #742b45;
+  border: 1px solid white;
+}
+
+.ev-ref-hero-bottom {
+  position: relative;
+  padding: 0 10px;
+}
+
+.ev-ref-hero-bottom h1 {
+  font: 800 43px/.98 var(--headline);
+  color: white;
+  margin: 11px 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.ev-ref-hero-bottom p {
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  margin: 0;
+}
+
+.ev-ref-chips {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 14px 0 12px;
+}
+
+.ev-ref-chips span {
+  background: white;
+  border: 1px solid #ead9de;
+  color: #7e2f4e;
+  border-radius: 10px;
+  padding: 9px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 11px;
+}
+
+.ev-ref-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  border-bottom: 1px solid #e8d6df;
+  margin: 18px 0;
+}
+
+.ev-ref-tabs button {
+  border: 0;
+  background: transparent;
+  color: #796672;
+  padding: 11px 0;
+  font-weight: 800;
+  font-size: 12px;
+  border-bottom: 3px solid transparent;
+}
+
+.ev-ref-tabs button.active {
+  color: #921a43;
+  border-bottom-color: #a71e4d;
+}
+
+.ev-ref-content {
+  background: white;
+  border: 1px solid #eddae2;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  color: #452b37;
+}
+
+.ev-ref-content h3 {
+  font-size: 15px;
+  margin: 8px 0 10px;
+}
+
+.ev-ref-content p {
+  font-size: 12px;
+  color: #795f6b;
+  line-height: 1.75;
+}
+
+.ev-lineup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffebef;
+  padding: 12px;
+  border-radius: 12px;
+  margin: 10px 0 18px;
+  color: #9f2853;
+}
+
+.ev-lineup b,
+.ev-lineup small {
+  display: block;
+}
+
+.ev-lineup b {
+  font-size: 12px;
+  color: #532c3d;
+}
+
+.ev-lineup small {
+  font-size: 10px;
+  color: #836371;
+  margin-top: 4px;
+}
+
+.ev-perks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.ev-perks span {
+  background: #fbebee;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 3px;
+  color: #a11f50;
+  font-size: 10px;
+}
+
+.ev-price-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eedde3;
+  padding: 10px 0;
+  font-size: 12px;
+}
+
+.ev-price-row strong {
+  color: #961d48;
+}
+
+.ev-ref-cta {
+  position: fixed;
+  bottom: 78px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 448px;
+  z-index: 29;
+  background: #fffcfa;
+  border-top: 1px solid #ecdce2;
+  padding: 11px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ev-ref-cta .btn {
+  padding: 10px 5px;
+  min-width: 0;
+  font-size: 12px;
+}
+
+
+/* EVENT TICKET */
+
+.ev-ticket-page .pad,
+.ev-success-page .pad {
+  padding-top: 18px;
+}
+
+.ev-ticket-summary {
+  display: flex;
+  gap: 12px;
+  background: #fceaf0;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+.ev-ticket-thumb {
+  width: 81px;
+  height: 78px;
+  border-radius: 10px;
+  flex: none;
+}
+
+.ev-ticket-summary b,
+.ev-ticket-summary small {
+  display: block;
+}
+
+.ev-ticket-summary b {
+  font-size: 12px;
+  color: #452937;
+}
+
+.ev-ticket-summary small {
+  font-size: 10px;
+  color: #765663;
+  margin-top: 5px;
+}
+
+.ev-ticket-page h3 {
+  font-size: 16px;
+  color: #422835;
+}
+
+.ev-ticket-option {
+  width: 100%;
+  border: 1px solid #e9d4de;
+  border-radius: 13px;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 10px;
+  margin: 10px 0;
+  text-align: left;
+  color: #3b2631;
+}
+
+.ev-ticket-option.selected {
+  border-color: #b42554;
+  background: #fce9ef;
+}
+
+.ev-ticket-radio {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 2px solid #b99da9;
+  flex: none;
+}
+
+.ev-ticket-option.selected .ev-ticket-radio {
+  border: 5px solid #ae2250;
+}
+
+.ev-ticket-option b {
+  display: block;
+  font-size: 12px;
+}
+
+.ev-ticket-option small {
+  display: block;
+  color: #796570;
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 5px;
+}
+
+.ev-ticket-option strong {
+  color: #9a1f4a;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.ev-ticket-qty,
+.ev-ticket-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0;
+  padding: 12px 13px;
+  background: #fceef2;
+  border-radius: 12px;
+  color: #4d2e3a;
+  font-size: 13px;
+}
+
+.ev-ticket-qty > span {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ev-ticket-qty button {
+  width: 29px;
+  height: 29px;
+  border: 0;
+  background: #fce0e8;
+  color: #a21c4b;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+.ev-ticket-total strong {
+  font-size: 18px;
+  color: #a21c4b;
+}
+
+
+/* TICKET CONFIRMATION */
+
+.ev-success-page .pad {
+  text-align: center;
+}
+
+.ev-success-check {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  margin: 10px auto 16px;
+  background: #fbe1e9;
+  color: #9e1844;
+  display: grid;
+  place-items: center;
+}
+
+.ev-success-page h1 {
+  font: 700 24px/1.15 var(--headline);
+  color: #3d2532;
+}
+
+.ev-success-page p {
+  font-size: 12px;
+  color: #7b6570;
+}
+
+.ev-success-ticket {
+  text-align: left;
+  border: 1px solid #ead7de;
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  margin: 18px 0;
+}
+
+.ev-success-banner {
+  height: 110px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+  color: white;
+}
+
+.ev-success-banner b {
+  font-size: 15px;
+  color: white;
+}
+
+.ev-success-banner strong {
+  font-size: 18px;
+  color: white;
+}
+
+.ev-success-inner {
+  display: grid;
+  grid-template-columns: 1fr 102px;
+  gap: 10px;
+  padding: 14px;
+}
+
+.ev-success-inner > div:first-child {
+  display: grid;
+  gap: 8px;
+}
+
+.ev-success-inner span {
+  font-size: 11px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #5e4754;
+}
+
+.ev-success-inner b {
+  font-size: 12px;
+  color: #9c1f4b;
+}
+
+.ev-fake-qr {
+  height: 99px;
+  border: 3px dashed #994e66;
+  border-radius: 8px;
+  color: #893653;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  font-size: 13px;
+}
+
+.ev-fake-qr small {
+  font-weight: 400;
+  font-size: 10px;
+}
+
+.ev-ticket-disclaimer {
+  border-top: 1px solid #eddde3;
+  color: #9f274f;
+  background: #fff4f5;
+  padding: 12px;
+  font-size: 11px;
+  text-align: center;
+}
+
+.ev-ticket-warning {
+  background: #fff0e5;
+  border-radius: 12px;
+  display: flex;
+  gap: 9px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #7d5334;
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.ev-success-page .btn {
+  margin-top: 10px;
+}

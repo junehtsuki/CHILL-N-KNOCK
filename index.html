@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FAF7F2" />
+  <meta name="description" content="CHILL N’ KNOCK — ค้นหาร้าน จองโต๊ะ และจัดการคืนของคุณในกรุงเทพฯ — UX Prototype." />
+  <title>CHILL N’ KNOCK — Baseline v1.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="logo.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="polish.css" />
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <script src="app.js"></script>
+  <script src="venue-research.js"></script>
+  <script src="upgrade.js"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.warn));
+    }
+  </script>
+</body>
+</html>
