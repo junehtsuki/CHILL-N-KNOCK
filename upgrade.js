@@ -428,7 +428,7 @@ modal=function(){if(UI.modal!=='cancel')return oldModal();const r=requestById(UI
 
 // Add a safe account check for applications, without collecting KYC documents in localStorage.
 const oldStartApply=App.startApply;
-App.startApply=function(role){if(!DB.account){UI.pendingApply=role;App.auth('partner-choice');return;}oldStartApply(role);};
+App.startApply=function(role){  if (role === 'runner') {oldStartApply(role); return;} if (!DB.account) {UI.pendingApply = role;App.auth('partner-choice');return;}  oldStartApply(role); };
 const oldNextApply=App.nextApply;
 App.nextApply=function(ev){oldNextApply(ev);};
 // Social login icons show a clearly disabled integration, never an impression of active OAuth.
