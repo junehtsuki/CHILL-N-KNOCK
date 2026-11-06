@@ -501,6 +501,7 @@ App.demoSocial = function(provider) {
     `เข้าสู่ Home ด้วยบัญชีทดลอง ${names[provider]} (ยังไม่เชื่อมบัญชีจริง)`
   );
 };
+
 // Extra UI improvements: take users directly to one of the four methods, not an unrelated new flow.
 App.openMap=function(id){let v=V(id);window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(v.place.includes('รอยืนยัน')?v.name+' กรุงเทพฯ':v.place),'_blank','noopener');};
 
