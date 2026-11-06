@@ -181,8 +181,237 @@ async function hashLocal(value){const b=await crypto.subtle.digest('SHA-256',new
 App.submitAuth=async function(ev){ev.preventDefault();let mail=document.getElementById('auth-email')?.value.trim().toLowerCase(),pw=document.getElementById('auth-pass')?.value||'',signup=UI.authTab==='signup';if(!mail||pw.length<6)return toast('กรุณากรอกอีเมลและรหัสผ่านอย่างน้อย 6 ตัวอักษร');try{let hashed=await hashLocal(pw);let record=DB.accounts[mail];if(signup){if(record)return toast('อีเมลนี้มีบัญชีทดลองแล้ว กรุณาเข้าสู่ระบบ');let name=document.getElementById('auth-name')?.value.trim()||'สมาชิก';record={email:mail,name,hash:hashed,created:Date.now()};DB.accounts[mail]=record;}else if(!record||record.hash!==hashed){return toast('อีเมลหรือรหัสผ่านไม่ถูกต้อง');}DB.sessionEmail=mail;DB.account={email:mail,name:record.name};DB.name=record.name;UI.role='user';save();let dest=UI.returnTo||'home';UI.stack=[];UI.screen=dest==='auth'?'home':dest;render();toast('เข้าสู่ระบบในเบราว์เซอร์นี้แล้ว');}catch(err){console.error(err);toast('เปิดผ่าน HTTPS หรือ Live Server เพื่อใช้งานบัญชีทดลอง');}};
 App.authTab=function(x){UI.authTab=x;render(true)};
 function providerIcon(provider){if(provider==='apple')return `<svg viewBox="0 0 24 24" width="23" height="23" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.04 2.58 2.25 3.43 2.27 3.44-.02.06-.35 1.19-1.16 2.35-.7 1-1.43 1.99-2.58 2.01-1.13.02-1.5-.66-2.8-.66-1.3 0-1.72.64-2.79.68-1.12.04-1.97-1.06-2.68-2.06-1.45-2.06-2.56-5.81-1.07-8.35.74-1.26 2.06-2.05 3.49-2.07 1.1-.02 2.13.74 2.81.74.69 0 1.97-.91 3.32-.78.57.02 2.17.23 3.19 1.73-.08.05-1.9 1.11-1.88 3.25zM14.98 6.4a4.51 4.51 0 0 0 1.03-3.35c-.99.04-2.2.66-2.92 1.51-.64.74-1.2 1.94-1.05 3.08 1.11.09 2.25-.57 2.94-1.24z"/></svg>`;if(provider==='google')return `<svg viewBox="0 0 24 24" width="23" height="23" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.2c0-.7-.06-1.39-.18-2.05H12v3.9h5.25a4.5 4.5 0 0 1-1.96 2.97v2.47h3.18c1.86-1.7 2.88-4.18 2.88-7.29Z"/><path fill="#34A853" d="M12 21.8c2.65 0 4.88-.87 6.5-2.31l-3.18-2.47c-.88.59-2.01.93-3.32.93a5.87 5.87 0 0 1-5.51-4.07H3.22v2.55A9.83 9.83 0 0 0 12 21.8Z"/><path fill="#FBBC05" d="M6.49 13.88a5.97 5.97 0 0 1 0-3.76V7.57H3.22a9.81 9.81 0 0 0 0 8.86l3.27-2.55Z"/><path fill="#EA4335" d="M12 6.05c1.44 0 2.73.5 3.74 1.46l2.81-2.81A9.48 9.48 0 0 0 12 2.2a9.83 9.83 0 0 0-8.78 5.37l3.27 2.55A5.87 5.87 0 0 1 12 6.05Z"/></svg>`;return `<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="9" fill="#1877F2"/><path d="M13 20v-7h2.2l.3-2.5H13V9c0-.72.2-1.2 1.3-1.2h1.3V5.6a18 18 0 0 0-1.8-.1C11.8 5.5 11 6.7 11 8.8v1.7H9v2.5h2V20z" fill="white"/></svg>`;}
-authPage=function(){let signup=UI.authTab==='signup';return `<div class="auth-screen"><button class="circle-btn" aria-label="ย้อนกลับ" onclick="App.back()">${ic('back')}</button><div class="auth-brand"><img src="logo.png" alt="โลโก้"><b>CHILL N’<br>KNOCK</b></div><h1>${signup?'สมัครสมาชิก':'เข้าสู่ระบบเพื่อจอง'}</h1><p class="auth-note">${signup?'สร้างบัญชีเพื่อจัดการค่ำคืนของคุณ':'จองโต๊ะ ขอความช่วยเหลือจาก Runner และปลดล็อกทุกฟีเจอร์ของ CHILL N’ KNOCK'}</p><div class="auth-tabs"><button type="button" class="${!signup?'on':''}" onclick="App.authTab('login')">เข้าสู่ระบบ</button><button type="button" class="${signup?'on':''}" onclick="App.authTab('signup')">สมัครสมาชิก</button></div><form onsubmit="App.submitAuth(event)">${signup?'<label class="field-label">ชื่อที่แสดง *</label><input class="field" id="auth-name" required autocomplete="name" placeholder="ชื่อของคุณ">':''}<label class="field-label">อีเมล *</label><input type="email" class="field" id="auth-email" required autocomplete="email" placeholder="example@email.com"><label class="field-label">รหัสผ่าน *</label><input type="password" minlength="6" class="field" id="auth-pass" required autocomplete="${signup?'new-password':'current-password'}" placeholder="อย่างน้อย 6 ตัวอักษร"><button class="btn full" type="submit">${signup?'สมัครสมาชิก':'เข้าสู่ระบบ'} ${ic('arrow',16)}</button></form><div class="auth-social"><p>หรือเข้าสู่ระบบด้วย</p><div class="row">${['apple','google','facebook'].map(id=>`<button class="social-btn" type="button" aria-label="เข้าสู่ระบบด้วย ${id}" onclick="App.demoSocial()">${providerIcon(id)}</button>`).join('')}</div></div><button class="btn full outline" onclick="App.authTab('${signup?'login':'signup'}')">${signup?'มีบัญชีแล้ว? เข้าสู่ระบบ':'ยังไม่มีบัญชี? สมัครสมาชิก'}</button><button class="partner-entry" onclick="App.go('partner-choice')">${ic('briefcase')} สำหรับ Runner / ร้านพาร์ตเนอร์ ${ic('arrow')}</button><p class="footer-small">บัญชีในเวอร์ชันนี้เป็นการทดลองภายในเบราว์เซอร์เดียว ไม่ใช่การยืนยันตัวตนจริง</p></div>`;};
 
+authPage = function () {
+  const signup = UI.authTab === 'signup';
+  const forgot = UI.authTab === 'forgot';
+
+  // หน้าลืมรหัสผ่าน
+  if (forgot) {
+    return `
+      <div class="auth-screen">
+
+        <button class="circle-btn" type="button"
+          aria-label="ย้อนกลับ"
+          onclick="App.authTab('login')">
+          ${ic('back')}
+        </button>
+
+        <div class="auth-brand">
+          <img src="logo.png" alt="โลโก้ CHILL N’ KNOCK">
+          <b>CHILL N’<br>KNOCK</b>
+        </div>
+
+        <h1>ลืมรหัสผ่าน?</h1>
+
+        <p class="auth-note">
+          กรอกอีเมลที่ใช้สมัครบัญชี
+          เพื่อขอรีเซ็ตรหัสผ่าน
+        </p>
+
+        <form onsubmit="App.requestPasswordReset(event)">
+
+          <label class="field-label" for="reset-email">
+            อีเมล *
+          </label>
+
+          <input
+            id="reset-email"
+            class="field"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="example@email.com">
+
+          <button class="btn full" type="submit">
+            ดำเนินการต่อ ${ic('arrow', 16)}
+          </button>
+
+        </form>
+
+        <p class="auth-reset-note">
+          เวอร์ชันทดสอบยังไม่สามารถส่งอีเมล
+          รีเซ็ตรหัสผ่านได้จริง
+        </p>
+
+        <button class="btn full outline"
+          type="button"
+          onclick="App.authTab('login')">
+          กลับไปเข้าสู่ระบบ
+        </button>
+
+      </div>
+    `;
+  }
+
+  // หน้า Login และ Signup เดิม
+  return `
+    <div class="auth-screen">
+
+      <button class="circle-btn"
+        type="button"
+        aria-label="ย้อนกลับ"
+        onclick="App.back()">
+        ${ic('back')}
+      </button>
+
+      <div class="auth-brand">
+        <img src="logo.png" alt="โลโก้ CHILL N’ KNOCK">
+        <b>CHILL N’<br>KNOCK</b>
+      </div>
+
+      <h1>
+        ${signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบเพื่อจอง'}
+      </h1>
+
+      <p class="auth-note">
+        ${signup
+          ? 'สร้างบัญชีเพื่อจัดการค่ำคืนของคุณ'
+          : 'จองโต๊ะ ขอความช่วยเหลือจาก Runner และปลดล็อกทุกฟีเจอร์ของ CHILL N’ KNOCK'
+        }
+      </p>
+
+      <div class="auth-tabs">
+        <button type="button"
+          class="${!signup ? 'on' : ''}"
+          onclick="App.authTab('login')">
+          เข้าสู่ระบบ
+        </button>
+
+        <button type="button"
+          class="${signup ? 'on' : ''}"
+          onclick="App.authTab('signup')">
+          สมัครสมาชิก
+        </button>
+      </div>
+
+      <form onsubmit="App.submitAuth(event)">
+
+        ${signup ? `
+          <label class="field-label" for="auth-name">
+            ชื่อที่แสดง *
+          </label>
+
+          <input
+            class="field"
+            id="auth-name"
+            required
+            autocomplete="name"
+            placeholder="ชื่อของคุณ">
+        ` : ''}
+
+        <label class="field-label" for="auth-email">
+          อีเมล *
+        </label>
+
+        <input
+          type="email"
+          class="field"
+          id="auth-email"
+          required
+          autocomplete="email"
+          placeholder="example@email.com">
+
+        <label class="field-label" for="auth-pass">
+          รหัสผ่าน *
+        </label>
+
+        <div class="auth-password-wrap">
+
+          <input
+            type="password"
+            minlength="6"
+            class="field"
+            id="auth-pass"
+            required
+            autocomplete="${signup ? 'new-password' : 'current-password'}"
+            placeholder="อย่างน้อย 6 ตัวอักษร">
+
+          <button
+            type="button"
+            class="auth-password-eye"
+            aria-label="แสดงรหัสผ่าน"
+            aria-pressed="false"
+            aria-controls="auth-pass"
+            onclick="App.toggleAuthPassword(this)">
+
+            <svg viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true">
+
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+              <path class="auth-eye-slash" d="M4 4l16 16"/>
+            </svg>
+
+          </button>
+
+        </div>
+
+        ${!signup ? `
+          <div class="auth-forgot-row">
+            <button type="button"
+              onclick="App.authTab('forgot')">
+              ลืมรหัสผ่าน?
+            </button>
+          </div>
+        ` : ''}
+
+        <button class="btn full" type="submit">
+          ${signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}
+          ${ic('arrow', 16)}
+        </button>
+
+      </form>
+
+      <div class="auth-social">
+
+        <p>หรือทดลองเข้าสู่ระบบด้วย</p>
+
+        <div class="row">
+          ${['apple', 'google', 'facebook'].map(id => `
+            <button
+              class="social-btn"
+              type="button"
+              aria-label="ทดลองเข้าสู่ระบบด้วย ${id}"
+              onclick="App.demoSocial('${id}')">
+              ${providerIcon(id)}
+            </button>
+          `).join('')}
+        </div>
+
+      </div>
+
+      <button class="btn full outline"
+        onclick="App.authTab('${signup ? 'login' : 'signup'}')">
+        ${signup
+          ? 'มีบัญชีแล้ว? เข้าสู่ระบบ'
+          : 'ยังไม่มีบัญชี? สมัครสมาชิก'
+        }
+      </button>
+
+      <button class="partner-entry"
+        onclick="App.go('partner-choice')">
+        ${ic('briefcase')}
+        สำหรับ Runner / ร้านพาร์ตเนอร์
+        ${ic('arrow')}
+      </button>
+
+      <p class="footer-small">
+        บัญชีและการเข้าสู่ระบบผ่านโซเชียล
+        ในเวอร์ชันนี้เป็นการทดลองในเบราว์เซอร์
+        ไม่ใช่การยืนยันตัวตนจริง
+      </p>
+
+    </div>
+  `;
+};
 // Role-based profile rather than unrestricted switch experience.
 profile=function(){let auth=!!DB.account,app=DB.applications||{},name=auth?DB.name:'ผู้เยี่ยมชม',canRunner=QA||app.runner?.status==='approved',canVenue=QA||app.venue?.status==='approved';return `<div class="screen">${brandHeader()}<div class="profile-hero"><div class="row"><div class="avatar">${e((name||'G').slice(0,1).toUpperCase())}</div><div><div class="eyebrow">MY ACCOUNT</div><h2 style="margin:6px 0 3px">สวัสดี, ${e(name)}</h2><p class="hint" style="margin:0">${auth?'บัญชีสมาชิก':'เข้าชมร้านได้โดยไม่ต้องสมัครสมาชิก'}</p></div></div></div><div class="pad"><div class="section">${!auth?`<button class="btn full" onclick="App.auth('profile')">เข้าสู่ระบบ / สมัครสมาชิก</button>`:`<div class="subtle-card"><b>${e(DB.account.email)}</b><p class="hint">ลงชื่อเข้าใช้ในเบราว์เซอร์นี้แล้ว</p></div>`}${canRunner || canVenue ? `
   <h2 class="body-title" style="margin-top:25px">
@@ -203,8 +432,75 @@ App.startApply=function(role){if(!DB.account){UI.pendingApply=role;App.auth('par
 const oldNextApply=App.nextApply;
 App.nextApply=function(ev){oldNextApply(ev);};
 // Social login icons show a clearly disabled integration, never an impression of active OAuth.
-App.demoSocial=function(){toast('ยังไม่ได้เชื่อม Apple / Google / Facebook Login · ใช้อีเมลทดสอบแทน');};
 
+/* เปิด–ปิดการมองเห็นรหัสผ่าน */
+
+App.toggleAuthPassword = function(button) {
+  const field = document.getElementById('auth-pass');
+
+  if (!field) return;
+
+  const visible = field.type === 'password';
+
+  field.type = visible ? 'text' : 'password';
+
+  button.setAttribute(
+    'aria-pressed',
+    String(visible)
+  );
+
+  button.setAttribute(
+    'aria-label',
+    visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'
+  );
+};
+
+
+/* ลืมรหัสผ่าน — แจ้งข้อจำกัดของระบบทดลอง */
+
+App.requestPasswordReset = function(event) {
+  event.preventDefault();
+
+  toast(
+    'ยังไม่สามารถส่งอีเมลรีเซ็ตรหัสผ่านได้ในเวอร์ชันทดสอบ ต้องเชื่อมระบบยืนยันตัวตนจริงก่อน'
+  );
+};
+
+
+/* Social Login — จำลองบัญชีสำหรับทดสอบ Flow */
+
+App.demoSocial = function(provider) {
+  const names = {
+    apple: 'Apple',
+    google: 'Google',
+    facebook: 'Facebook'
+  };
+
+  if (!Object.hasOwn(names, provider)) return;
+
+  // บัญชีจำลอง ไม่ใช่บัญชีที่ยืนยันโดยผู้ให้บริการ
+  const email = `demo-${provider}@cnk.invalid`;
+
+  DB.account = {
+    email: email,
+    name: 'สมาชิกทดลอง'
+  };
+
+  DB.sessionEmail = email;
+  DB.name = 'สมาชิกทดลอง';
+
+  UI.role = 'user';
+  UI.screen = 'home';
+  UI.stack = [];
+  UI.returnTo = null;
+
+  save();
+  render();
+
+  toast(
+    `เข้าสู่ Home ด้วยบัญชีทดลอง ${names[provider]} (ยังไม่เชื่อมบัญชีจริง)`
+  );
+};
 // Extra UI improvements: take users directly to one of the four methods, not an unrelated new flow.
 App.openMap=function(id){let v=V(id);window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(v.place.includes('รอยืนยัน')?v.name+' กรุงเทพฯ':v.place),'_blank','noopener');};
 

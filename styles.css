@@ -77,7 +77,76 @@ html,body{background:#faf7f2;color:var(--ink)}.phone{background:var(--bg)}.scree
   margin: 10px auto 0;
 }
 /* login */
-.auth-screen{padding:26px 26px 60px;min-height:100dvh;background:#fffcf9}.auth-screen>.circle-btn{margin-bottom:42px}.auth-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin:6px 0 30px}.auth-brand img{width:43px;height:43px;border-radius:9px}.auth-brand b{font:900 22px/.9 var(--headline)}.auth-screen h1{text-align:center;color:#8b153b;font-size:26px;margin:0 0 7px}.auth-note{text-align:center;color:#66515b;font-size:12px;line-height:1.7;margin-bottom:30px}.auth-tabs{background:#fae6e7;border-radius:35px;display:flex;padding:4px;margin-bottom:22px}.auth-tabs button{flex:1;border:0;background:transparent;border-radius:28px;padding:11px;color:#764456;font-size:12px}.auth-tabs button.on{background:#f5cfd7;color:#87183f;font-weight:800}.auth-screen .field-label{display:block;margin:14px 0 7px}.auth-screen .field{width:100%;padding:13px 15px}.auth-screen form>.btn{margin-top:22px}.auth-social{text-align:center;margin:18px 0}.auth-social p{color:#97838a;font-size:11px}.auth-social .row{justify-content:center}.auth-social button{flex:1;border:1px solid #e7d6db;border-radius:10px;padding:11px;background:#fff;color:#4c2733}.partner-entry{width:100%;border:0;background:#fbe8e8;color:#8d1740;border-radius:12px;padding:17px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:17px;font-size:12px;font-weight:700;text-align:left}
+.auth-screen{padding:26px 26px 60px;min-height:100dvh;background:#fffcf9}.auth-screen>.circle-btn{margin-bottom:12px}.auth-brand{display:flex;align-items:center;justify-content:center;width: fit-content;max-width: 100%; gap: 10px; margin:0 auto 18px; padding: 0;}.auth-brand img{display: block;width:64px;height:64px; min-width:64px; flex:0 0 64px;aspect-ratio: 1/1; object-fit: cover; margin:0; padding:0;border-radius:13px}.auth-brand b{display: block;margin:0; padding:0;font:900 24px/1.04 var(--headline);  letter-spacing: -0.02em; color: #8e2b4e;}.auth-screen h1{text-align:center;color:#8b153b;font-size:26px;margin:0 0 7px}.auth-note{text-align:center;color:#66515b;font-size:12px;line-height:1.7;margin-bottom:18px}.auth-tabs{background:#fae6e7;border-radius:35px;display:flex;padding:4px;margin-bottom:16px}.auth-tabs button{flex:1;border:0;background:transparent;border-radius:28px;padding:11px;color:#764456;font-size:12px}.auth-tabs button.on{background:#f5cfd7;color:#87183f;font-weight:800}.auth-screen .field-label{display:block;margin:14px 0 7px}.auth-screen .field{width:100%;padding:13px 15px}.auth-screen form>.btn{margin-top:22px}
+/* Password visibility — Login & Signup */
+
+.auth-password-wrap {
+  position: relative;
+}
+
+.auth-password-wrap .field {
+  padding-right: 54px;
+}
+
+.auth-password-eye {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #8E536C;
+  cursor: pointer;
+}
+
+/* เริ่มต้น: ตาปิด เพราะรหัสผ่านถูกซ่อน */
+.auth-password-eye .auth-eye-slash {
+  display: block;
+}
+
+/* เมื่อกดดูรหัสผ่าน: ตาเปิด */
+.auth-password-eye[aria-pressed="true"] .auth-eye-slash {
+  display: none;
+}
+
+/* Forgot password link */
+
+.auth-forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0 0;
+}
+
+.auth-forgot-row button {
+  border: 0;
+  background: transparent;
+  color: #981B49;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 0;
+  cursor: pointer;
+}
+
+
+/* Forgot password information */
+
+.auth-reset-note {
+  color: #8E7380;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 15px 0;
+}
+.auth-social{text-align:center;margin:18px 0}.auth-social p{color:#97838a;font-size:11px}.auth-social .row{justify-content:center}.auth-social button{flex:1;border:1px solid #e7d6db;border-radius:10px;padding:11px;background:#fff;color:#4c2733}.partner-entry{width:100%;border:0;background:#fbe8e8;color:#8d1740;border-radius:12px;padding:17px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:17px;font-size:12px;font-weight:700;text-align:left}
 /* multi-step forms */
 .partner-choice{border:1px solid #e9d3d9;background:#fff;width:100%;border-radius:16px;padding:23px 16px;display:flex;align-items:center;gap:10px;color:#92314c;text-align:left;margin:14px 0;flex-wrap:wrap}.partner-choice strong{font-size:15px}.partner-choice small{color:#806c75;line-height:1.6;flex-basis:100%;padding-left:40px}.progress-steps{display:flex;gap:7px;padding:0 22px;margin:2px 0 10px}.progress-steps i{height:4px;background:#e8d8dd;border-radius:10px;flex:1}.progress-steps i.filled{background:#aa2450}.pad form .field{display:block;width:100%;margin:7px 0 16px;padding:13px 14px}.apply-check{display:flex;align-items:center;gap:9px;font-size:12px;color:#67374b;margin:18px 0}.app-success{height:90px;width:90px;border-radius:50%;margin:auto auto 25px;background:#fbe2e8;color:#932048;display:grid;place-items:center}.status-list{border:1px solid #efd7df;text-align:left;border-radius:16px;margin:25px 0;padding:17px;line-height:3;color:#6f3b50}
 .extras{background:#fce8e8;padding:15px;border-radius:18px;margin:14px 0 24px}.extras h3{font-size:14px;margin:0 0 12px;color:#711834}.extras button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:#fff;border-radius:12px;text-align:left;color:#982a51;padding:14px;margin-top:9px}.extras span{flex:1;color:#532d3d}.extras small{display:block;color:#9a7988;font-size:10px;margin-top:5px}
