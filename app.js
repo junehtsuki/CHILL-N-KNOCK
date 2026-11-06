@@ -439,7 +439,100 @@ if(UI.modal==='role')return head('Preview a role',`<p class="modal-text">Choose 
 if(UI.modal==='notifications')return head('Notifications',`<div class="spread"><p class="hint">Device-local demo notifications only.</p><button class="inline-link" onclick="App.clearNotifications()">Clear all</button></div>${DB.notifications.length?DB.notifications.slice(0,12).map(n=>`<div class="menu-item"><div><strong>${e(n.text)}</strong><small>${e(n.at)}</small></div><span style="color:#e5a1b0">${ic('bell',17)}</span></div>`).join(''):`<div class="empty"><h3>All caught up</h3><p>Updates from booking, runner and venue demo workflows show up here.</p></div>`}`);
 if(UI.modal==='interests')return head('Music & mood',`<p class="modal-text">Choose what you like. Tonight’s Picks on Home will prioritize these example music styles.</p><div class="chips" style="flex-wrap:wrap">${['Hip-Hop','Live','Jazz','House','EDM','Pop'].map(g=>`<button class="chip ${DB.prefs.interests.includes(g)?'active':''}" onclick="App.toggleInterest('${g}')">${g}</button>`).join('')}</div><button class="btn full" style="margin-top:20px" onclick="App.closeModal()">DONE</button>`);
 if(UI.modal==='name')return head('Your profile',`<p class="modal-text">Change your local demo display name.</p><label class="field-label" for="display-name">Display name</label><input class="field" id="display-name" maxlength="25" placeholder="Your name" value="${e(DB.name)}"><button class="btn full" style="margin-top:18px" onclick="App.saveName()">SAVE NAME</button>`);
-if(UI.modal==='help')return head('Help center',`<div class="stack"><div class="subtle-card"><strong>Does the request guarantee a table?</strong><p class="hint" style="margin:8px 0 0">No. Direct bookings require venue approval; Runner services also depend on runner availability and venue permission.</p></div><div class="subtle-card"><strong>When do I pay?</strong><p class="hint" style="margin:8px 0 0">This demo collects no money. Payment handling, fees, deposits and refunds would need a real provider and agreed operating policies.</p></div><div class="subtle-card"><strong>Can a runner hold a queue spot?</strong><p class="hint" style="margin:8px 0 0">Only if the venue allows it. There is no guarantee of queue transfer or admission.</p></div><div class="subtle-card"><strong>Where is my data?</strong><p class="hint" style="margin:8px 0 0">Stored in your browser's localStorage. Don't enter sensitive real information.</p></div></div><button class="btn ghost full" style="margin-top:18px" onclick="App.openModal('about')">ABOUT THE PROTOTYPE</button>`);
+
+if (UI.modal === 'help') return head('ศูนย์ช่วยเหลือ', `
+  <div class="stack">
+
+    <div class="subtle-card">
+      <strong>ส่งคำขอแล้วได้โต๊ะทันทีหรือไม่?</strong>
+      <p class="hint" style="margin:8px 0 0">
+        ยังไม่ได้รับการยืนยัน การจองกับร้านโดยตรงต้องรอร้านอนุมัติ
+        ส่วนบริการ Runner ขึ้นอยู่กับผู้รับงานที่พร้อมให้บริการ
+        และเงื่อนไขของแต่ละร้าน
+      </p>
+    </div>
+
+    <div class="subtle-card">
+      <strong>ต้องชำระเงินเมื่อไหร่?</strong>
+      <p class="hint" style="margin:8px 0 0">
+        ระบบปัจจุบันยังไม่มีการเรียกเก็บเงินจริง
+        ค่าบริการ เงินประกัน การชำระเงิน
+        และการคืนเงินจะต้องมีเงื่อนไขที่ชัดเจน
+        ก่อนเปิดให้บริการจริง
+      </p>
+    </div>
+
+    <div class="subtle-card">
+      <strong>Runner สามารถต่อคิวแทนได้หรือไม่?</strong>
+      <p class="hint" style="margin:8px 0 0">
+        ได้เฉพาะร้านที่อนุญาตให้ต่อคิวแทนเท่านั้น
+        และไม่ได้รับประกันว่าจะสามารถรับโต๊ะ
+        หรือเข้าร้านได้
+      </p>
+    </div>
+
+    <div class="subtle-card">
+      <strong>ข้อมูลของฉันถูกจัดเก็บที่ไหน?</strong>
+      <p class="hint" style="margin:8px 0 0">
+        ในเวอร์ชันทดสอบ ข้อมูลจะถูกเก็บไว้
+        ภายในเบราว์เซอร์ที่ใช้งาน
+        ยังไม่มีระบบบัญชีและฐานข้อมูลกลาง
+        ไม่ควรกรอกข้อมูลส่วนบุคคลที่มีความอ่อนไหว
+      </p>
+    </div>
+
+  </div>
+
+  <button class="btn ghost full"
+    style="margin-top:18px"
+    onclick="App.openModal('about')">
+    เกี่ยวกับ CHILL N’ KNOCK
+  </button>
+`);
+
+if (UI.modal === 'privacy') return head(
+  'ข้อมูลและความเป็นส่วนตัว',
+  `
+  <div class="stack">
+    <div class="subtle-card">
+      <strong>ข้อมูลที่จัดเก็บ</strong>
+      <p class="hint">
+        เวอร์ชันทดสอบนี้จัดเก็บข้อมูลบัญชีทดลอง
+        ร้านที่บันทึก คำขอจอง และการตั้งค่าบางส่วน
+        ภายในเบราว์เซอร์ที่ใช้งาน
+      </p>
+    </div>
+
+    <div class="subtle-card">
+      <strong>การใช้งานข้อมูล</strong>
+      <p class="hint">
+        ข้อมูลถูกใช้เพื่อจำลองขั้นตอนการค้นหาร้าน
+        การจอง การติดต่อ Runner และการจัดการคำขอ
+        ยังไม่มีการเชื่อมต่อฐานข้อมูลกลาง
+      </p>
+    </div>
+
+    <div class="subtle-card">
+      <strong>การควบคุมข้อมูล</strong>
+      <p class="hint">
+        ผู้ใช้สามารถล้างข้อมูลเว็บไซต์ผ่าน
+        การตั้งค่าของเบราว์เซอร์
+        ซึ่งอาจทำให้ข้อมูลทดลองที่บันทึกไว้หายไป
+      </p>
+    </div>
+
+    <div class="subtle-card">
+      <strong>ข้อควรระวัง</strong>
+      <p class="hint">
+        ระบบนี้ยังไม่ใช่บริการที่เปิดใช้งานจริง
+        กรุณาอย่าส่งเอกสารยืนยันตัวตน
+        ข้อมูลทางการเงิน หรือข้อมูลส่วนบุคคล
+        ที่มีความอ่อนไหวผ่านระบบทดลอง
+      </p>
+    </div>
+  </div>
+  `
+);
 if(UI.modal==='about')return head('About the prototype',`<div class="row"><img src="logo.png" style="width:50px;border-radius:12px" alt="Brand"><div><strong>CHILL N’ KNOCK</strong><div class="hint">Interactive UX study · October 2026</div></div></div><p class="modal-text" style="margin-top:17px">A three-sided research prototype inspired by nightlife discovery apps. Supports fictional venue search, event browsing, simulated tickets, direct table requests, booking assistance, walk-in queue assistance, progress, messaging, runner jobs, and venue decisions.</p><div class="safety">${ic('shield',18)} No verified live venue data, reservations, transaction processing, authentication, payment collection, user identity verification, GPS or backend sync.</div><p class="modal-text" style="margin-top:15px">For a real launch, secure venue partnerships, verify lawful queue practices, define service contracts, handle privacy and accessibility, integrate role-based backend access and conduct operational testing.</p>`);
 if(UI.modal==='cancel')return head('Cancel sample request?',`<p class="modal-text">You are cancelling ${e(UI.modalReq)}. This changes the browser demo status and does not initiate a real refund.</p><div class="row"><button class="btn ghost grow" onclick="App.closeModal()">Keep request</button><button class="btn danger grow" onclick="App.cancelConfirmed()">Cancel demo</button></div>`);
 if(UI.modal==='decline')return head('Decline this request?',`<p class="modal-text">The guest will see a declined status in this browser. Add a brief reason for clarity.</p><textarea class="field fieldarea" maxlength="250" id="decline-reason" placeholder="e.g. We cannot approve this request under current policy."></textarea><div class="row" style="margin-top:15px"><button class="btn ghost grow" onclick="App.closeModal()">Back</button><button class="btn danger grow" onclick="App.declineConfirmed()">Decline request</button></div>`);
@@ -449,7 +542,7 @@ if(UI.modal==='map')return head('Find your neighborhood',`<p class="modal-text">
 return head('Information','<p class="modal-text">This section is part of the demo experience.</p>')}
 function navItems(){if(UI.role==='runner')return [['home','Home','home'],['jobs','Jobs','briefcase'],['active','Active','clock'],['wallet','Wallet','wallet'],['profile','Profile','user']];if(UI.role==='venue')return [['home','Home','home'],['venue-requests','Bookings','calendar'],['venue-queue','Queue','users'],['venue-policies','Policies','shield'],['profile','Profile','user']];return [['home','Home','home'],['discover','Explore','compass'],['events','Events','ticket'],['activity','My nights','calendar'],['profile','Profile','user']]}
 
-function welcome(){return `<div class="welcome-new"><div class="welcome-photo" style="background-image:linear-gradient(180deg,#fff1eb10 0%,#ffefe9aa 62%,#faf7f2 91%),url('assets/crowd.jpg')"><div class="welcome-brand"><img src="logo.png" alt="logo"><b>CHILL N’<br>KNOCK</b></div></div><div class="welcome-copy"><h1>ONE APP.<br><span>ONE NIGHT OUT.</span></h1><p>ค้นหาร้าน จองโต๊ะ ต่อคิว<br>หาเพื่อนเที่ยว เรียกรถ<br>ครบในแอปเดียว</p><button class="btn full" onclick="App.go('home')">เริ่มสำรวจเลย →</button><button class="btn full pale" onclick="App.auth('home')">เข้าสู่ระบบ / สมัครสมาชิก</button><button class="textbtn" onclick="App.go('home')">→ เลื่อนเพื่อดูเพิ่มเติม —</button></div></div>`}
+function welcome(){return `<div class="welcome-new"><div class="welcome-photo" style="background-image:linear-gradient(180deg,rgba(255,255,255,0.03) 0%,rgba(255,244,241,0.18) 42%,rgba(255,255,255,0.72) 68%,#ffffff 88%,#ffffff 100%),url('assets/splash-cover.jpg')"><div class="welcome-brand"><img src="logo.png" alt="logo"><b>CHILL N’<br>KNOCK</b></div></div><div class="welcome-copy"><h1>ONE APP.<br><span>ONE NIGHT OUT.</span></h1><p>ค้นหาร้าน จองโต๊ะ ต่อคิว<br>หาเพื่อนเที่ยว เรียกรถ<br>ครบในแอปเดียว</p><button class="btn full" onclick="App.go('home')">เริ่มสำรวจเลย →</button><button class="btn full pale" onclick="App.auth('home')">เข้าสู่ระบบ / สมัครสมาชิก</button><button class="textbtn" onclick="App.go('home')">→ เลื่อนเพื่อดูเพิ่มเติม —</button></div></div>`}
 function authPage(){let signup=UI.authTab==='signup';return `<div class="auth-screen"><button class="circle-btn" onclick="App.back()">${ic('back')}</button><div class="auth-brand"><img src="logo.png"><b>CHILL N’<br>KNOCK</b></div><h1>เข้าสู่ระบบเพื่อจอง</h1><p class="auth-note">จองโต๊ะ ขอความช่วยเหลือจาก Runner<br>และจัดการค่ำคืนของคุณ</p><div class="auth-tabs"><button class="${!signup?'on':''}" onclick="App.authTab('login')">เข้าสู่ระบบ</button><button class="${signup?'on':''}" onclick="App.authTab('signup')">สมัครสมาชิก</button></div><form onsubmit="App.submitAuth(event)">${signup?`<label class="field-label">ชื่อที่แสดง</label><input id="auth-name" class="field" autocomplete="name" required placeholder="ชื่อของคุณ">`:''}<label class="field-label">อีเมล</label><input id="auth-email" class="field" type="email" autocomplete="email" required placeholder="your@email.com"><label class="field-label">รหัสผ่าน</label><input id="auth-pass" class="field" type="password" minlength="6" autocomplete="${signup?'new-password':'current-password'}" required placeholder="อย่างน้อย 6 ตัวอักษร"><button class="btn full" type="submit">${signup?'สมัครสมาชิก':'เข้าสู่ระบบ'} →</button></form><div class="auth-social"><p>หรือดำเนินการต่อด้วย</p><div class="row"><button onclick="App.demoSocial()">Apple</button><button onclick="App.demoSocial()">Google</button><button onclick="App.demoSocial()">LINE</button></div></div><button class="btn full outline" onclick="App.authTab(signup?'login':'signup')">${signup?'มีบัญชีแล้ว? เข้าสู่ระบบ':'ยังไม่มีบัญชี? สมัครสมาชิก'}</button><button class="partner-entry" onclick="App.go('partner-choice')">${ic('briefcase')} สำหรับ Runner / พาร์ตเนอร์ร้านค้า ${ic('arrow')}</button><p class="footer-small">Prototype เท่านั้น · ข้อมูลล็อกอินเก็บเฉพาะในเครื่อง ไม่ใช่ระบบยืนยันตัวตนจริง</p></div>`}
 function partnerChoice(){return `<div class="screen">${title('ร่วมงานกับ CHILL N’ KNOCK','Runner / Venue Partner')}<div class="pad"><h1 class="s-title" style="margin:25px 0">YOUR NIGHT.<br><span class="accent">YOUR ROLE.</span></h1><button class="partner-choice" onclick="App.startApply('runner')">${ic('users',30)}<strong>สมัครเป็น Table Runner</strong><small>ช่วยจองโต๊ะ รับโต๊ะ และต่อคิวภายใต้เงื่อนไขร้าน</small>${ic('arrow')}</button><button class="partner-choice" onclick="App.startApply('venue')">${ic('briefcase',30)}<strong>สมัครเป็นร้านพาร์ตเนอร์</strong><small>จัดการคำขอจองโต๊ะ ตารางเวลา และนโยบายบริการ</small>${ic('arrow')}</button><p class="content-note">ผู้สมัครต้องได้รับการตรวจสอบและอนุมัติก่อนใช้งานจริง การอนุมัติในต้นแบบเป็นเพียงสถานะตัวอย่าง</p></div></div>`}
 const applyRunner=[{title:'ข้อมูลส่วนตัว',sub:'กรอกข้อมูลพื้นฐาน',fields:[['ชื่อ - นามสกุล','text'],['ชื่อเล่น','text'],['วัน / เดือน / ปีเกิด','date'],['รูปโปรไฟล์','file']]},{title:'ข้อมูลติดต่อและพื้นที่',sub:'ติดต่อและรับงานสะดวก',fields:[['เบอร์โทรศัพท์','tel'],['อีเมล','email'],['ที่อยู่ปัจจุบัน','textarea'],['พื้นที่ที่สะดวกรับงาน','select:RCA|ทองหล่อ|เอกมัย|สุขุมวิท|สยาม|อื่น ๆ']]},{title:'ยืนยันตัวตน',sub:'เพื่อความปลอดภัย',fields:[['ประเภทเอกสาร','select:บัตรประชาชน|พาสปอร์ต'],['อัปโหลดเอกสารระบุตัวตน','file'],['รูปถ่ายยืนยันใบหน้า','file']]},{title:'ข้อมูลการทำงาน',sub:'เลือกช่วงเวลาและประเภทงาน',fields:[['ประสบการณ์','select:ยังไม่มีประสบการณ์|เคยช่วยจองโต๊ะ|เคยต่อคิว|เคยทำงานร้านกลางคืน'],['วันที่สะดวก','select:วันจันทร์ - ศุกร์|เสาร์ - อาทิตย์|ทุกวัน'],['เวลาที่สะดวกเริ่มต้น','time'],['เวลาสิ้นสุด','time'],['ประเภทงานที่สนใจ','select:จองโต๊ะล่วงหน้า|เช็กอิน/รับโต๊ะ|ต่อคิว Walk-in|ทุกประเภท']]},{title:'ตรวจทานและข้อตกลง',sub:'อ่านก่อนส่งใบสมัคร',fields:[]}];
@@ -487,7 +580,7 @@ function askDecline(id){UI.modalReq=id;UI.modal='decline';render(true)}
 function declineConfirmed(){let r=requestById(UI.modalReq);if(!r)return closeModal();r.decisionNote=(document.getElementById('decline-reason')?.value||'Venue did not approve this sample request.').trim().slice(0,250);UI.modal='';merchantDecision(r.id,false)}
 function cancelConfirmed(){let r=requestById(UI.modalReq);if(!r||isDone(r))return closeModal();r.status='cancelled';r.progressNote='Guest cancelled the local demo request.';save();notify('Cancelled sample request '+r.id);UI.modal='';render();toast('Demo request cancelled.')}
 function sendMessage(){let el=document.getElementById('chat-message');if(!el||!el.value.trim())return;let text=el.value.trim().slice(0,500);(DB.chats[UI.reqId]??=[]).push({role:UI.role,text,at:new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})});save();notify('New sample message on '+UI.reqId);render(true);window.scrollTo(0,document.body.scrollHeight)}
-function profileAction(a){if(a==='saved'){UI.tab='saved';if(UI.role!=='user')switchRole('user');go('activity');return}if(a==='notifications'||a==='name'||a==='help'||a==='about'||a==='reset'||a==='interests')return openModal(a)}
+function profileAction(a){if(a==='saved'){UI.tab='saved';if(UI.role!=='user')switchRole('user');go('activity');return}if(a==='notifications'||a==='name'||a==='help'||a==='privacy'||a==='about'||a==='reset'||a==='interests')return openModal(a)}
 function addReview(){const text=document.getElementById('review-text')?.value.trim();if(!text||text.length<5)return toast('Write at least 5 characters for your review.');DB.reviews.push({venue:UI.venue,name:DB.name||'Guest',rating:UI.rate,text:text.slice(0,400)});save();UI.modal='';UI.infoTab='reviews';render(true);toast('Demo review saved to your browser.')}
 function openMap(id){const v=V(id);const query=encodeURIComponent(v.area+', Bangkok');window.open('https://www.google.com/maps/search/?api=1&query='+query,'_blank','noopener,noreferrer')}
 function copyLink(text){if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(()=>toast('Copied to clipboard.')).catch(()=>toast('Could not copy this link.'))}else{try{window.prompt('Copy this local demo link:',text)}catch(_){toast('Sharing is not supported here.')}}}
