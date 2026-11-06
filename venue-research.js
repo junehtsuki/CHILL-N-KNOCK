@@ -70,8 +70,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/onyx-01.jpg",
       "assets/venues/onyx-02.jpg",
-      "assets/venues/onyx-03.jpg",
-      "assets/venues/onyx-04.jpg"
     ]
   },
   "muin": {
@@ -160,7 +158,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/muin-01.jpg",
       "assets/venues/muin-02.jpg",
-      "assets/venues/muin-03.jpg"
     ]
   },
   "chupa": {
@@ -255,7 +252,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/chupa-01.jpg",
       "assets/venues/chupa-02.jpg",
-      "assets/venues/chupa-03.jpg"
     ]
   },
   "tic": {
@@ -337,7 +333,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/tic-01.jpg",
       "assets/venues/tic-02.jpg",
-      "assets/venues/tic-03.jpg"
     ]
   },
   "repeat": {
@@ -379,7 +374,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/repeat-01.jpg",
       "assets/venues/repeat-02.jpg",
-      "assets/venues/repeat-03.jpg"
     ]
   },
   "tderm": {
@@ -496,7 +490,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/tderm-01.jpg",
       "assets/venues/tderm-02.jpg",
-      "assets/venues/tderm-03.jpg"
     ]
   },
   "savoy": {
@@ -593,7 +586,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/savoy-01.jpg",
       "assets/venues/savoy-02.jpg",
-      "assets/venues/savoy-03.jpg"
     ]
   },
   "mil": {
@@ -681,7 +673,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/mil-01.jpg",
       "assets/venues/mil-02.jpg",
-      "assets/venues/mil-03.jpg"
     ]
   },
   "what": {
@@ -762,7 +753,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/what-01.jpg",
       "assets/venues/what-02.jpg",
-      "assets/venues/what-03.jpg"
     ]
   },
   "upper": {
@@ -864,7 +854,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/upper-01.jpg",
       "assets/venues/upper-02.jpg",
-      "assets/venues/upper-03.jpg"
     ]
   },
   "ratch": {
@@ -939,7 +928,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/ratch-01.jpg",
       "assets/venues/ratch-02.jpg",
-      "assets/venues/ratch-03.jpg"
     ]
   },
   "praao": {
@@ -1022,7 +1010,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/praao-01.jpg",
       "assets/venues/praao-02.jpg",
-      "assets/venues/praao-03.jpg"
     ]
   },
   "rysh": {
@@ -1090,7 +1077,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/rysh-01.jpg",
       "assets/venues/rysh-02.jpg",
-      "assets/venues/rysh-03.jpg"
     ]
   },
   "thay": {
@@ -1223,7 +1209,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/thay-01.jpg",
       "assets/venues/thay-02.jpg",
-      "assets/venues/thay-03.jpg"
     ]
   },
   "viral": {
@@ -1252,7 +1237,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/viral-01.jpg",
       "assets/venues/viral-02.jpg",
-      "assets/venues/viral-03.jpg"
     ]
   },
   "truth": {
@@ -1403,7 +1387,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/truth-01.jpg",
       "assets/venues/truth-02.jpg",
-      "assets/venues/truth-03.jpg"
     ]
   },
   "guest": {
@@ -1432,7 +1415,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/guest-01.jpg",
       "assets/venues/guest-02.jpg",
-      "assets/venues/guest-03.jpg"
     ]
   },
   "mirror": {
@@ -1504,7 +1486,6 @@ window.CNK_RESEARCH = {
     "gallery": [
       "assets/venues/mirror-01.jpg",
       "assets/venues/mirror-02.jpg",
-      "assets/venues/mirror-03.jpg"
     ]
   }
 };

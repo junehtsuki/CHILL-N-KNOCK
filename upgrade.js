@@ -483,11 +483,226 @@ authPage = function () {
   `;
 };
 // Role-based profile rather than unrestricted switch experience.
-profile=function(){let auth=!!DB.account,app=DB.applications||{},name=auth?DB.name:'ผู้เยี่ยมชม',canRunner=QA||app.runner?.status==='approved',canVenue=QA||app.venue?.status==='approved';return `<div class="screen">${brandHeader()}<div class="profile-hero"><div class="row"><div class="avatar">${e((name||'G').slice(0,1).toUpperCase())}</div><div><div class="eyebrow">MY ACCOUNT</div><h2 style="margin:6px 0 3px">สวัสดี, ${e(name)}</h2><p class="hint" style="margin:0">${auth?'บัญชีสมาชิก':'เข้าชมร้านได้โดยไม่ต้องสมัครสมาชิก'}</p></div></div></div><div class="pad"><div class="section">${!auth?`<button class="btn full" onclick="App.auth('profile')">เข้าสู่ระบบ / สมัครสมาชิก</button>`:`<div class="subtle-card"><b>${e(DB.account.email)}</b><p class="hint">ลงชื่อเข้าใช้ในเบราว์เซอร์นี้แล้ว</p></div>`}${canRunner || canVenue ? `
-  <h2 class="body-title" style="margin-top:25px">
-    พื้นที่ทำงานของคุณ
-  </h2>
-` : ''}${canRunner?`<button class="role-card" onclick="App.switchRole('runner')"><div><b>Table Runner ${QA?'(QA)':''}</b><p>งานที่รับและความคืบหน้า</p></div>${ic('chevron')}</button>`:''}${canVenue?`<button class="role-card" onclick="App.switchRole('venue')"><div><b>ร้านพาร์ตเนอร์ ${QA?'(QA)':''}</b><p>คำขอจองและการจัดการคิว</p></div>${ic('chevron')}</button>`:''}${QA?`<div class="qa-panel"><b>QA TEST CENTER · ทดสอบข้ามบทบาท</b><p>เมนูนี้แสดงเฉพาะเมื่อเปิดลิงก์ด้วย ?qa=1 และไม่ใช่ระบบกำหนดสิทธิ์จริง</p><div class="qa-buttons"><button onclick="App.qaSwitch('user')">ลูกค้า</button><button onclick="App.qaSwitch('runner')">Runner</button><button onclick="App.qaSwitch('venue')">ร้าน</button></div></div>`:''}</div><div class="section"><h2 class="body-title">บัญชีและการตั้งค่า</h2>${[['heart','ร้านที่บันทึก','saved'],['bell','การแจ้งเตือน','notifications'],['user','แก้ไขชื่อ','name'],['help','ศูนย์ช่วยเหลือ','help'],['shield','ข้อมูลและความเป็นส่วนตัว','privacy']].map(([ico,label,id])=>`<button class="menu-row" onclick="App.profileAction('${id}')">${ic(ico,18)} ${label}<span class="right-arrow">${ic('chevron',16)}</span></button>`).join('')}<button class="menu-row" onclick="App.toggleLang()">${ic('settings',18)} ภาษา: ${DB.lang==='th'?'ไทย':'English'}<span class="right-arrow">${ic('chevron',16)}</span></button>${auth?'<button class="menu-row" onclick="App.signOut()">ออกจากระบบ</button>':''}</div>${demoFooter()}</div></div>`;};
+
+profile = function () {
+  const role = UI.role || 'user';
+  const auth = !!DB.account;
+
+  const name = auth
+    ? (DB.name || DB.account?.name || 'สมาชิก')
+    : 'ผู้เยี่ยมชม';
+
+  const apps = DB.applications || {};
+  const canRunner = QA || apps.runner?.status === 'approved';
+  const canVenue = QA || apps.venue?.status === 'approved';
+
+  // เมนูแบบแถวแนวตั้งเหมือน Profile ลูกค้า
+  const rows = items => items.map(([icon, label, action]) => `
+    <button class="menu-row" onclick="${action}">
+      ${ic(icon, 18)}
+      <span>${e(label)}</span>
+      <span class="right-arrow">${ic('chevron', 16)}</span>
+    </button>
+  `).join('');
+
+  // ส่วนหัวโปรไฟล์ ใช้ดีไซน์เดิม
+  const hero = (eyebrow, heading, subtitle, letter) => `
+    <div class="profile-hero">
+      <div class="row">
+        <div class="avatar">${e(letter)}</div>
+        <div>
+          <div class="eyebrow">${eyebrow}</div>
+          <h2 style="margin:6px 0 3px">${e(heading)}</h2>
+          <p class="hint" style="margin:0">${e(subtitle)}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const settings = (kind) => rows([
+    [
+      'user',
+      kind === 'venue' ? 'แก้ไขชื่อผู้ดูแลร้าน' : 'แก้ไขชื่อ',
+      "App.profileAction('name')"
+    ],
+    ['bell', 'การแจ้งเตือน', "App.profileAction('notifications')"],
+    ['help', 'ศูนย์ช่วยเหลือ', "App.profileAction('help')"],
+    ['shield', 'ข้อมูลและความเป็นส่วนตัว', "App.profileAction('about')"]
+  ]);
+
+  // สลับบทบาทผ่านเมนูย่อย ไม่โชว์พื้นที่ทำงานบน Profile ลูกค้า
+  const choices = [
+    ['user', 'ลูกค้า', true],
+    ['runner', 'Table Runner', canRunner],
+    ['venue', 'ร้านพาร์ตเนอร์', canVenue]
+  ].filter(([, , allowed]) => allowed);
+
+  const switcher = choices.length > 1 ? `
+    <details class="subtle-card" style="margin:16px 0">
+      <summary style="cursor:pointer;font-weight:700;color:#8F1742">
+        เปลี่ยนโหมดการใช้งาน
+      </summary>
+      <div style="display:grid;gap:8px;margin-top:12px">
+        ${choices.map(([id, label]) => `
+          <button class="btn full ghost" type="button"
+            onclick="App.switchRole('${id}')">
+            ${e(label)} ${role === id ? '✓' : ''}
+          </button>
+        `).join('')}
+      </div>
+    </details>
+  ` : '';
+
+  const signOut = auth ? `
+    <button class="menu-row" onclick="App.signOut()">
+      ${ic('arrow',18)}
+      <span>ออกจากระบบ</span>
+      <span class="right-arrow">${ic('chevron',16)}</span>
+    </button>
+  ` : '';
+
+  // ===========================
+  // PROFILE — TABLE RUNNER
+  // ===========================
+  if (role === 'runner') {
+    return `
+      <div class="screen">
+        ${brandHeader()}
+
+        ${hero(
+          'TABLE RUNNER',
+          name,
+          canRunner
+            ? 'บัญชี Runner · อนุมัติทดลอง'
+            : 'บัญชี Runner · รอตรวจสอบ',
+          (name || 'R').slice(0,1).toUpperCase()
+        )}
+
+        <div class="pad">
+          <div class="section">
+            <h2 class="body-title">งานของฉัน</h2>
+
+            ${rows([
+              ['briefcase', 'งานใหม่ที่เปิดรับ', "App.go('jobs')"],
+              ['clock', 'งานที่กำลังดำเนินการ', "App.go('active')"],
+              ['wallet', 'ประวัติรายได้', "App.go('wallet')"]
+            ])}
+          </div>
+
+          <div class="section">
+            <h2 class="body-title">การตั้งค่าบัญชี Runner</h2>
+            ${settings('runner')}
+            ${switcher}
+            ${signOut}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ===========================
+  // PROFILE — VENUE PARTNER
+  // ===========================
+  if (role === 'venue') {
+    const venue = V(DB.merchantVenue);
+
+    return `
+      <div class="screen">
+        ${brandHeader()}
+
+        ${hero(
+          'VENUE PARTNER',
+          venue.name,
+          canVenue
+            ? 'ร้านพาร์ตเนอร์ · เปิดใช้งานทดลอง'
+            : 'ร้านพาร์ตเนอร์ · รอตรวจสอบ',
+          (venue.name || 'V').slice(0,1).toUpperCase()
+        )}
+
+        <div class="pad">
+          <div class="section">
+            <h2 class="body-title">จัดการร้าน</h2>
+
+            ${rows([
+              ['calendar', 'คำขอจองโต๊ะ',
+                "App.go('venue-requests')"],
+              ['users', 'การจัดการคิว',
+                "App.go('venue-queue')"],
+              ['shield', 'นโยบายและบริการของร้าน',
+                "App.go('venue-policies')"],
+              ['chart', 'ภาพรวมการดำเนินงาน',
+                "App.go('venue-insights')"]
+            ])}
+          </div>
+
+          <div class="section">
+            <h2 class="body-title">การตั้งค่าบัญชีร้าน</h2>
+            ${settings('venue')}
+            ${switcher}
+            ${signOut}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ===========================
+  // PROFILE — USER
+  // ===========================
+  return `
+    <div class="screen">
+      ${brandHeader()}
+
+      ${hero(
+        'MY ACCOUNT',
+        'สวัสดี, ' + name,
+        auth
+          ? 'บัญชีสมาชิก'
+          : 'เข้าชมร้านได้โดยไม่ต้องสมัครสมาชิก',
+        (name || 'G').slice(0,1).toUpperCase()
+      )}
+
+      <div class="pad">
+        <div class="section">
+          ${auth ? `
+            <div class="subtle-card">
+              <b>${e(DB.account.email)}</b>
+              <p class="hint">
+                ลงชื่อเข้าใช้ในเบราว์เซอร์นี้แล้ว
+              </p>
+            </div>
+          ` : `
+            <button class="btn full" onclick="App.auth('profile')">
+              เข้าสู่ระบบ / สมัครสมาชิก
+            </button>
+          `}
+        </div>
+
+        <div class="section">
+          <h2 class="body-title">บัญชีและการตั้งค่า</h2>
+
+          ${rows([
+            ['heart', 'ร้านที่บันทึก',
+              "App.profileAction('saved')"],
+            ['bell', 'การแจ้งเตือน',
+              "App.profileAction('notifications')"],
+            ['user', 'แก้ไขชื่อ',
+              "App.profileAction('name')"],
+            ['help', 'ศูนย์ช่วยเหลือ',
+              "App.profileAction('help')"],
+            ['shield', 'ข้อมูลและความเป็นส่วนตัว',
+              "App.profileAction('about')"]
+          ])}
+
+          ${switcher}
+          ${signOut}
+        </div>
+
+        ${demoFooter()}
+      </div>
+    </div>
+  `;
+};
 App.signOut=function(){DB.account=null;DB.sessionEmail=null;DB.name='Guest';UI.role='user';save();UI.screen='profile';render();toast('ออกจากบัญชีทดลองแล้ว');};
 App.toggleLang=function(){DB.lang=DB.lang==='th'?'en':'th';save();render(true);toast(DB.lang==='th'?'ภาษาไทยเป็นภาษาเริ่มต้น':'English mode (some research content remains Thai)');};
 
@@ -609,7 +824,7 @@ brandHeader = function () {
 
   const leftSide = isUserHome
     ? `<div class="brand-row">
-         <img src="logo.png" alt="CHILL N’ KNOCK" class="brand-logo">
+         <img src="logo.png" alt="CHILL N’ KNOCK" class="brand-logo" style="width:50px;height:50px;flex:0 0 50px">
          <div>
            <div class="brand-name">CHILL N’<br>KNOCK</div>
            <div class="location-label">
@@ -643,11 +858,46 @@ title=function(name,sub=''){return `<header class="back-header"><button class="c
 demoFooter=function(){return `<p class="footer-small">CHILL N’ KNOCK · UX TEST RELEASE<br>รายละเอียดร้านอ้างอิงข้อมูลสาธารณะ แต่การจอง คิว ราคา ผู้รับงาน และธุรกรรมยังไม่เชื่อมต่อระบบจริง</p>`;};
 // Fake sample events have been made explicit and tied to an existing listed venue.
 events.splice(0,events.length,
- {id:'e1',name:'NIGHT FREQUENCY',subtitle:'ตัวอย่างโปสเตอร์',venue:'onyx',offset:1,time:'21:00',price:0,art:'poster-bg1',desc:'อีเวนต์สมมติสำหรับทดสอบหน้ารายละเอียด ไม่ใช่กำหนดการที่ประกาศโดย ONYX',label:'EVENT SAMPLE',tag:'ตัวอย่าง'},
- {id:'e2',name:'CLUB NIGHT',subtitle:'ตัวอย่างโปสเตอร์',venue:'muin',offset:2,time:'21:30',price:0,art:'poster-bg3',desc:'อีเวนต์สมมติสำหรับทดสอบหน้าตั๋ว ไม่ใช่ประกาศของ MU:IN',label:'EVENT SAMPLE',tag:'ตัวอย่าง'},
- {id:'e3',name:'URBAN BEATS',subtitle:'ตัวอย่างโปสเตอร์',venue:'mil',offset:3,time:'22:00',price:0,art:'poster-bg2',desc:'โปสเตอร์ทดสอบเพื่อแสดงการจัดหน้า ยังไม่เปิดขายจริง',label:'EVENT SAMPLE',tag:'ตัวอย่าง'},
- {id:'e4',name:'AFTER HOURS',subtitle:'ตัวอย่างโปสเตอร์',venue:'chupa',offset:4,time:'20:00',price:0,art:'poster-bg4',desc:'อีเวนต์ตัวอย่าง ไม่ใช่กำหนดการจริง',label:'EVENT SAMPLE',tag:'ตัวอย่าง'}
+  {
+    id:'e4',name:'SEK LOSO LIVE — MIL',subtitle:'New Date · 8 NOV',venue:'mil',
+    date:'2026-11-08',time:'21:00',endTime:'Late',price:null,status:'rescheduled',
+    art:'poster-bg4',label:'Live Concert / Rock',tag:'8 พ.ย. · วันใหม่',
+    lineup:['SEK LOSO'],lineupNote:'รายชื่อศิลปินตามโปสเตอร์วันจัดใหม่',
+    desc:'SEK LOSO LIVE ที่ MIL SOCIAL CLUB โปสเตอร์ระบุ “POSTPONED” พร้อม “08.11 NEW DATE” หมายถึงประกาศวันแสดงใหม่เป็นวันอาทิตย์ที่ 8 พฤศจิกายน 2026 เวลา 21:00 น. โปรดตรวจสอบอีกครั้งกับร้านก่อนเดินทาง',
+    ticketInfo:'โปสเตอร์แจ้งวันใหม่ 8 พ.ย. 2026 แต่ยังไม่มีราคาบัตรที่ยืนยัน จึงไม่เปิดตัวอย่างราคาบัตร'
+  },
+  {
+    id:'e1',name:'INQUISITIVE',subtitle:'ONYX Bangkok Presents',venue:'onyx',
+    date:'2026-11-14',time:'22:00',endTime:'04:00',price:600,
+    art:'poster-bg1',label:'Hard Dance / EDM',tag:'14 พ.ย.',
+    lineup:['INQUISITIVE'],lineupNote:'ศิลปินหลักตามประกาศ ONYX',
+    desc:'ONYX BANGKOK PRESENTS: INQUISITIVE ดีเจจากสิงคโปร์ ผู้โดดเด่นด้าน Asian Hard Dance และรีมิกซ์ K-Pop, C-Pop รวมถึงเพลงฮิตระดับโลก พบกันวันเสาร์ที่ 14 พฤศจิกายน 2026 ณ ONYX RCA',
+    ticketInfo:'ค่าเข้าหน้างาน 600 บาท รวมเครื่องดื่มมาตรฐาน 1 แก้ว; การจองโต๊ะ VIP ติดต่อร้านหรือช่องทางที่ร้านประกาศ',
+    ticketTiers:[{id:'door',name:'บัตรหน้างาน',price:600,info:['รวมเครื่องดื่มมาตรฐาน 1 แก้ว','จำหน่ายหน้างานจริง; บัตรในแอปเป็นตัวอย่างเท่านั้น']}]
+  },
+  {
+    id:'e2',name:'THROWBACK 90s: SEK LOSO',subtitle:'SEK LOSO LIVE',venue:'what',
+    date:'2026-11-15',time:'20:00',endTime:'Late',price:750,
+    art:'poster-bg2',label:'Live Concert / 90s',tag:'15 พ.ย.',
+    lineup:['SEK LOSO'],lineupNote:'ศิลปินหลักตามโปสเตอร์',
+    desc:'Throwback 90s กับ SEK LOSO ที่ WHAT’S HAPPENED วันอาทิตย์ที่ 15 พฤศจิกายน 2026 ณ EM WONDER ชั้น 5 EMSPHERE พบบรรยากาศเพลงร็อกไทยยุค 90s',
+    ticketInfo:'ราคาตามโปสเตอร์: Early Bird 750 บาท / Pre-Sale 850 บาท / Walk-in 950 บาท; โปรดตรวจสอบสิทธิ์และรอบขายล่าสุดกับร้าน',
+    ticketTiers:[
+      {id:'early',name:'Early Bird (อ้างอิง)',price:750,info:['ราคาตามโปสเตอร์','จำนวนและสถานะจำหน่ายต้องยืนยันกับร้าน']},
+      {id:'presale',name:'Pre-Sale (อ้างอิง)',price:850,info:['ราคาตามโปสเตอร์','โปรดตรวจสอบสถานะจำหน่าย']},
+      {id:'walkin',name:'Walk-in (อ้างอิง)',price:950,info:['ราคาหน้างานตามโปสเตอร์','ขึ้นอยู่กับจำนวนบัตรคงเหลือ']}
+    ]
+  },
+  {
+    id:'e3',name:'BOWKYLION LIVE',subtitle:'Tic Tac Toe · Special Guest',venue:'tic',
+    date:'2026-11-18',time:'19:00',endTime:'Late',timeNote:'เปิดร้าน 19:00 น.',price:null,
+    art:'poster-bg3',label:'Live Acoustic / Pop',tag:'18 พ.ย.',
+    lineup:['BOWKYLION','DHONNAHS'],lineupNote:'ศิลปินพิเศษ และ Live Acoustic ตามโปสเตอร์; เวลาแสดงต้องยืนยัน',
+    desc:'Special Guest BOWKYLION ที่ Tic Tac Toe (EM WONDER ชั้น 5, EMSPHERE) วันพุธที่ 18 พฤศจิกายน 2026 โปสเตอร์ระบุเปิดร้าน 19:00 น. และมี Live Acoustic โดย DHONNAHS; ยังไม่ยืนยันเวลาที่ BOWKYLION ขึ้นแสดง',
+    ticketInfo:'ยังไม่มีราคาบัตรและเวลาแสดงศิลปินที่ยืนยันได้ จึงไม่แสดงราคาคาดเดา'
+  }
 );
+
 // Only show bookings created by the signed-in browser account.
 activity=function(){const mine=DB.account?DB.requests.filter(r=>r.owner===DB.account.email):[];return `<div class="screen">${brandHeader()}<div class="pad discovery-header"><div class="eyebrow">MY NIGHTS</div><h1>คืนของ<br><span class="accent">ฉัน</span></h1>${myExtras()}<div class="chips" style="margin:20px 0"><button class="chip ${UI.tab==='requests'?'active':''}" onclick="App.setActivityTab('requests')">การจอง</button><button class="chip ${UI.tab==='tickets'?'active':''}" onclick="App.setActivityTab('tickets')">บัตรอีเวนต์</button><button class="chip ${UI.tab==='saved'?'active':''}" onclick="App.setActivityTab('saved')">ร้านที่บันทึก</button></div>${UI.tab==='requests'?(mine.length?mine.slice().reverse().map(requestCard).join(''):`<div class="empty"><h3>ยังไม่มีการจอง</h3><p>ค้นหาร้านที่ชอบแล้วเริ่มส่งคำขอได้เลย</p><button class="btn smallbtn" onclick="App.go('discover')">ค้นหาร้าน ${ic('arrow',15)}</button></div>`):UI.tab==='tickets'?(DB.tickets.length?DB.tickets.map(t=>`<button class="request-card" style="width:100%;text-align:left" onclick="App.openTicket('${t.id}')"><b>ตั๋วตัวอย่าง ${e(E(t.event).name)}</b><p class="hint">บัตรนี้ใช้เข้าร้านจริงไม่ได้ · ${e(t.id)}</p></button>`).join(''):`<div class="empty">ยังไม่มีบัตรอีเวนต์ตัวอย่าง</div>`):(DB.favs.length?venues.filter(v=>DB.favs.includes(v.id)).map(wideVenue).join(''):'<div class="empty">ยังไม่มีร้านที่บันทึก</div>')}${demoFooter()}</div></div>`;};
 
@@ -721,7 +971,7 @@ Object.assign(translatePairs,{
  '03 · Clear responsibilities':'03 · แสดงเงื่อนไขให้ชัดเจน',
  'FIND A VENUE':'ค้นหาร้าน'
 });
-navItems=function(){if(UI.role==='runner')return [['home','หน้าหลัก','home'],['jobs','งาน','briefcase'],['active','งานของฉัน','clock'],['wallet','รายได้','wallet'],['profile','โปรไฟล์','user']];if(UI.role==='venue')return [['home','หน้าหลัก','home'],['venue-requests','จองโต๊ะ','calendar'],['venue-queue','คิว','users'],['venue-policies','นโยบาย','shield'],['profile','โปรไฟล์','user']];return [['home','หน้าหลัก','home'],['discover','ค้นหาร้าน','compass'],['events','อีเวนต์','ticket'],['activity','คืนของฉัน','calendar'],['profile','โปรไฟล์','user']];};
+navItems=function(){if(UI.role==='runner') {return [['jobs','งานใหม่','briefcase'],['active','งานของฉัน','clock'],['profile','โปรไฟล์','user']];} if(UI.role==='venue') {return [['home','ภาพรวม','home'],['venue-requests','คำขอจอง','calendar'],['venue-policies','จัดการร้าน','shield'],['profile','โปรไฟล์','user']];} return [['home','หน้าหลัก','home'],['discover','ค้นหาร้าน','compass'],['events','อีเวนต์','ticket'],['activity','คืนของฉัน','calendar'],['profile','โปรไฟล์','user']];};
 
 // Native select menus vary across browsers: replace them with in-app sheets on phones.
 document.addEventListener('pointerdown',event=>{let s=event.target.closest('select.field');if(s&&s.id!=='managedVenue'){event.preventDefault();event.stopPropagation();openSelectPicker(s);}},true);
@@ -808,7 +1058,7 @@ detailInfo = function (v) {
   if (UI.infoTab === 'gallery') {
     const fallback = ['assets/club.jpg','assets/stage.jpg','assets/crowd.jpg'];
     return `<div class="info-copy"><h3>รูปภาพบรรยากาศร้าน</h3>
-      <div class="cnk-photo-grid">${(d.gallery||[]).map((src,i)=>`
+      <div class="cnk-photo-grid">${(d.gallery||[]).slice(0,2).map((src,i)=>`
         <div class="cnk-gallery-item"><img src="${e(src)}" alt="รูปภาพ ${e(v.name)} หมายเลข ${i+1}" loading="lazy"
           onerror="this.onerror=null;this.src='${fallback[i%fallback.length]}';this.parentNode.classList.add('is-placeholder')">
           <span>ภาพประกอบชั่วคราว</span>
@@ -844,8 +1094,7 @@ function cnkExploreCard(v) {
     </div>
     <div class="cnk-explore-info">
       <div class="cnk-explore-title-row"><strong>${e(v.name)}</strong>
-        <span class="cnk-explore-source ${hasInfo?'':'pending'}">${hasInfo?'มีข้อมูลวิจัย':'รอตรวจสอบร้าน'}</span>
-      </div>
+        ${hasInfo ? '' : `<span class="cnk-explore-source pending">รอตรวจสอบร้าน</span>`}      </div>
       <div class="cnk-explore-meta">${ic('pin',15)} <span>${e(CNK_AREA_TH[v.area]||v.area)}</span></div>
       <div class="cnk-explore-meta">${ic('music',15)} <span>${e(v.genre)} · ${e(v.kind)}</span></div>
       <div class="cnk-explore-bottom"><span>${budget}<small>ข้อมูลประมาณการ ไม่ใช่ราคาโต๊ะ</small></span>
@@ -1076,7 +1325,6 @@ App.cnkMoveMonth = function (n) {
     return `
       <div class="search-meta">
         <span>${rows.length} ร้าน</span>
-        <span>คะแนนจากข้อมูลทีม</span>
       </div>
 
       ${rows.length
@@ -1284,81 +1532,58 @@ App.cnkMoveMonth = function (n) {
   // คะแนน / งบต่อคน แสดงเฉพาะกรอบด้านบน
   // ==========================================
 
-  venueDetail = function () {
+    venueDetail = function () {
     const v = V(UI.venue);
+    const d = CNK_RES[v.id] || {};
     const score = rating(v);
-
     const budget = Number.isFinite(v.budgetMin)
       ? `${money(v.budgetMin)}+`
-      : 'ยังไม่มีข้อมูล';
+      : 'สอบถามร้าน';
+    const count = Number.isFinite(d.research_rating_count)
+      ? `จาก ${Number(d.research_rating_count).toLocaleString('th-TH')} รีวิว (อ้างอิง)`
+      : 'คะแนนจากข้อมูลทีม';
 
     return `
       <div class="screen venue-screen">
-
-        <div class="detail-cover image"
-          style="${media(v.image,v.accent)}">
-
+        <div class="detail-cover image" style="${media(v.image,v.accent)}">
           <div class="detail-top">
-            <button class="circle-btn"
-              onclick="App.back()">${ic('back')}</button>
-
+            <button class="circle-btn" onclick="App.back()" aria-label="ย้อนกลับ">${ic('back')}</button>
             <div class="row">
-              <button class="circle-btn"
-                onclick="App.toggleFav('${v.id}')">
-                ${ic('heart')}
-              </button>
-              <button class="circle-btn"
-                onclick="App.shareVenue('${v.id}')">
-                ${ic('share')}
-              </button>
+              <button class="circle-btn" onclick="App.toggleFav('${v.id}')" aria-label="บันทึกร้าน">${ic('heart')}</button>
+              <button class="circle-btn" onclick="App.shareVenue('${v.id}')" aria-label="แชร์ร้าน">${ic('share')}</button>
             </div>
           </div>
-
           <div class="detail-bottom">
-            <span class="pill rose">
-              ${e(v.kind)} · ${e(v.genre)}
-            </span>
-
+            <span class="pill rose">${e(v.kind)} · ${e(v.genre)}</span>
             <h1>${e(v.name)}</h1>
-            <p>${ic('pin',13)}
-              ${e(area(v.area))} · กรุงเทพฯ
-            </p>
+            <p>${ic('pin',13)} ${e(area(v.area))} · กรุงเทพฯ</p>
           </div>
         </div>
 
         <div class="pad">
-
           <div class="detail-stats">
             <div class="stat">
-              <b>${score === null
-                ? '—'
-                : score.toFixed(1) + '/5 ★'}</b>
-              <span>คะแนนจากข้อมูลทีม</span>
+              <b>${score === null ? '—' : score.toFixed(1) + '/5 ★'}</b>
+              <span>${score === null ? 'ยังไม่มีคะแนน' : e(count)}</span>
             </div>
-
             <div class="stat">
               <b>${budget}</b>
               <span>งบต่อคน (ประมาณ)</span>
             </div>
-
             <div class="stat">
               <b>รอยืนยัน</b>
               <span>โต๊ะและคิว</span>
             </div>
           </div>
 
-          <div class="info-tabs">
+          <div class="info-tabs" role="tablist" aria-label="รายละเอียดร้าน">
             ${[
-              ['about','ภาพรวม'],
-              ['menu','เมนู'],
-              ['reviews','รีวิว'],
-              ['gallery','รูปภาพ']
+              ['about','ภาพรวม'], ['menu','เมนู'],
+              ['reviews','รีวิว'], ['gallery','รูปภาพ']
             ].map(([id,label]) => `
-              <button class="${UI.infoTab === id
-                ? 'active' : ''}"
-                onclick="App.setInfoTab('${id}')">
-                ${label}
-              </button>
+              <button type="button" role="tab" aria-selected="${UI.infoTab === id}"
+                class="${UI.infoTab === id ? 'active' : ''}"
+                onclick="App.setInfoTab('${id}')">${label}</button>
             `).join('')}
           </div>
 
@@ -1368,13 +1593,9 @@ App.cnkMoveMonth = function (n) {
         <div class="floating-cta venue-sticky">
           <div>
             <div class="micro">CHILL N’ KNOCK</div>
-            <strong style="font-size:11px">
-              เลือกวิธีจอง 4 แบบ
-            </strong>
+            <strong style="font-size:11px">เลือกวิธีจอง 4 แบบ</strong>
           </div>
-
-          <button class="btn"
-            onclick="App.startBooking('${v.id}')">
+          <button class="btn" onclick="App.startBooking('${v.id}')">
             จองคืนนี้ ${ic('arrow',16)}
           </button>
         </div>
@@ -1383,68 +1604,86 @@ App.cnkMoveMonth = function (n) {
   };
 
 
+
+
   // ==========================================
   // FIX E — เมนู / รีวิว / ภาพรวม
-  // ==========================================
+// ราคาเพิ่มเติมที่ค้นพบจากรายการเมนูเผยแพร่
+const extraMenu = {
+  onyx: [
+    ['Johnnie Walker Black Label (1 L)',3300],
+    ['Johnnie Walker Gold Label',3900],
+    ['Monkey Shoulder',5500],
+    ['Hennessy VSOP',5500]
+  ],
+  savoy: [
+    ['Johnnie Walker Gold Label',5900],
+    ['Monkey Shoulder',5900],
+    ['Hennessy VSOP',7000],
+    ['Moët & Chandon Brut Impérial',8900]
+  ]
+};
 
-  // ราคาเพิ่มเติมที่ค้นพบจากรายการเมนูเผยแพร่
-  const extraMenu = {
-    onyx: [
-      ['Johnnie Walker Black Label (1 L)',3300],
-      ['Johnnie Walker Gold Label',3900],
-      ['Monkey Shoulder',5500],
-      ['Hennessy VSOP',5500]
-    ],
-    savoy: [
-      ['Johnnie Walker Gold Label',5900],
-      ['Monkey Shoulder',5900],
-      ['Hennessy VSOP',7000],
-      ['Moët & Chandon Brut Impérial',8900]
-    ]
+// ราคาเก่าที่พบสำหรับเมนู TDERM
+const tdermPrices = {
+  'สปาเก็ตตี้ครีมซอสแหนม':300,
+  'สปาเก็ตตี้กุ้งซอสโหระพา':350,
+  'A.O.P. เบคอนพริกแห้ง':280
+};
+
+const previousDetailInfo = detailInfo;
+
+    // หมวดเมนูใช้เฉพาะหน้า Venue Detail; ไม่เปลี่ยนข้อมูลเมนูต้นฉบับ
+  App.cnkVenueMenuCategory = function (category) {
+    if (!['drinks','table','bottle'].includes(category)) return;
+    UI.cnkVenueMenuCategory = category;
+    render(true);
   };
 
-  // ราคาเก่าที่พบสำหรับเมนู TDERM
-  const tdermPrices = {
-    'สปาเก็ตตี้ครีมซอสแหนม':300,
-    'สปาเก็ตตี้กุ้งซอสโหระพา':350,
-    'A.O.P. เบคอนพริกแห้ง':280
-  };
-
-  const previousDetailInfo = detailInfo;
-
-  detailInfo = function (v) {
+    detailInfo = function (v) {
     const d = CNK_RES[v.id] || {};
 
     if (UI.infoTab === 'about') {
+      const hours = d.hours || 'ยังไม่มีข้อมูลเวลาเปิด–ปิดที่ยืนยันได้';
       return `
-        <div class="info-copy">
+        <div class="info-copy cnk-venue-about">
           <h3>เกี่ยวกับร้าน</h3>
           <p>${e(d.overview || v.desc)}</p>
-
-          ${d.atmosphere
-            ? `<p>${e(d.atmosphere)}</p>`
-            : ''}
-
+          ${d.atmosphere ? `<p>${e(d.atmosphere)}</p>` : ''}
           <div class="tag-list">
-            ${v.tags.map(t => `
-              <span class="pill outline">${e(t)}</span>
-            `).join('')}
+            ${v.tags.map(t => `<span class="pill outline">${e(t)}</span>`).join('')}
           </div>
 
-          <div class="line"></div>
-
-          <div class="spread cnk-venue-line">
-            <div>
-              <b>ที่ตั้งร้าน</b>
-              <p class="hint">
-                ${e(d.address || v.place)}
-              </p>
+          <h3>ที่ตั้งร้าน</h3>
+          <div class="venue-map-card venue-map-card--flat">
+            
+            <div class="venue-map-thumb venue-map-thumb--streets" aria-label="แผนที่ของ ${e(v.name)}">
+              ${v.verified && d.identity_status !== 'unconfirmed'
+                ? `<iframe
+                    title="แผนที่ ${e(v.name)}"
+                    src="https://maps.google.com/maps?hl=th&amp;q=${encodeURIComponent(`${v.name}, ${d.address || v.place}, Bangkok, Thailand`)}&amp;z=16&amp;output=embed"
+                    loading="lazy"
+                    tabindex="-1"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    style="position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none"
+                  ></iframe>`
+                : `<div style="height:100%;display:flex;align-items:center;justify-content:center;background:#F4EFEC;color:#755A68;font-size:11px">
+                    ยังไม่ยืนยันพิกัดร้าน
+                  </div>`}
             </div>
 
-            <button class="btn smallbtn ghost"
-              onclick="App.openMap('${v.id}')">
-              ${ic('map',15)} เปิดแผนที่
-            </button>
+            <div class="venue-map-row">
+              <div class="venue-address">${e(d.address || v.place || v.area)}</div>
+              <button type="button" class="map-open-btn" onclick="App.openMap('${v.id}')">
+                ${ic('map',15)} เปิดแผนที่
+              </button>
+            </div>
+          </div>
+
+          <h3 class="cnk-hours-title">ช่วงเวลาเปิดบริการ</h3>
+          <div class="hours-row">
+            <span class="hours-icon">${ic('clock',16)}</span>
+            <span>${e(hours)}${hours.startsWith('ยังไม่มี') ? '' : ' · โปรดตรวจสอบอีกครั้ง'}</span>
           </div>
         </div>
       `;
@@ -1452,95 +1691,116 @@ App.cnkMoveMonth = function (n) {
 
     if (UI.infoTab === 'menu') {
       const list = [...(d.menu || [])];
-
       for (const [name,price] of extraMenu[v.id] || []) {
-        if (!list.some(x => x.name === name)) {
-          list.push({name,price});
-        }
+        if (!list.some(x => x.name === name)) list.push({name,price});
       }
+      if (UI.cnkVenueMenuFor !== v.id) {
+        UI.cnkVenueMenuFor = v.id;
+        UI.cnkVenueMenuCategory = 'drinks';
+      }
+      const category = UI.cnkVenueMenuCategory || 'drinks';
+      const hasBottle = name => /bottle|johnnie|hennessy|monkey shoulder|เหล้า|ขวด|whisk|moët|champagne/i.test(name);
+      const hasTable = name => /โต๊ะ|table|package|แพ็กเกจ|minimum|set\b/i.test(name) && !hasBottle(name);
+      const visible = category === 'table'
+        ? list.filter(m => hasTable(m.name))
+        : category === 'bottle'
+          ? list.filter(m => hasBottle(m.name))
+          : list;
 
-      const priceText = m => {
-        const exact = Number.isFinite(m.price)
-          ? m.price
-          : tdermPrices[m.name];
-
-        if (Number.isFinite(exact)) {
-          return `${money(exact)}${
-            m.verified_in_team_file
-              ? '' : ' (อ้างอิง)'
-          }`;
-        }
-
-        const range = String(m.note || '').match(
-          /(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)\s*บาท/
-        );
-
-        return range
-          ? `ประมาณ ฿${range[1]}–${range[2]}`
-          : 'ยังไม่มีราคาต่อรายการ';
+      const imageOf = (name, custom) => {
+        if (custom && /^(https?:\/\/|assets\/)/i.test(custom)) return custom;
+        if (/beer|เบียร์/i.test(name)) return 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&q=80';
+        if (/mojito|cocktail|ค็อกเทล|margarita/i.test(name)) return 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300&q=80';
+        if (/fruit|น้ำผลไม้|pre-mixed|juice/i.test(name)) return 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=300&q=80';
+        if (hasBottle(name)) return 'https://images.unsplash.com/photo-1527281400683-1aae777175f8?w=300&q=80';
+        return 'assets/bar.jpg';
       };
 
+      const priceText = m => {
+        const exact = Number.isFinite(m.price) ? m.price : tdermPrices[m.name];
+        if (Number.isFinite(exact)) return `${money(exact)}`;
+        const range = String(m.note || '').match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)\s*บาท/);
+        return range ? `ประมาณ ฿${range[1]}–${range[2]}` : 'สอบถามร้าน';
+      };
       return `
         <div class="info-copy cnk-menu-section">
           <h3>เมนูและแพ็กเกจ</h3>
-
-          <p class="hint">
-            ราคาอ้างอิงจากข้อมูลที่รวบรวม
-            อาจเปลี่ยนแปลงและอาจยังไม่รวม
-            ค่าบริการหรือภาษี
-          </p>
-
-          ${list.length
-            ? list.map(m => `
-                <div class="cnk-menu-card">
-                  <strong>${e(m.name)}</strong>
-                  <span>${e(priceText(m))}</span>
+          <div class="cnk-menu-categories" aria-label="หมวดเมนู">
+            ${[['drinks','เครื่องดื่ม'],['table','แพ็กเกจโต๊ะ'],['bottle','Bottle Set']]
+              .map(([id,label]) => `<button type="button" class="${category === id ? 'active' : ''}"
+                aria-pressed="${category === id}"
+                onclick="App.cnkVenueMenuCategory('${id}')">${label}</button>`).join('')}
+          </div>
+          ${visible.length ? `<div class="cnk-menu-list">
+            ${visible.map(m => `
+              <div class="cnk-menu-card">
+                <div class="cnk-menu-thumb">
+                  <img src="${e(imageOf(m.name,m.image))}" alt="ภาพประกอบ ${e(m.name)}"
+                    loading="lazy" onerror="this.onerror=null;this.src='assets/bar.jpg'">
                 </div>
-              `).join('')
-            : `<div class="cnk-menu-card">
-                 ยังไม่มีข้อมูลเมนูของร้านนี้
-               </div>`
-          }
+                <div class="cnk-menu-desc">
+                  <strong>${e(m.name)}</strong>
+                  ${m.note ? `<small>${e(m.note)}</small>` : ''}
+                </div>
+                <div class="cnk-menu-price">
+                  <b>${e(priceText(m))}</b>
+                  <small>${m.verified_in_team_file ? 'ตามข้อมูลทีม' : 'ราคาอ้างอิง'}</small>
+                </div>
+              </div>
+            `).join('')}
+          </div>` : `<p class="cnk-menu-empty">ยังไม่มีข้อมูลหมวดนี้ของร้าน</p>`}
+          <p class="cnk-menu-note">ราคาเป็นข้อมูลอ้างอิงหรือค่าประมาณ อาจเปลี่ยนแปลงได้ · ภาพเมนูเป็นภาพประกอบ</p>
         </div>
       `;
     }
 
     if (UI.infoTab === 'reviews') {
-      const entries = (d.review_notes || [])
-        .map(x => x.summary)
-        .concat(
-          (DB.reviews || [])
-            .filter(r => r.venue === v.id)
-            .map(r => r.text)
-        );
-
+      const notes = (d.review_notes || []).map(x => ({
+        text: x.summary, source: x.source || 'ข้อมูลที่ทีมรวบรวม'
+      }));
+      const local = (DB.reviews || [])
+        .filter(r => r.venue === v.id)
+        .map(r => ({text:r.text,source:'รีวิวทดลองจากเบราว์เซอร์นี้'}));
+      const entries = [...notes,...local];
       const score = rating(v);
-
       return `
         <div class="info-copy cnk-reviews-section">
-          <h3>
-            รีวิวและความคิดเห็น
-            ${score === null
-              ? ''
-              : `<span>★ ${score.toFixed(1)}/5</span>`
-            }
-          </h3>
-
-          <p class="hint">
-            ความคิดเห็นจากข้อมูลที่ทีมรวบรวม
-            ไม่ใช่รีวิวสด
-          </p>
-
-          ${entries.length
-            ? entries.map(s => `
-                <div class="cnk-review-card">
-                  ${e(s)}
+          <h3>รีวิวและความคิดเห็น</h3>
+          <div class="cnk-review-summary">
+            <strong>${score === null ? '—' : score.toFixed(1) + '/5'} <span>★</span></strong>
+            <small>${score === null ? 'ยังไม่มีคะแนนร้าน' : 'คะแนนอ้างอิงจากข้อมูลที่ทีมรวบรวม'}<br>ไม่ใช่รีวิวสดจากแพลตฟอร์ม</small>
+          </div>
+          <div class="cnk-review-list">
+            ${entries.length ? entries.map((item,i) => `
+              <div class="cnk-review-card">
+                <div class="cnk-review-icon" aria-hidden="true">${ic('user',20)}</div>
+                <div class="cnk-review-text">
+                  <strong>${local.includes(item) ? 'ผู้ใช้งานทดลอง' : 'ความคิดเห็นจากข้อมูลอ้างอิง'}</strong>
+                  <small>${e(item.source)}</small>
+                  <p>${e(item.text || '')}</p>
                 </div>
-              `).join('')
-            : `<div class="cnk-review-card">
-                 ยังไม่มีรีวิวของร้านนี้
-               </div>`
-          }
+              </div>
+            `).join('') : '<div class="cnk-review-card">ยังไม่มีรีวิวของร้านนี้</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    if (UI.infoTab === 'gallery') {
+      const gallery = (d.gallery && d.gallery.length ? d.gallery : [v.image, 'assets/club.jpg']).slice(0,2);
+      return `
+        <div class="info-copy cnk-gallery-section">
+          <h3>รูปภาพบรรยากาศร้าน</h3>
+          <div class="cnk-photo-grid">
+            ${gallery.map((src,i) => `
+              <div class="cnk-gallery-item">
+                <img src="${e(src)}" alt="ภาพบรรยากาศประกอบ ${e(v.name)} ${i+1}"
+                  loading="lazy" onerror="this.onerror=null;this.src='assets/club.jpg';this.parentNode.classList.add('is-placeholder')">
+                <span>ภาพประกอบชั่วคราว</span>
+              </div>
+            `).join('')}
+          </div>
+          <p class="cnk-gallery-note">ภาพประกอบสำหรับต้นแบบ ไม่ใช่ภาพที่ร้านยืนยัน</p>
         </div>
       `;
     }

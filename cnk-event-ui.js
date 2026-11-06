@@ -10,8 +10,7 @@
   const getEvent = () => E(UI.event);
   const cover = ev => `assets/events/${ev.id}.jpg`;
   const image = (ev,cls='') => `<img class="${cls}" src="${cover(ev)}" onerror="this.onerror=null;this.src='assets/club.jpg'" alt="ภาพประกอบอีเวนต์ ${e(ev.name)}">`;
-  const info = ev => ({v:V(ev.venue), date:dateOffset(ev.offset), end: ev.endTime || '04:00'});
-  const types = ev => Array.isArray(ev.ticketTiers) && ev.ticketTiers.length ? ev.ticketTiers : [
+  const info = ev => ({v:V(ev.venue), date:ev.date || dateOffset(ev.offset), end: ev.endTime || '02:00'});  const types = ev => Array.isArray(ev.ticketTiers) && ev.ticketTiers.length ? ev.ticketTiers : [
     {id:'early', name:'Early Bird', price:500, info:['เข้างานได้ 1 คน','จำนวนจำกัด'], recommended:true},
     {id:'regular', name:'Regular', price:700, info:['เข้างานได้ 1 คน','เข้างานได้ตลอดทั้งคืน']},
     {id:'vip', name:'VIP Entry', price:1500, info:['เข้างานได้ 1 คน','ทางเข้า VIP','ใช้โซน VIP Lounge (ตัวอย่าง)']}
@@ -19,10 +18,7 @@
   const chosen = ev => types(ev).find(t=>t.id===UI.cnkTicketType) || types(ev)[0];
   const evHeader = (title,subtitle='') => `<div class="cnk-ev-head"><button class="cnk-ev-back" aria-label="ย้อนกลับ" onclick="App.back()">${ic('back',22)}</button><div><b>${e(title)}</b><small>${e(subtitle)}</small></div></div>`;
 
-  // Demo exemplar matching the approved ONYX reference; not a real venue announcement.
-  const demoEvent = events.find(ev=>ev.id==='e1' && ev.name==='NIGHT FREQUENCY');
-  if (demoEvent) Object.assign(demoEvent, {name:'SPECIAL GUEST DJ', subtitle:'DJ Event', time:'22:00', endTime:'04:00', label:'DJ Event', desc:'ค่ำคืนพิเศษกับ Special Guest DJ ระดับอินเตอร์ พร้อมบรรยากาศ EDM สุดมันส์ที่ ONYX RCA (อีเวนต์จำลองสำหรับทดสอบ UI)', offset:3});
-
+  
   eventDetail = function () {
     const ev=getEvent(), {v,date,end}=info(ev);
     return `<div class="screen cnk-ev-screen">
@@ -38,24 +34,36 @@
           <h1>${e(ev.name)}</h1><p>${ic('pin',15)} ${e(v.name)} · ${e(v.area)} · กรุงเทพฯ</p></div>
       </div>
       <div class="cnk-ev-meta"><span>${ic('calendar',17)} ${e(thaiDate(date))}</span>
-        <span>${ic('clock',17)} ${e(ev.time)}–${e(end)} น.</span></div>
+        <span>${ic('clock',17)} ${e(ev.timeNote||(end==='Late'?ev.time+' น. เป็นต้นไป':ev.time+'–'+end+' น.'))}</span></div>
       <div class="cnk-ev-panel">
         <h2>เกี่ยวกับอีเวนต์</h2><p>${e(ev.desc)}</p>
-        <h2>ไลน์อัป</h2>
-        <div class="cnk-ev-lineup"><span class="cnk-ev-artist">${ic('music',27)}</span><div><b>${e(ev.name==='SPECIAL GUEST DJ'?'Special Guest DJ':ev.subtitle||'DJ / Live Act')}</b><small>(ประกาศรายชื่อจริงจากร้านอีกครั้ง)</small></div></div>
+        ${ev.ticketInfo?`<p class="cnk-ev-disclosure">${e(ev.ticketInfo)}</p>`:''}
+        ${Array.isArray(ev.lineup)&&ev.lineup.length?`
+        <h2>${ev.lineup.length===1?'ศิลปินที่แสดง':'ไลน์อัป'}</h2>
+        <div class="cnk-ev-lineup"><span class="cnk-ev-artist">${ic('music',27)}</span>
+          <div><b>${e(ev.lineup.join(' · '))}</b><small>${e(ev.lineupNote||'โปรดตรวจสอบกับผู้จัดอีกครั้ง')}</small></div>
+        </div>`:''}
         <h2>บริการในงาน</h2>
         <div class="cnk-ev-features">
-          <div>${ic('music',24)}<span>EDM</span></div>
-          <div>${ic('gift',24)}<span>บาร์</span></div>
-          <div>${ic('users',24)}<span>VIP</span></div>
-          <div>${ic('pin',24)}<span>ที่จอดรถ</span></div>
+          <div>${ic('music',24)}<span>ดนตรี</span></div>
+          <div>${ic('users',24)}<span>บรรยากาศ</span></div>
+          <div>${ic('ticket',24)}<span>ข้อมูลบัตร</span></div>
+          <div>${ic('pin',24)}<span>สถานที่</span></div>
         </div>
         <div class="cnk-ev-location"><b>สถานที่จัดงาน</b><span>${e(v.name)} · ${e(v.place)}</span><button onclick="App.openMap('${v.id}')">${ic('map',16)} เปิดแผนที่</button></div>
-        <p class="cnk-ev-disclosure">อีเวนต์และราคาบัตรในตัวอย่างนี้ยังไม่ยืนยันจากร้าน</p>
+        <p class="cnk-ev-disclosure">ข้อมูลจากโปสเตอร์และแหล่งสาธารณะ · การจองและบัตรใน CHILL N’ KNOCK ยังเป็นต้นแบบ ไม่ใช่การซื้อจริง</p>
       </div>
-      <div class="cnk-ev-cta"><button class="secondary" onclick="App.startBooking('${v.id}')">${ic('calendar',18)} จองโต๊ะ</button><button onclick="App.cnkGoTickets()">${ic('ticket',18)} ซื้อบัตร</button></div>
+      <div class="cnk-ev-cta">
+        <button class="secondary" ${ev.status==='postponed'?'disabled':''} onclick="App.startBooking('${v.id}')">${ic('calendar',18)} จองโต๊ะ</button>
+        ${ev.status==='postponed'
+          ?'<button disabled>งานเลื่อนกำหนด</button>'
+          :Array.isArray(ev.ticketTiers)&&ev.ticketTiers.length
+            ?`<button onclick="App.cnkGoTickets()">${ic('ticket',18)} ดูบัตรทดลอง</button>`
+            :'<button disabled>รอข้อมูลบัตร</button>'}
+      </div>
     </div>`;
   };
+
 
   App.cnkGoTickets = () => {
     UI.cnkTicketType = types(getEvent())[0].id;
@@ -85,8 +93,7 @@
     if(!DB.account) return App.auth('cnk-ticket-select');
     const ev=getEvent(), tier=chosen(ev), qty=UI.cnkTicketQty||1;
     const t={id:'TKT-DEMO-'+Date.now(),event:ev.id,qty,price:tier.price*qty,
-      tierName:tier.name,date:dateOffset(ev.offset),time:ev.time,
-      owner:DB.account.email,prototype:true,cnkTicketV2:true};
+    tierName:tier.name,date:ev.date||dateOffset(ev.offset),time:ev.time,      owner:DB.account.email,prototype:true,cnkTicketV2:true};
     if(!Array.isArray(DB.tickets)) DB.tickets=[];
     DB.tickets.push(t);UI.ticketId=t.id;save();
     App.go('cnk-ticket-success');
@@ -95,7 +102,7 @@
   function ticketSuccess() {
     const t=(DB.tickets||[]).find(x=>x.id===UI.ticketId);
     if(!t)return activity();
-    const ev=E(t.event),v=V(ev.venue), end=ev.endTime||'04:00';
+    const ev=E(t.event),v=V(ev.venue), end=ev.endTime||'02:00';
     return `<div class="screen cnk-ts-screen">
       <div class="cnk-ts-top"><div class="cnk-ts-icon">${ic('ticket',54)}<span>${ic('check',23)}</span></div>
         <h1>บันทึกบัตรสำเร็จ!</h1><p>ขอบคุณที่ใช้ CHILL N’ KNOCK</p><span class="cnk-ts-demo">บัตรทดลอง · ไม่สามารถใช้เข้างานจริง</span></div>

@@ -64,7 +64,7 @@ html,body{background:#EEE7E5;color:var(--ink)}
 .floating-cta .micro{color:#8A576A}
 .floating-cta strong{color:#542B3D}
 .floating-cta .btn{min-width:0;min-height:48px;white-space:nowrap}
-.venue-screen{padding-bottom:205px}
+.venue-screen{padding-bottom:170px}
 .bottom-nav{background:#FFFAF8;box-shadow:0 -2px 18px #42222d10}
 .bottom-nav button{color:#7A6C77;font-size:10px}
 .bottom-nav button.active{color:#941C47}
@@ -310,11 +310,13 @@ h1,h2,h3,h4,.body-title,.brand-name,.section-bar h2,
 .cnk-research-sources{margin:20px 0 9px;font-size:12px}
 .cnk-research-sources>div{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
 .cnk-research-sources a{display:inline-flex;align-items:center;gap:5px;border:1px solid #E6CAD4;background:#fff;color:#8B1D49;border-radius:9px;padding:8px 10px;font-size:11px;text-decoration:none}
-.cnk-photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:13px 0}
-.cnk-gallery-item{position:relative;overflow:hidden;min-width:0;border-radius:13px;background:#F3E8EA}
-.cnk-gallery-item img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
-.cnk-gallery-item span{display:none;position:absolute;bottom:0;left:0;right:0;background:#2F1D29B5;color:#fff;padding:5px 7px;font-size:10px}
-.cnk-gallery-item.is-placeholder span{display:block}
+
+.venue-screen .cnk-photo-grid {display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:12px}
+.venue-screen .cnk-gallery-item {position:relative;overflow:hidden;min-width:0;border-radius:14px;background:#F3E8EA}
+.venue-screen .cnk-gallery-item img {display:block;width:100%;aspect-ratio:1.62;object-fit:cover}
+.venue-screen .cnk-gallery-item span {display:none;position:absolute;bottom:0;left:0;right:0;background:#2F1D29B5;color:#fff;padding:6px 9px;font-size:10px}
+.venue-screen .cnk-gallery-item.is-placeholder span {display:block}
+.venue-screen .cnk-gallery-note {font-size:10px!important;color:#8A7180!important;margin-top:10px}
 .cnk-filter-sheet{padding-bottom:28px;max-height:88dvh}
 .cnk-filter-sheet .sheet-heading h2{font-size:25px;line-height:1.2}
 .cnk-filter-stack{display:grid;gap:10px;margin:12px 0 24px}
@@ -359,9 +361,75 @@ h1,h2,h3,h4,.body-title,.brand-name,.section-bar h2,
 .cnk-event-date{background:#F9E5EC;color:#98214C;border-radius:9px;min-width:38px;text-align:center;font-size:16px;font-weight:800;padding:5px}
 .cnk-event-date small{color:#98214C!important}
 
-/* Keep the approved, balanced venue-detail tab alignment. */
-.venue-screen .info-tabs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
-.venue-screen .info-tabs button {text-align:center;padding:0 0 12px}
+/* Venue Detail only: soft stat cards and four pill-shaped tabs. */
+.venue-screen .detail-stats {gap:9px;margin-top:16px}
+.venue-screen .detail-stats .stat {background:#FFF8FA;border:1px solid #E9D4DD;border-radius:14px;padding:13px 10px;box-shadow:0 3px 12px #5B27340B}
+.venue-screen .detail-stats .stat b {display:block;font-size:14px;line-height:1.35}
+.venue-screen .detail-stats .stat span {font-size:10px;margin-top:5px;line-height:1.4}
+.venue-screen .info-tabs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin:14px 0 22px;padding:4px;background:#FFF9FA;border:1px solid #E5CED7;border-radius:30px;overflow:visible;position:relative;z-index:2}
+.venue-screen .info-tabs button {border:0;border-radius:26px;min-width:0;min-height:38px;padding:8px 2px;text-align:center;font-size:12px;font-weight:800;color:#674454;background:transparent;position:relative;z-index:3;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.venue-screen .info-tabs button.active {background:linear-gradient(100deg,#8E0B3F,#B62255);color:#FFF;border:0;box-shadow:0 4px 12px #9A17483A}
+.venue-screen .cnk-venue-about h3 {margin:25px 0 12px}
+.venue-screen .cnk-venue-about h3:first-child {margin-top:0}
+.venue-screen .cnk-venue-about .tag-list {margin:14px 0 24px}
+.venue-screen .cnk-hours-title {margin-top:25px}
+.venue-screen .venue-map-card{
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  margin-top:4px;
+}
+
+.venue-screen .venue-map-thumb{
+  height:92px;
+}
+
+.venue-screen .venue-map-thumb--streets{
+  position:relative;
+  height:92px;
+  border-radius:16px;
+  overflow:hidden;
+  margin-bottom:14px;
+  background-color:#EAE4DB;
+  background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20210%22%20fill%3D%22none%22%3E%3Crect%20width%3D%22640%22%20height%3D%22210%22%20rx%3D%2224%22%20fill%3D%22%23EAE4DB%22/%3E%3Crect%20x%3D%22520%22%20y%3D%220%22%20width%3D%2222%22%20height%3D%22210%22%20fill%3D%22%239EC0DA%22%20opacity%3D%220.95%22/%3E%3Cg%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M18%2038H622%22/%3E%3Cpath%20d%3D%22M44%2084H248%22/%3E%3Cpath%20d%3D%22M286%2084H500%22/%3E%3Cpath%20d%3D%22M16%20132H226%22/%3E%3Cpath%20d%3D%22M270%20132H616%22/%3E%3Cpath%20d%3D%22M40%20178H620%22/%3E%3Cpath%20d%3D%22M86%2018V192%22/%3E%3Cpath%20d%3D%22M166%2032V192%22/%3E%3Cpath%20d%3D%22M248%2018V164%22/%3E%3Cpath%20d%3D%22M344%2018V192%22/%3E%3Cpath%20d%3D%22M430%2030V192%22/%3E%3Cpath%20d%3D%22M588%2018V192%22/%3E%3Cpath%20d%3D%22M148%20150L315%2062%22/%3E%3Cpath%20d%3D%22M310%20144L470%2058%22/%3E%3Cpath%20d%3D%22M378%20178L510%2096%22/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover;
+  background-position:center;
+  box-shadow:inset 0 0 0 1px #EFE4E8;
+}
+
+.venue-screen .venue-map-thumb--streets .venue-map-pin{
+  width:26px;
+  height:26px;
+  top:46%;
+  left:56%;
+  background:#7E1B46;
+  box-shadow:0 8px 18px rgba(126,27,70,.20);
+}
+
+.venue-screen .venue-map-row{
+  align-items:center;
+  gap:14px;
+}
+
+.venue-screen .venue-address{
+  font-size:12px;
+  line-height:1.65;
+  color:#402331;
+  max-width:calc(100% - 132px);
+}
+
+.venue-screen .map-open-btn{
+  min-height:44px;
+  padding:0 16px;
+  border-radius:16px;
+  font-size:12px;
+  white-space:nowrap;
+  box-shadow:none;
+}
+.venue-screen .cnk-menu-section, .venue-screen .cnk-reviews-section, .venue-screen .cnk-gallery-section {padding-bottom:0}
+.venue-screen .cnk-menu-section h3,.venue-screen .cnk-reviews-section h3,.venue-screen .cnk-gallery-section h3 {margin-bottom:16px}
 
 /* =========================================
    CHILL N' KNOCK — v1.1 SELECTIVE FIXES
@@ -388,54 +456,33 @@ h1,h2,h3,h4,.body-title,.brand-name,.section-bar h2,
 }
 
 
-/* เมนูและรีวิว ให้มีกรอบจางๆ */
-.cnk-menu-card,
-.cnk-review-card {
-  background: #fff;
-  border: 1px solid #ecd9e1;
-  border-radius: 14px;
-  padding: 15px 16px;
-  margin: 9px 0;
-  color: #3c2630;
-  box-shadow: 0 2px 8px #5125350a;
-}
-
-.cnk-menu-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-}
-
-.cnk-menu-card strong {
-  flex: 1;
-  font-weight: 700;
-  line-height: 1.55;
-  font-size: 13px;
-}
-
-.cnk-menu-card span {
-  flex: none;
-  color: #9c1a48;
-  text-align: right;
-  font-size: 12px;
-  font-weight: 800;
-  max-width: 43%;
-}
-
-.cnk-review-card {
-  font-size: 13px;
-  line-height: 1.75;
-  background: #fffcfc;
-}
-
-.cnk-reviews-section h3 span {
-  font-size: 14px;
-  color: #a62152;
-  white-space: nowrap;
-}
-
-
+/* Venue Detail: menu photo cards and genuine research notes. */
+.venue-screen .cnk-menu-categories {display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:2px 0 17px;padding-bottom:2px;position:relative;z-index:2}
+.venue-screen .cnk-menu-categories button {flex:none;border:1px solid #E6C6D3;border-radius:24px;background:#FFF9FA;color:#71374B;padding:9px 13px;font-size:11px;font-weight:800;position:relative;z-index:3;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.venue-screen .cnk-menu-categories button.active {background:#A6174B;border-color:#A6174B;color:white;box-shadow:0 3px 10px #9A174820}
+.venue-screen .cnk-menu-list {display:grid;gap:10px}
+.venue-screen .cnk-menu-card {display:flex;align-items:center;gap:12px;min-width:0;padding:9px;border:1px solid #F1E4E8;border-radius:15px;background:#FFF9F9;box-shadow:0 3px 11px #54213913}
+.venue-screen .cnk-menu-thumb {width:74px;height:74px;flex:0 0 74px;border-radius:11px;overflow:hidden;background:#F7E4EB}
+.venue-screen .cnk-menu-thumb img {display:block;width:100%;height:100%;object-fit:cover}
+.venue-screen .cnk-menu-desc {flex:1;min-width:0;overflow-wrap:anywhere}
+.venue-screen .cnk-menu-desc strong {display:block;font-size:13px;line-height:1.35;color:#3B1F2D}
+.venue-screen .cnk-menu-desc small {display:block;font-size:10px;line-height:1.35;color:#876F7B;max-height:3.9em;overflow:hidden;margin-top:3px}
+.venue-screen .cnk-menu-price {flex:0 0 auto;max-width:110px;text-align:right;min-width:67px}
+.venue-screen .cnk-menu-price b {display:block;color:#AE184C;font-size:13px;line-height:1.3;white-space:normal}
+.venue-screen .cnk-menu-price small {display:block;font-size:9px;color:#907684;line-height:1.35;margin-top:4px}
+.venue-screen .cnk-menu-note,.venue-screen .cnk-menu-empty {font-size:10px!important;color:#8A7180!important;margin-top:13px}
+/* Reviews: single pastel-pink tone, never gradient. */
+.venue-screen .cnk-review-summary {display:flex;align-items:center;gap:16px;padding:7px 8px 16px;color:#5C3044}
+.venue-screen .cnk-review-summary strong {font-size:29px;white-space:nowrap;color:#A2154A}
+.venue-screen .cnk-review-summary strong span {color:#E76B33}
+.venue-screen .cnk-review-summary small {font-size:11px;line-height:1.55;color:#8D7580}
+.venue-screen .cnk-review-list {display:grid;gap:11px}
+.venue-screen .cnk-review-card {display:flex;align-items:flex-start;gap:11px;background:#FCEEF3;border:1px solid #F2DBE3;border-radius:17px;padding:13px;box-shadow:0 7px 17px rgba(90,37,59,.09);color:#422637;font-size:13px;line-height:1.65}
+.venue-screen .cnk-review-icon {height:38px;width:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:50%;background:#EBC9D8;color:#8A1B49}
+.venue-screen .cnk-review-text {flex:1;min-width:0}
+.venue-screen .cnk-review-text strong {display:block;color:#4C2B39;font-size:13px}
+.venue-screen .cnk-review-text small {display:block;color:#916F7C;font-size:10px;margin:3px 0 7px}
+.venue-screen .info-copy .cnk-review-card p {color:#543847!important;font-size:12px;line-height:1.65!important;margin:0}
 /* Filter ไม่กระพริบเวลาเลือก */
 .cnk-filter-option,
 .cnk-filter-chips button {
@@ -449,7 +496,6 @@ h1,h2,h3,h4,.body-title,.brand-name,.section-bar h2,
 .cnk-filter-chips button:active {
   transform: none !important;
 }
-
 
 /* Event Detail */
 .cnk-event-panel {

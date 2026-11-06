@@ -53,8 +53,21 @@ function sec(label,sub,action=''){return `<div class="section-bar"><div><div cla
 function demoFooter(){return '<p class="footer-small">CHILL N’ KNOCK · Interactive UX Prototype<br>All venues, events, prices and statuses shown are illustrative. Not a live booking service.</p>'}
 function venueTile(v,i=0){let saved=DB.favs.includes(v.id);return `<button class="venue-tile" onclick="App.openVenue('${v.id}')" aria-label="View ${e(v.name)}"><div class="image photo" style="${media(v.image,v.accent)}"><div class="large-num">0${i+1}</div><span class="v-rating"><span class="star">★</span>${v.rating}</span><div class="v-photo-tags"><span class="pill tiny rose">${e(v.kind)}</span></div></div><div class="spread"><div class="v-name truncate">${e(v.name)}</div><span style="color:${saved?'#f37c9b':'#ad8b9c'}">${ic('heart',15)}</span></div><div class="v-sub">${ic('pin',12)} ${e(v.area)} · From ${baht(v.price)}*</div></button>`}
 function wideVenue(v){const p=DB.policies[v.id]||{};return `<button class="venue-wide" onclick="App.openVenue('${v.id}')"><div class="image" style="${media(v.image,v.accent)}"></div><div class="wide-info"><div class="wide-title">${e(v.name)}</div><div class="wide-sub">${e(v.area)} · ${e(v.kind)}<br>${e(v.genre)} · ★ ${v.rating}</div><div class="wide-footer"><span class="pill tiny ${p.direct?'mint':'outline'}">${p.direct?'● Requests on':'○ Requests off'}</span><span class="accent strong">DETAILS ${ic('chevron',12)}</span></div></div></button>`}
-function eventTile(ev){const v=V(ev.venue);return `<button class="event-card" onclick="App.openEvent('${ev.id}')"><div class="event-poster ${ev.art} image" style="${media(ev.venue==='sugar'?photos.stage:ev.venue==='rue'?photos.rooftop:photos.crowd,'#6e2449')}"><div class="poster-graphic"></div><span class="cover-tag">${e(ev.tag)}</span><div class="poster-type">${e(ev.label)}</div><div><div class="poster-big">${e(ev.name.replaceAll(' ','<br>')).replaceAll('&lt;br&gt;','<br>')}</div><div class="poster-bottom">${e(ev.subtitle)}<br>${niceDate(dateOffset(ev.offset))} · ${e(ev.time)}</div></div></div><strong class="truncate">${e(ev.name)}</strong><div class="v-sub">${e(v.area)} · ${baht(ev.price)} demo</div></button>`}
-function home(){return `<div class="screen">${brandHeader()}<section class="hero image" style="${media(photos.dancing,'#7e1745')}"><div class="decor">N</div><div class="hero-stamp">DRINK • DINE • DISCOVER</div><div class="hero-kicker"><span class="tag-dot"></span> THE NIGHT IS CALLING</div><h1>MAKE<br>IT A <em>NIGHT.</em></h1><p>Discover Bangkok after dark. Find your people, your music, your next favorite spot.</p><button class="btn cream hero-cta" onclick="App.go('discover')">EXPLORE TONIGHT ${ic('arrow',17)}</button></section>
+function eventTile(ev){
+  const v=V(ev.venue);
+  const rescheduled=ev.status==='rescheduled';
+  const dateLabel=rescheduled?'8 พ.ย. (วันจัดใหม่)':niceDate(ev.date||dateOffset(ev.offset));
+  return `<button class="event-card" onclick="App.openEvent('${ev.id}')">
+    <div class="event-poster image" style="padding:0;background:#241421">
+      <img src="assets/events/${ev.id}.jpg" alt="โปสเตอร์ ${e(ev.name)}" loading="lazy"
+        style="display:block;width:100%;height:100%;object-fit:cover"
+        onerror="this.onerror=null;this.src='assets/club.jpg'">
+    </div>
+    <strong class="truncate">${e(ev.name)}</strong>
+    <div class="v-sub">${e(v.name)} · ${e(dateLabel)}</div>
+  </button>`;
+}
+function home(){return `<div class="screen">${brandHeader()}<section class="hero image" style="background-image:linear-gradient(180deg,#7e174522 0%,#160B1120 40%,#170A17A8 100%),url('assets/hero.jpg');background-size:cover;background-position:center"><div class="decor">N</div><div class="hero-stamp">DRINK • DINE • DISCOVER</div><div class="hero-kicker"><span class="tag-dot"></span> THE NIGHT IS CALLING</div><h1>MAKE<br>IT A <em>NIGHT.</em></h1><p>Discover Bangkok after dark. Find your people, your music, your next favorite spot.</p><button class="btn cream hero-cta" onclick="App.go('discover')">EXPLORE TONIGHT ${ic('arrow',17)}</button></section>
 <div class="quick"><button class="quick-btn" onclick="App.quick('All')"><span class="qi">${ic('compass',21)}</span>Explore all</button><button class="quick-btn" onclick="App.quick('Live')"><span class="qi">${ic('music',21)}</span>Live Music</button><button class="quick-btn" onclick="App.quick('Hip-Hop')"><span class="qi">${ic('spark',21)}</span>Nightclubs</button><button class="quick-btn" onclick="App.go('events')"><span class="qi">${ic('ticket',21)}</span>Events</button><button class="quick-btn" onclick="App.openModal('map')"><span class="qi">${ic('map',21)}</span>Near me*</button></div>
 <div class="section"><div class="pad">${sec('TONIGHT’S PICKS','THE HOT LIST',"App.go('discover')")}</div><div class="scroll-x">${venues.slice().sort((a,b)=>Number(DB.prefs.interests.includes(b.genre))-Number(DB.prefs.interests.includes(a.genre))).slice(0,4).map(venueTile).join('')}</div></div>
 <div class="feature-banner"><div><div class="micro" style="color:#ffd8e0">INTRODUCING THE TABLE RUNNER</div><h3>LESS WAIT.<br>MORE NIGHT.</h3><p>Get help requesting a table or joining an eligible walk-in queue.</p></div><button aria-label="Explore Table Runner" onclick="App.go('guide')">${ic('arrow')}</button></div>
@@ -64,11 +77,167 @@ function quick(g){UI.genre=g;UI.area='All';UI.q='';UI.map=false;go('discover')}
 function filteredVenues(){let q=UI.q.trim().toLowerCase();let a=venues.filter(v=>(UI.area==='All'||v.area===UI.area)&&(UI.genre==='All'||v.genre===UI.genre||v.kind.toLowerCase().includes(UI.genre.toLowerCase())||v.tags.includes(UI.genre))&&(!q||[v.name,v.area,v.kind,v.genre,...v.tags].join(' ').toLowerCase().includes(q))&&(UI.filterPrice===0||v.price<=UI.filterPrice));if(UI.sort==='Top rated')a.sort((a,b)=>b.rating-a.rating);if(UI.sort==='Lowest sample price')a.sort((a,b)=>a.price-b.price);return a}
 function discoveryResults(){const v=filteredVenues();return `<div class="search-meta"><span>${v.length} sample venues found</span><button class="inline-link" onclick="App.toggleMap()">${ic(UI.map?'menu':'map',13)} ${UI.map?'List view':'Map preview'}</button></div>${UI.map?`<div class="mini-map"><div class="map-title">Bangkok · Schematic map</div><button class="map-pin" style="top:68px;left:42%" onclick="App.openVenue('sugar')">${ic('pin',13)}</button><button class="map-pin" style="top:112px;left:65%" onclick="App.openVenue('velvet')">${ic('pin',13)}</button><button class="map-pin" style="top:157px;left:22%" onclick="App.openVenue('neon')">${ic('pin',13)}</button><button class="map-pin" style="top:64px;left:77%" onclick="App.openVenue('rue')">${ic('pin',13)}</button><span class="map-disclaimer">Illustration · Not live GPS</span></div>`:''}${v.length?v.map(wideVenue).join(''):`<div class="empty"><div class="emptyicon">${ic('search',25)}</div><h3>No venues found</h3><p>Try another neighborhood, music style or budget.</p><button class="btn soft smallbtn" onclick="App.resetFilters()">Reset filters</button></div>`}`}
 function discover(){const areas=['All','RCA','Thonglor','Ekkamai','Sukhumvit','Sathorn','Silom'];const genres=['All','Hip-Hop','Live','Jazz','House','EDM','Pop'];return `<div class="screen">${brandHeader()}<div class="pad discovery-header"><div class="eyebrow">FIND YOUR SCENE</div><h1>DISCOVER<br><span class="accent">AFTER DARK.</span></h1><div class="searchbar-row"><label class="searchbox">${ic('search')}<input id="discovery-search" aria-label="Search venues" placeholder="Venues, music, neighborhoods..." value="${e(UI.q)}" oninput="App.setQuery(this.value)"></label><button class="filter-btn" aria-label="Filters" onclick="App.openModal('filter')">${ic('sliders',22)}</button></div><div class="micro" style="margin:23px 0 9px">NEIGHBORHOOD</div><div class="chips">${areas.map(a=>`<button class="chip ${UI.area===a?'active':''}" onclick="App.setArea('${a}')">${a}</button>`).join('')}</div><div class="micro" style="margin:18px 0 9px">MUSIC & MOOD</div><div class="chips">${genres.map(g=>`<button class="chip ${UI.genre===g?'line-active':''}" onclick="App.setGenre('${g}')">${g}</button>`).join('')}</div><div id="discovery-results">${discoveryResults()}</div><div class="content-note">* Sample starting prices and venue policies are not verified. Confirm with venues before visiting.</div></div></div>`}
-function detailInfo(v){if(UI.infoTab==='menu')return `<div class="micro" style="margin-bottom:12px">SAMPLE MENU — NOT VERIFIED PRICES</div>${v.menu.map(m=>`<div class="menu-item"><div><strong>${e(m[0])}</strong><small>${e(m[1])}</small></div><span class="menu-price">${e(m[2])}</span></div>`).join('')}<p class="hint" style="margin-top:14px">Menu prices and availability are illustrative only.</p>`;
-if(UI.infoTab==='reviews')return `<div class="spread"><b>Community notes</b><button class="inline-link" onclick="App.openModal('review')">${ic('edit',13)} Write a review</button></div>${[{name:'Mina',r:5,text:'Loved the atmosphere and music. Sample review.'},{name:'Pete',r:4,text:'Fun place with friendly energy. Sample review.'},...DB.reviews.filter(r=>r.venue===v.id).map(x=>({name:x.name,r:x.rating,text:x.text}))].map(r=>`<div class="review"><div class="spread"><strong>${e(r.name)}</strong><small class="rating-stars">${'★'.repeat(r.r)}${'☆'.repeat(5-r.r)}</small></div><p>${e(r.text)}</p></div>`).join('')}<p class="hint">All reviews shown here are prototype examples or saved in this browser.</p>`;
-if(UI.infoTab==='gallery')return `<div class="gallery">${[v.image,photos.lounge,photos.crowd,photos.stage].map((p,i)=>`<div class="image" style="${media(p,v.accent)}"><span style="position:absolute;bottom:10px;left:10px;font-size:10px">PHOTO 0${i+1}</span></div>`).join('')}</div><p class="hint" style="margin-top:12px">Visual moodboard photos — not guaranteed to depict this venue.</p>`;
-return `<p style="font-size:13px;color:#d4c1cb;line-height:1.8">${e(v.desc)}</p><div class="row wrap" style="margin-top:12px">${v.tags.map(t=>`<span class="pill outline">${e(t)}</span>`).join('')}</div><div class="line"></div><div class="spread"><div><strong style="font-size:12px">Location area</strong><p class="hint" style="margin:6px 0">${e(v.area)}, Bangkok</p></div><button class="btn smallbtn ghost" onclick="App.openMap('${v.id}')">${ic('map',15)} Open area map</button></div><div class="line"></div><div class="spread"><strong style="font-size:12px">Contact & booking policies</strong><span class="pill tiny gold">Sample data</span></div><p class="hint" style="margin-top:8px">Opening hours, entry policies, prices and availability must be verified with the actual venue. A request is not a reservation.</p>`}
-function venueDetail(){let v=V(UI.venue),p=DB.policies[v.id];return `<div class="screen"> <div class="detail-cover image" style="${media(v.image,v.accent)}"><div class="detail-top"><button class="circle-btn" onclick="App.back()" aria-label="Back">${ic('back')}</button><div class="row"><button class="circle-btn" onclick="App.toggleFav('${v.id}')" aria-label="Save favorite" style="color:${DB.favs.includes(v.id)?'#ff94aa':'#fff'}">${ic('heart')}</button><button class="circle-btn" onclick="App.shareVenue('${v.id}')" aria-label="Share">${ic('share')}</button></div></div><div class="detail-bottom"><span class="pill rose">${e(v.kind)} · ${e(v.genre)}</span><h1>${e(v.name)}</h1><p>${ic('pin',13)} ${e(v.area)} · Bangkok <span style="margin:0 6px">•</span> ★ ${v.rating} sample</p></div></div><div class="pad"><div class="detail-stats"><div class="stat"><b>${v.rating} ★</b><span>Demo rating</span></div><div class="stat"><b>${baht(v.price)}*</b><span>Sample price from</span></div><div class="stat"><b>${p.queue?'Available*':'Not shown'}</b><span>Queue-help policy</span></div></div><div class="info-tabs">${[['about','Overview'],['menu','Menu'],['reviews','Reviews'],['gallery','Photos']].map(([id,label])=>`<button class="${UI.infoTab===id?'active':''}" onclick="App.setInfoTab('${id}')">${label}</button>`).join('')}</div>${detailInfo(v)}<div style="height:18px"></div><div class="safety">${ic('info',18)}<span>All listings and policy switches are for demonstration only. A booking or queue request does not guarantee a table or entry.</span></div></div><div class="floating-cta"><div><div class="micro">YOUR NIGHT STARTS HERE</div><strong style="font-size:11px">3 ways to request</strong></div><button class="btn" onclick="App.startBooking('${v.id}')">BOOK YOUR NIGHT ${ic('arrow',16)}</button></div></div>`}
+function detailInfo(v){
+  const venueAddress = {
+    velvet: 'RCA Alley, Bang Kapi, Huai Khwang, Bangkok 10310',
+    sugar: 'สุขุมวิท 11 เขตวัฒนา กรุงเทพมหานคร 10110',
+    neon: 'ทองหล่อ เขตวัฒนา กรุงเทพมหานคร 10110',
+    rue: 'เอกมัย เขตวัฒนา กรุงเทพมหานคร 10110'
+  };
+
+  const venueHours = {
+    velvet: '20:00 – 02:00 น. (ทุกวัน)',
+    sugar: '21:00 – 02:00 น. (ทุกวัน)',
+    neon: '19:00 – 01:00 น. (พฤ.–อา.)',
+    rue: '18:00 – 00:00 น. (ทุกวัน)'
+  };
+
+  const menuThumbs = {
+    mojito: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300&q=80',
+    juice: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=300&q=80',
+    whiskey: 'https://images.unsplash.com/photo-1527281400683-1aae777175f8?w=300&q=80',
+    beer: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&q=80'
+  };
+
+  const menuData = {
+    velvet: [
+      { name:'Mojito', desc:'ค็อกเทลซิกเนเจอร์รสสดชื่น', price:'฿380 (อ้างอิง)', img:menuThumbs.mojito },
+      { name:'เครื่องดื่ม/น้ำผลไม้ pre-mixed', desc:'ดื่มง่าย เหมาะกับการแชร์', price:'฿320 (อ้างอิง)', img:menuThumbs.juice },
+      { name:'Bottle Set', desc:'เซ็ตสำหรับกลุ่มเพื่อน', price:'฿2,900 (อ้างอิง)', img:menuThumbs.whiskey },
+      { name:'เบียร์ (ขวด)', desc:'ตัวเลือกมาตรฐานสำหรับเริ่มต้น', price:'฿180 (อ้างอิง)', img:menuThumbs.beer }
+    ]
+  };
+
+  const reviewData = {
+    velvet: [
+      { icon:'🎵', text:'ดนตรีดี DJ เก่ง พนักงานเป็นมิตร แต่พื้นที่เต้นน้อย' },
+      { icon:'🍸', text:'ราคาเครื่องดื่มสูง และร้านแน่นมากช่วงพีค' },
+      { icon:'💸', text:'Mojito 380 บาท ก่อนค่าบริการ และโต๊ะมี minimum spend 5,000 บาท' }
+    ]
+  };
+
+  const photoSet = {
+    velvet: [v.image, photos.lounge]
+  };
+
+  const address = venueAddress[v.id] || `${e(v.area)}, Bangkok`;
+  const openHours = venueHours[v.id] || '20:00 – 02:00 น.';
+  const reviews = reviewData[v.id] || [
+    { icon:'⭐', text:'บรรยากาศดี เหมาะกับสายปาร์ตี้' },
+    { icon:'🎧', text:'แนวเพลงและสไตล์ร้านชัดเจน' }
+  ];
+  const menu = menuData[v.id] || (v.menu || []).map((m, i) => ({
+    name: m[0],
+    desc: m[1],
+    price: m[2],
+    img: [menuThumbs.mojito, menuThumbs.juice, menuThumbs.whiskey, menuThumbs.beer][i % 4]
+  }));
+  const gallery = photoSet[v.id] || [v.image, photos.crowd];
+
+  if (UI.infoTab === 'about') {
+    return `
+      <div class="detail-block">
+        <h3 class="detail-section-title">เกี่ยวกับร้าน</h3>
+        <p class="detail-lead">${e(v.desc)}</p>
+
+        <div class="detail-tags">
+          ${v.tags.map(t => `<span class="pill outline">${e(t)}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <h3 class="detail-section-title">ที่ตั้งร้าน</h3>
+
+        <div class="venue-map-card">
+          <div class="venue-map-thumb">
+            <div class="venue-map-pin">${ic('pin',14)}</div>
+          </div>
+
+          <div class="venue-map-row">
+            <div class="venue-address">${address}</div>
+            <button class="map-open-btn" onclick="App.openMap('${v.id}')">
+              ${ic('map',15)} เปิดแผนที่
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-block">
+        <h3 class="detail-section-title">ช่วงเวลาเปิดบริการ</h3>
+        <div class="hours-row">
+          <span class="hours-icon">${ic('clock',15)}</span>
+          <span>${openHours}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  if (UI.infoTab === 'menu') {
+    return `
+      <div class="detail-block">
+        <h3 class="detail-section-title">เมนูและแพ็กเกจ</h3>
+        <p class="detail-lead detail-lead--small">
+          ราคาอ้างอิงจากข้อมูลที่รวบรวม อาจเปลี่ยนแปลงและอาจยังไม่รวมค่าบริการหรือภาษี
+        </p>
+
+        <div class="menu-card-list">
+          ${menu.map(item => `
+            <div class="menu-card">
+              <div class="menu-thumb" style="background-image:url('${item.img}')"></div>
+
+              <div class="menu-meta">
+                <strong>${e(item.name)}</strong>
+                <small>${e(item.desc)}</small>
+              </div>
+
+              <div class="menu-price">${e(item.price)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (UI.infoTab === 'reviews') {
+    return `
+      <div class="detail-block">
+        <h3 class="detail-section-title">รีวิวและความคิดเห็น <span class="review-score-inline">⭐ ${v.rating}/5</span></h3>
+        <p class="detail-lead detail-lead--small">
+          ความคิดเห็นจากข้อมูลที่ทีมรวบรวม ไม่ใช่รีวิวสด
+        </p>
+
+        <div class="review-card-list">
+          ${reviews.map(r => `
+            <div class="review-soft-card">
+              <div class="review-soft-icon">${r.icon}</div>
+              <div class="review-soft-text">${e(r.text)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (UI.infoTab === 'gallery') {
+    return `
+      <div class="detail-block">
+        <h3 class="detail-section-title">รูปภาพบรรยากาศร้าน</h3>
+
+        <div class="gallery-vertical">
+          ${gallery.slice(0,2).map((p,i)=>`
+            <div class="gallery-photo-card">
+              <div class="gallery-photo image" style="${media(p,v.accent)}"></div>
+              <div class="gallery-photo-caption">ภาพบรรยากาศร้าน ${i+1}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  return '';
+}
+function venueDetail(){let v=V(UI.venue),p=DB.policies[v.id];return `<div class="screen"> <div class="detail-cover image" style="${media(v.image,v.accent)}"><div class="detail-top"><button class="circle-btn" onclick="App.back()" aria-label="Back">${ic('back')}</button><div class="row"><button class="circle-btn" onclick="App.toggleFav('${v.id}')" aria-label="Save favorite" style="color:${DB.favs.includes(v.id)?'#ff94aa':'#fff'}">${ic('heart')}</button><button class="circle-btn" onclick="App.shareVenue('${v.id}')" aria-label="Share">${ic('share')}</button></div></div><div class="detail-bottom"><span class="pill rose">${e(v.kind)} · ${e(v.genre)}</span><h1>${e(v.name)}</h1><p>${ic('pin',13)} ${e(v.area)} · Bangkok <span style="margin:0 6px">•</span> ★ ${v.rating} sample</p></div></div><div class="pad"><div class="detail-stats"><div class="stat"><b>${v.rating} ★</b><span>Demo rating</span></div><div class="stat"><b>${baht(v.price)}*</b><span>Sample price from</span></div><div class="stat"><b>${p.queue?'Available*':'Not shown'}</b><span>Queue-help policy</span></div></div><div class="info-tabs">${[['about','Overview'],['menu','Menu'],['reviews','Reviews'],['gallery','Photos']].map(([id,label])=>`<button class="${UI.infoTab===id?'active':''}" onclick="App.setInfoTab('${id}')">${label}</button>`).join('')}</div>${detailInfo(v)}<div style="height:8px"></div><div class="safety">${ic('info',18)}<span>All listings and policy switches are for demonstration only. A booking or queue request does not guarantee a table or entry.</span></div></div><div class="floating-cta"><div><div class="micro">YOUR NIGHT STARTS HERE</div><strong style="font-size:11px">3 ways to request</strong></div><button class="btn" onclick="App.startBooking('${v.id}')">BOOK YOUR NIGHT ${ic('arrow',16)}</button></div></div>`}
 function eventList(){return `<div class="screen">${brandHeader()}<div class="pad discovery-header"><div class="eyebrow">PARTY CALENDAR</div><h1>WHAT’S<br><span class="accent">ON TONIGHT?</span></h1><p class="hint">Curated event concepts, illustrated ticket flow. Dates and prices are demo-only.</p><div class="section-bar" style="margin-top:25px"><h2>UPCOMING EVENTS</h2><span class="pill rose">${events.length} EVENTS</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:22px 11px">${events.map(ev=>`<div style="min-width:0">${eventTile(ev)}</div>`).join('')}</div>${demoFooter()}</div></div>`}
 function eventDetail(){let ev=E(UI.event),v=V(ev.venue);return `<div class="screen"><div class="detail-cover image ${ev.art}" style="${media(photos.crowd,'#652042')}"><div class="detail-top"><button class="circle-btn" onclick="App.back()">${ic('back')}</button><button class="circle-btn" onclick="App.shareEvent('${ev.id}')">${ic('share')}</button></div><div class="detail-bottom"><span class="pill rose">${e(ev.label)}</span><h1>${e(ev.name)}</h1><p>${e(ev.subtitle)}</p></div></div><div class="pad"><div class="section-bar" style="margin-top:22px"><h2>THE EXPERIENCE</h2></div><p style="color:#d3bfc9;font-size:13px;line-height:1.8">${e(ev.desc)}</p><div class="subtle-card stack"><div class="row">${ic('calendar',20)} <span class="grow">${niceDate(dateOffset(ev.offset))}, ${ev.time}</span></div><div class="row">${ic('pin',20)} <span class="grow">${e(v.name)} · ${e(v.area)}</span><button class="inline-link" onclick="App.openVenue('${v.id}')">Venue ${ic('chevron',12)}</button></div><div class="row">${ic('ticket',20)} <span>Illustrative admission · ${baht(ev.price)} / ticket</span></div></div><div class="section">${sec('CHOOSE TICKETS','SAMPLE ADMISSION')}<div class="spread form-card"><div><strong>General admission</strong><div class="hint">Admission request · Demo only</div></div><div class="num-control"><button onclick="App.qty(-1)">−</button><b>${UI.ticketQty}</b><button onclick="App.qty(1)">+</button></div></div><div class="line"></div><div class="spread"><b>Total (sample)</b><b style="font-size:22px">${baht(ev.price*UI.ticketQty)}</b></div><div class="safety" style="margin-top:14px">${ic('shield',17)} No payment is taken. The issued ticket is a simulated pass, not a valid entry ticket.</div></div></div><div class="floating-cta"><button class="btn full" onclick="App.issueTicket()">GENERATE DEMO TICKET ${ic('arrow',17)}</button></div></div>`}
 function serviceScreen(){let v=V(UI.venue),p=DB.policies[v.id];let options=[{id:'direct',icon:'calendar',name:'Request directly',desc:'Send a table request for the venue to review.',available:p.direct,fee:0},{id:'runner_pickup',icon:'shield',name:'จองเอง แล้วให้ Runner ไปรับโต๊ะ',desc:'คุณจองกับร้านเองก่อน แล้วให้ Runner ไปช่วยเช็กอิน/รับโต๊ะตามกฎร้าน',available:p.runner,fee:300},{id:'runner_booking',icon:'users',name:'Runner · Advance booking',desc:'Ask a runner to help contact the venue and request a table.',available:p.runner,fee:300},{id:'queue',icon:'clock',name:'Runner · Walk-in queue',desc:'Ask a runner to wait at the venue, only where allowed.',available:p.queue,fee:350}];return `<div class="screen">${title('Book your night','Step 1 / 3 · Select a service')}<div class="stepper"><span class="done"></span><span></span><span></span></div><div class="pad"><div class="eyebrow" style="margin:15px 0 7px">${e(v.name)} · ${e(v.area)}</div><h1 class="s-title" style="font-size:44px;margin:0 0 19px">HOW DO YOU<br>WANT TO GO?</h1>${options.map(o=>`<button class="service-option ${UI.service===o.id?'selected':''}" ${o.available?'':'disabled'} onclick="App.chooseService('${o.id}')"><div class="service-mark">${ic(o.icon,22)}</div><div class="grow"><strong>${e(o.name)}</strong><p>${e(o.desc)}</p><div style="margin-top:6px;font-size:10px;color:${o.available?'#f6c1ce':'#aaa'}">${o.available?'Example service fee: '+baht(o.fee):'Disabled in demo venue policy'}</div></div><span class="radio"></span></button>`).join('')}<div class="safety">${ic('shield',18)}<span>Venue permission is required. A runner cannot guarantee a table, a queue spot or entry. Demo fees are not charged and do not represent actual prices.</span></div><div style="margin-top:21px"><button class="btn full" onclick="App.go('booking-form')" ${!p[['runner_booking','runner_pickup'].includes(UI.service)?'runner':UI.service]?'disabled':''}>CONTINUE ${ic('arrow',17)}</button></div></div></div>`}
@@ -1018,27 +1187,76 @@ function go(page) {
   render();
 }
 
+
+
 function back() {
+  const leavingVenue = UI.screen === 'venue';
+
   UI.modal = '';
 
   const previous = UI.stack.pop() || 'home';
-
   UI.screen = previous;
 
-  // ดึงตำแหน่ง Scroll ที่เคยบันทึกไว้
-  const targetY = UI.scrollMemory?.[previous] ?? 0;
+  // กลับจากรายละเอียดร้านไป Explore
+  if (
+    leavingVenue &&
+    previous === 'discover' &&
+    UI.exploreCache?.phone
+  ) {
+    const cache = UI.exploreCache;
+    const app = document.getElementById('app');
+
+    if (app) {
+      // คืนหน้าเดิม โดยไม่สร้าง HTML และรูปใหม่
+      app.replaceChildren(cache.phone);
+
+      // อัปเดตหัวใจในกรณีบันทึกร้านจากหน้ารายละเอียด
+      cache.phone
+        .querySelectorAll('.cnk-explore-heart')
+        .forEach(button => {
+          const code = button.getAttribute('onclick') || '';
+
+          const id = code.match(
+            /App\.toggleFav\(['"]([^'"]+)['"]\)/
+          )?.[1];
+
+          if (id) {
+            const saved = DB.favs.includes(id);
+
+            button.classList.toggle('is-saved', saved);
+            button.setAttribute('aria-pressed', String(saved));
+          }
+        });
+
+      cache.phone.scrollTop = cache.phoneY;
+
+      const screen = cache.phone.querySelector('.screen');
+      if (screen) screen.scrollTop = cache.screenY;
+
+      window.scrollTo(0, cache.y);
+
+      if (document.scrollingElement) {
+        document.scrollingElement.scrollTop = cache.docY;
+      }
+
+      UI.exploreCache = null;
+      return;
+    }
+  }
+
+  // หน้าอื่นยังใช้การ Render ตามระบบเดิม
+  const savedY = UI.scrollMemory?.[previous];
 
   render();
 
-  // คืนตำแหน่งหลังสร้างหน้ากลับมาแล้ว
-  requestAnimationFrame(() => {
-    window.scrollTo({
-      top: targetY,
-      behavior: 'instant'
+  if (typeof savedY === 'number') {
+    requestAnimationFrame(() => {
+      window.scrollTo(0, savedY);
     });
-  });
+  }
 }
-function switchRole(role){if(!['user','runner','venue'].includes(role))return;UI.role=role;UI.screen='home';UI.stack=[];UI.modal='';UI.toast='';render()}
+
+function switchRole(role){if(!['user','runner','venue'].includes(role))return;UI.role=role;UI.screen=role === 'runner' ? 'jobs' : 'home' ;UI.stack=[];UI.modal='';UI.toast='';render()}
 function startBooking(venue){UI.venue=venue;UI.service=DB.policies[venue].direct?'direct':DB.policies[venue].runner?'runner_booking':'queue';UI.date=dateOffset(1);UI.time='21:00';UI.guests=2;UI.seat='Indoor';UI.note='';go('service')}
 function chooseService(s){UI.service=s;render(true)}
 
@@ -1082,7 +1300,27 @@ function openMap(id){const v=V(id);const query=encodeURIComponent(v.area+', Bang
 function copyLink(text){if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(()=>toast('Copied to clipboard.')).catch(()=>toast('Could not copy this link.'))}else{try{window.prompt('Copy this local demo link:',text)}catch(_){toast('Sharing is not supported here.')}}}
 function openModal(m){UI.modal=m;render(true)}function closeModal(){UI.modal='';render(true)}
 function setQuery(v){UI.q=v;const r=document.getElementById('discovery-results');if(r)r.innerHTML=discoveryResults()}
-function openVenue(id){UI.venue=id;UI.infoTab='about';go('venue')}
+
+
+function openVenue(id) {
+  if (UI.screen === 'discover') {
+    const phone = document.querySelector('#app > .phone');
+
+    if (phone) {
+      UI.exploreCache = {
+        phone,
+        y: window.scrollY || 0,
+        docY: document.scrollingElement?.scrollTop || 0,
+        phoneY: phone.scrollTop || 0,
+        screenY: phone.querySelector('.screen')?.scrollTop || 0
+      };
+    }
+  }
+
+  UI.venue = id;
+  UI.infoTab = 'about';
+  go('venue');
+}
 function openEvent(id){UI.event=id;UI.ticketQty=1;go('event')}
 function openTracking(id){UI.reqId=id;go('track')}
 function openChat(id){UI.reqId=id;go('chat')}
