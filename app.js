@@ -76,7 +76,8 @@ function bookingForm(){let v=V(UI.venue),p=DB.policies[v.id],isq=UI.service==='q
 <label class="field-label">เลือกวันที่</label>
 ${window.CNK_bookingCalendar()}
 <label class="field-label">Preferred arrival time</label><div class="selectrow">${['18:00','18:30','19:00','19:30','20:00','20:30','21:00'].map(t=>`<button class="choice ${UI.time===t?'active':''}" onclick="App.formChange('time','${t}')">${t}</button>`).join('')}</div>
-<label class="field-label">Your group size</label><div class="subtle-card spread"><span class="hint">Including you</span><div class="num-control"><button onclick="App.guests(-1)">−</button><b>${UI.guests}</b><button onclick="App.guests(1)">+</button></div></div>
+<label class="field-label">Your group size</label><div class="subtle-card spread"><span class="hint">Including you</span><div class="num-control"><button onclick="App.guests(-1)">−</button><b id="cnk-guest-count">${UI.guests}</b>
+<button onclick="App.guests(1)">+</button></div></div>
 ${!isq?`<label class="field-label">Preferred seating <small>(subject to venue)</small></label><div class="selectrow">${['Indoor','Outdoor','VIP','Bar'].map(x=>`<button class="choice ${UI.seat===x?'active':''}" onclick="App.formChange('seat','${x}')">${x}</button>`).join('')}</div>`:''}
 <label class="field-label" for="bookingnotes">A message for the ${UI.service==='direct'?'venue':'runner'} <small>(optional)</small></label><textarea class="field fieldarea" maxlength="350" id="bookingnotes" placeholder="e.g. We are celebrating a birthday. Please confirm requirements." oninput="App.formChange('note',this.value,false)">${e(UI.note)}</textarea>
 ${isq?`<div class="notice-card">A queue helper can only act where the venue explicitly permits it. You may still need to appear in person before admission.</div>`:''}<div style="margin:22px 0"><button class="btn full" onclick="App.reviewBooking()">REVIEW REQUEST ${ic('arrow',16)}</button></div></div></div>`}
@@ -85,13 +86,331 @@ function serviceName(s){return({direct:'Direct table request',runner_booking:'Ru
 function bookingReview(){let v=V(UI.venue);const fees=feeFor(UI.service);return `<div class="screen">${title('Review & submit','Step 3 / 3 · Not a confirmed booking')}<div class="stepper"><span class="done"></span><span class="done"></span><span class="done"></span></div><div class="pad"><div class="eyebrow" style="margin-top:15px">FINAL CHECK</div><h1 class="s-title" style="font-size:44px;margin:8px 0 19px">READY FOR<br><span class="accent">YOUR NIGHT?</span></h1><div class="form-card"><span class="pill rose">${e(serviceName(UI.service))}</span><h2 style="font-size:22px;margin:13px 0 12px">${e(v.name)}</h2>${[['Neighborhood',v.area],['Date & time',niceDate(UI.date)+' · '+UI.time],['Guests',String(UI.guests)],...(UI.service!=='queue'?[['Seating preference',UI.seat]]:[]),['Special request',UI.note||'None']].map(([k,val])=>`<div class="spread" style="padding:9px 0;border-bottom:1px solid var(--line);gap:12px"><span class="hint">${e(k)}</span><strong style="font-size:12px;text-align:right">${e(val)}</strong></div>`).join('')}</div><div class="subtle-card" style="margin-top:13px"><div class="spread"><span class="hint">Illustrative runner service fee</span><strong>${baht(fees)}</strong></div><p class="hint" style="margin:10px 0 0">No charge is collected in this prototype. Actual service price, venue deposit and cancellation terms require agreement.</p></div><div class="safety" style="margin-top:13px">${ic('shield',19)}<span>Submitting sends a demo request only. Venue approval, runner availability, entry eligibility and queue transfer conditions are not guaranteed.</span></div><button class="btn full" style="margin-top:19px" onclick="App.submitBooking()">SEND DEMO REQUEST ${ic('arrow',17)}</button><button class="btn ghost full" style="margin-top:9px" onclick="App.back()">Edit details</button></div></div>`}
 const stLabels={finding_runner:'Finding a runner',pending_venue:'Awaiting venue review',contacting:'Runner contacting venue',queuing:'Runner checking queue',awaiting_venue:'Waiting for venue verification',confirmed:'Venue confirmed',queue_verified:'Queue help verified',declined:'Not approved',cancelled:'Cancelled'};
 function statusLabel(s){return stLabels[s]||'Request sent'}
+function userStatusThai(status) {
+  return ({
+    finding_runner: 'กำลังหา Runner',
+    pending_venue: 'รอร้านตรวจสอบ',
+    contacting: 'Runner กำลังติดต่อร้าน',
+    queuing: 'Runner กำลังตรวจสอบคิว',
+    awaiting_venue: 'รอร้านยืนยัน',
+    confirmed: 'ร้านยืนยันแล้ว',
+    queue_verified: 'ร้านตรวจสอบคิวแล้ว',
+    declined: 'ร้านไม่อนุมัติ',
+    cancelled: 'ยกเลิกแล้ว'
+  })[status] || 'ส่งคำขอแล้ว';
+}
 function isDone(r){return ['confirmed','queue_verified','declined','cancelled'].includes(r.status)}
 function requestById(id){return DB.requests.find(x=>x.id===id)}
-function bookingReceipt(){const r=requestById(UI.reqId);if(!r)return activity();return `<div class="screen">${title('Request submitted','This is not a confirmed reservation')}<div class="pad" style="text-align:center;padding-top:28px"><div style="background:#392032;border-radius:50%;width:96px;height:96px;display:grid;place-items:center;color:#f68ca1;margin:0 auto 20px">${ic('check',49)}</div><div class="eyebrow">REQUEST RECEIVED · DEMO</div><h1 class="display" style="font-size:55px;margin:11px 0 17px">YOU’RE ONE<br>STEP CLOSER.</h1><p class="hint">We’ve created your sample request for ${e(V(r.venue).name)}. Follow the status, test another role or message the other side.</p><div class="subtle-card" style="margin:22px 0;text-align:left"><div class="spread"><span class="micro">REQUEST ID</span><b>${e(r.id)}</b></div><div class="line"></div><div class="spread"><span class="hint">Next step</span><span class="pill tiny gold">${e(statusLabel(r.status))}</span></div></div><button class="btn full" onclick="App.openTracking('${r.id}')">TRACK YOUR REQUEST ${ic('arrow',17)}</button><button class="btn full ghost" style="margin-top:10px" onclick="App.switchRole('${r.service==='direct'?'venue':'runner'}')">TEST ${r.service==='direct'?'VENUE':'RUNNER'} ROLE ${ic('arrow',16)}</button><button class="inline-link" style="margin-top:23px" onclick="App.switchRole('user')">Back to home</button></div></div>`}
+function bookingReceipt(){
+function bookingReceipt() {
+  const r = requestById(UI.reqId);
+  if (!r) return activity();
+
+  const venue = V(r.venue);
+
+  return `
+    <div class="screen">
+      ${title(
+        'ส่งคำขอแล้ว',
+        'ยังไม่ใช่การจองที่ได้รับการยืนยัน'
+      )}
+
+      <div class="pad"
+        style="text-align:center;padding-top:28px">
+
+        <div style="
+          background:#392032;
+          border-radius:50%;
+          width:96px;
+          height:96px;
+          display:grid;
+          place-items:center;
+          color:#f68ca1;
+          margin:0 auto 20px;
+        ">
+          ${ic('check',49)}
+        </div>
+
+        <div class="eyebrow">
+          ระบบได้รับคำขอแล้ว
+        </div>
+
+        <h1 class="display"
+          style="
+            font-size:38px;
+            line-height:1.24;
+            margin:12px 0 16px;
+          ">
+          ส่งคำขอ<br>เรียบร้อยแล้ว
+        </h1>
+
+        <p class="hint">
+          เราได้รับคำขอสำหรับ
+          ${e(venue.name)} แล้ว
+          กรุณาติดตามสถานะและรอการตอบรับ
+          จากร้านหรือ Runner
+        </p>
+
+        <div class="subtle-card"
+          style="margin:22px 0;text-align:left">
+
+          <div class="spread">
+            <span class="micro">รหัสคำขอ</span>
+            <b>${e(r.id)}</b>
+          </div>
+
+          <div class="line"></div>
+
+          <div class="spread">
+            <span class="hint">สถานะปัจจุบัน</span>
+            <span class="pill tiny gold">
+              ${e(userStatusThai(r.status))}
+            </span>
+          </div>
+
+        </div>
+
+        <button class="btn full"
+          onclick="App.openTracking('${r.id}')">
+          ติดตามสถานะ ${ic('arrow',17)}
+        </button>
+
+        <button class="btn full ghost"
+          style="margin-top:10px"
+          onclick="App.go('activity')">
+          ดูรายการในคืนของฉัน
+        </button>
+
+        <button class="inline-link"
+          style="margin-top:23px"
+          onclick="App.go('home')">
+          กลับหน้าหลัก
+        </button>
+
+      </div>
+    </div>
+  `;
+}
+}
 function statusPlan(r){if(r.service==='direct')return[{t:'Request submitted',ok:true,d:'The venue has received a sample request.'},{t:'Venue reviewing',ok:!['pending_venue'].includes(r.status),active:r.status==='pending_venue',d:'The venue needs to confirm availability and terms.'},{t:'Venue confirmation',ok:r.status==='confirmed',active:false,d:'Only the venue can confirm a table.'}];if(['runner_booking','runner_pickup'].includes(r.service))return[{t:'Request submitted',ok:true,d:'Booking help requested.'},{t:'Runner assigned',ok:!['finding_runner'].includes(r.status),active:r.status==='finding_runner',d:'Runner availability is not guaranteed.'},{t:'Venue contacted',ok:['awaiting_venue','confirmed'].includes(r.status),active:r.status==='contacting',d:'Runner contacts the venue and submits details.'},{t:'Venue confirmation',ok:r.status==='confirmed',active:r.status==='awaiting_venue',d:'Only the venue can confirm the request.'}];return[{t:'Request submitted',ok:true,d:'Walk-in queue help requested.'},{t:'Runner assigned',ok:!['finding_runner'].includes(r.status),active:r.status==='finding_runner',d:'Venue policy needs to permit queue help.'},{t:'Queue progress verified by runner',ok:['awaiting_venue','queue_verified'].includes(r.status),active:r.status==='queuing',d:'Progress is reported by the runner, not guaranteed.'},{t:'Venue review',ok:r.status==='queue_verified',active:r.status==='awaiting_venue',d:'Venue decides whether queue assistance is accepted; entry not guaranteed.'}]}
 function requestCard(r){const v=V(r.venue);return `<div class="request-card"><div class="request-top"><span class="pill tiny rose">${e(serviceName(r.service))}</span><span class="pill tiny ${r.status==='confirmed'||r.status==='queue_verified'?'mint':r.status==='declined'||r.status==='cancelled'?'outline':'gold'}">${e(statusLabel(r.status))}</span></div><h3>${e(v.name)}</h3><div class="request-meta">${ic('calendar',12)} ${niceDate(r.date)} · ${e(r.time)} &nbsp; ${ic('users',12)} ${r.guests} guests<br>${e(v.area)} · ${e(r.id)}</div><div class="row" style="margin-top:12px"><button class="btn smallbtn grow" onclick="App.openTracking('${r.id}')">View status ${ic('arrow',14)}</button><button class="btn smallbtn ghost" onclick="App.openChat('${r.id}')">${ic('chat',15)} Message</button></div></div>`}
 function activity(){return `<div class="screen">${brandHeader()}<div class="pad discovery-header"><div class="eyebrow">ALL YOUR PLANS</div><h1>YOUR<br><span class="accent">NIGHTS.</span></h1>${myExtras()}<div class="chips" style="margin:21px 0 22px"><button class="chip ${UI.tab==='requests'?'active':''}" onclick="App.setActivityTab('requests')">Bookings & queue</button><button class="chip ${UI.tab==='tickets'?'active':''}" onclick="App.setActivityTab('tickets')">Event tickets</button><button class="chip ${UI.tab==='saved'?'active':''}" onclick="App.setActivityTab('saved')">Saved venues</button></div>${UI.tab==='requests'?DB.requests.filter(r=>r.owner==='guest').length?DB.requests.filter(r=>r.owner==='guest').slice().reverse().map(requestCard).join(''):`<div class="empty"><div class="emptyicon">${ic('calendar',27)}</div><h3>No night plans yet</h3><p>Discover a venue and create your first sample request.</p><button class="btn smallbtn" onclick="App.go('discover')">Explore venues ${ic('arrow',15)}</button></div>`:UI.tab==='tickets'?DB.tickets.length?DB.tickets.slice().reverse().map(t=>`<button class="request-card" style="display:block;text-align:left;width:100%;color:inherit" onclick="App.openTicket('${t.id}')"><div class="spread"><span class="pill tiny rose">DEMO TICKET</span><span class="hint">${e(t.id)}</span></div><h3>${e(E(t.event).name)}</h3><p class="hint">${t.qty} ticket(s) · ${niceDate(t.date)}</p><span class="inline-link">View pass ${ic('chevron',14)}</span></button>`).join(''):`<div class="empty"><h3>No tickets yet</h3><p>Choose a demo event and generate a sample ticket.</p><button class="btn smallbtn" onclick="App.go('events')">Explore events</button></div>`:DB.favs.length?venues.filter(v=>DB.favs.includes(v.id)).map(wideVenue).join(''):`<div class="empty"><h3>No saved venues</h3><p>Tap the heart on any venue to save it here.</p><button class="btn smallbtn" onclick="App.go('discover')">Find places</button></div>`}${demoFooter()}</div></div>`}
-function tracking(){const r=requestById(UI.reqId);if(!r)return activity();let v=V(r.venue);return `<div class="screen">${title('Booking status','Request '+r.id)}<div class="pad"><div class="eyebrow" style="margin-top:8px">LIVE-LIKE DEMO TRACKING</div><h1 class="s-title" style="font-size:45px;margin:8px 0 17px">YOUR NIGHT<br><span class="accent">IN PROGRESS.</span></h1><div class="request-card"><div class="spread"><b style="font-size:19px">${e(v.name)}</b><span class="pill tiny ${isDone(r)?'rose':'gold'}">${e(statusLabel(r.status))}</span></div><div class="hint" style="margin-top:11px">${e(serviceName(r.service))} · ${niceDate(r.date)} · ${e(r.time)} · ${r.guests} guests</div>${r.runner?`<div class="divider"></div><div class="row">${ic('user',18)} <span class="hint">Assigned runner (demo)</span><strong style="margin-left:auto">CKN RUNNER</strong></div>`:''}</div>${r.status==='declined'||r.status==='cancelled'?`<div class="notice-card"><strong>${e(statusLabel(r.status))}</strong><br>${e(r.decisionNote||'This demo request is no longer active. No payment was collected.')}</div>`:`<div class="section-bar" style="margin-top:22px"><h2>STATUS TIMELINE</h2><span class="micro">DEMO DATA</span></div><div class="timeline">${statusPlan(r).map(x=>`<div class="timeline-step ${x.ok?'done':x.active?'active':''}"><h4>${e(x.t)}</h4><p>${e(x.d)}</p></div>`).join('')}</div>`}<div class="divider"></div><strong style="font-size:13px">Status notes</strong><p class="hint">${e(r.progressNote||'No new updates. Switch roles to test the end-to-end experience.')}</p><div class="row" style="margin-top:18px"><button class="btn grow" onclick="App.openChat('${r.id}')">${ic('chat',16)} MESSAGES</button>${!isDone(r)?`<button class="btn ghost" onclick="App.askCancel('${r.id}')">Cancel</button>`:''}</div>${!isDone(r)?`<div class="notice-card" style="margin-top:16px">Try switching to ${r.service==='direct'?'Venue Partner':'Table Runner'} to move this request forward, then return here to see the updated status.</div>`:''}</div></div>`}
+
+function tracking() {
+  const r = requestById(UI.reqId);
+  if (!r) return activity();
+
+  const v = V(r.venue);
+
+  const isClosed =
+    r.status === 'cancelled' ||
+    r.status === 'declined';
+
+  const service = ({
+    direct: 'จองกับร้านโดยตรง',
+    runner_booking: 'ให้ Runner ช่วยจองล่วงหน้า',
+    runner_pickup: 'จองเอง แล้วให้ Runner รับโต๊ะ',
+    queue: 'ให้ Runner ช่วยต่อคิว'
+  })[r.service] || serviceName(r.service);
+
+  // แปลข้อความ โดยคงลำดับสถานะและเงื่อนไขเดิม
+  const th = {
+    'Request submitted': 'ส่งคำขอแล้ว',
+    'Venue reviewing': 'ร้านกำลังตรวจสอบ',
+    'Venue confirmation': 'รอการยืนยันจากร้าน',
+    'Runner assigned': 'มอบหมายงานให้ Runner',
+    'Venue contacted': 'ติดต่อร้านแล้ว',
+    'Queue progress verified by runner':
+      'Runner อัปเดตคิว',
+    'Venue review': 'ร้านตรวจสอบคำขอ',
+
+    'The venue has received a sample request.':
+      'ร้านได้รับคำขอแล้ว',
+
+    'The venue needs to confirm availability and terms.':
+      'รอร้านตรวจสอบโต๊ะและเงื่อนไข',
+
+    'Only the venue can confirm a table.':
+      'ร้านเป็นผู้ยืนยันโต๊ะเท่านั้น',
+
+    'Booking help requested.':
+      'ส่งคำขอให้ Runner ช่วยจองแล้ว',
+
+    'Runner availability is not guaranteed.':
+      'กำลังตรวจสอบ Runner ที่รับงานได้',
+
+    'Runner contacts the venue and submits details.':
+      'Runner ติดต่อร้านและส่งรายละเอียดคำขอ',
+
+    'Only the venue can confirm the request.':
+      'รอร้านเป็นผู้ยืนยันคำขอ',
+
+    'Walk-in queue help requested.':
+      'ส่งคำขอให้ Runner ช่วยต่อคิวแล้ว',
+
+    'Venue policy needs to permit queue help.':
+      'ต้องได้รับอนุญาตจากร้านก่อนต่อคิวแทน',
+
+    'Progress is reported by the runner, not guaranteed.':
+      'Runner รายงานความคืบหน้าคิว ยังไม่รับประกันสิทธิ์',
+
+    'Venue decides whether queue assistance is accepted; entry not guaranteed.':
+      'ร้านเป็นผู้ตัดสินใจรับคำขอ และยังไม่รับประกันการเข้าร้าน'
+  };
+
+  const steps = statusPlan(r).map(s => ({
+    ...s,
+    t: th[s.t] || s.t,
+    d: th[s.d] || s.d
+  }));
+
+  const rawNote = String(r.progressNote || '');
+
+  const note = rawNote.includes(
+    'Demo venue approved request'
+  )
+    ? 'ร้านได้ยืนยันคำขอแล้ว โปรดตรวจสอบเงื่อนไขกับร้านอีกครั้ง'
+    : rawNote.includes('Runner accepted this demo job')
+      ? 'Runner รับงานแล้วและกำลังตรวจสอบเงื่อนไขของร้าน'
+      : rawNote.includes(
+          'Guest cancelled the local demo request'
+        )
+        ? 'ผู้ใช้ยกเลิกคำขอแล้ว'
+        : rawNote || 'ยังไม่มีความคืบหน้าเพิ่มเติม';
+
+  return `
+    <div class="screen">
+
+      ${title(
+        'สถานะคำขอ',
+        'รหัสคำขอ ' + r.id
+      )}
+
+      <div class="pad">
+
+        <div class="eyebrow"
+          style="margin-top:8px">
+          ติดตามคำขอของคุณ
+        </div>
+
+        <h1 class="s-title"
+          style="
+            font-size:38px;
+            line-height:1.25;
+            margin:8px 0 17px;
+          ">
+          คำขอของคุณ<br>
+          <span class="accent">กำลังดำเนินการ</span>
+        </h1>
+
+        <div class="request-card">
+
+          <div class="spread">
+            <b style="font-size:19px">
+              ${e(v.name)}
+            </b>
+
+            <span class="pill tiny
+              ${isDone(r) ? 'rose' : 'gold'}">
+              ${e(userStatusThai(r.status))}
+            </span>
+          </div>
+
+          <p class="hint" style="margin-top:9px">
+            รหัสคำขอ:
+            <strong>${e(r.id)}</strong>
+          </p>
+
+          <div class="hint">
+            ${e(service)} ·
+            ${e(niceDate(r.date))} ·
+            ${e(r.time)} ·
+            ${r.guests} คน
+          </div>
+
+          ${r.runner ? `
+            <div class="divider"></div>
+            <div class="row">
+              ${ic('user',18)}
+              <span class="hint">
+                Runner รับงานแล้ว
+              </span>
+            </div>
+          ` : ''}
+
+        </div>
+
+        ${isClosed ? `
+          <div class="notice-card">
+            <strong>
+              ${e(userStatusThai(r.status))}
+            </strong>
+
+            <p>
+              ${e(
+                r.decisionNote ||
+                'คำขอนี้สิ้นสุดแล้ว ไม่มีการเรียกเก็บเงินในระบบทดลอง'
+              )}
+            </p>
+          </div>
+        ` : `
+          <div class="section-bar"
+            style="margin-top:22px">
+            <h2>ลำดับสถานะ</h2>
+            <span class="micro">
+              ข้อมูลคำขอ
+            </span>
+          </div>
+
+          <div class="timeline">
+            ${steps.map(s => `
+              <div class="timeline-step
+                ${s.ok ? 'done' : s.active ? 'active' : ''}">
+
+                <h4>${e(s.t)}</h4>
+                <p>${e(s.d)}</p>
+
+              </div>
+            `).join('')}
+          </div>
+        `}
+
+        <div class="divider"></div>
+
+        <strong style="font-size:13px">
+          หมายเหตุสถานะ
+        </strong>
+
+        <p class="hint">${e(note)}</p>
+
+        <div class="row" style="margin-top:18px">
+
+          <button class="btn grow"
+            onclick="App.openChat('${r.id}')">
+            ${ic('chat',16)} แชต
+          </button>
+
+          ${!isDone(r) ? `
+            <button class="btn ghost"
+              onclick="App.askCancel('${r.id}')">
+              ยกเลิก
+            </button>
+          ` : ''}
+
+        </div>
+
+        ${!isDone(r) ? `
+          <div class="notice-card"
+            style="margin-top:16px">
+            คำขอนี้ยังไม่ได้รับการยืนยันจากร้าน
+            สถานะจะเปลี่ยนเมื่อ Runner หรือร้านอัปเดต
+          </div>
+        ` : ''}
+
+      </div>
+    </div>
+  `;
+}
 function chat(){let r=requestById(UI.reqId);if(!r)return activity();let arr=DB.chats[r.id]||[];let my=UI.role;return `<div class="screen">${title('Messages',V(r.venue).name+' · '+r.id)}<div class="pad"><div class="role-note">Prototype chat: messages are stored in this browser only. Role switching simulates two sides of the conversation; nothing is sent externally.</div><div class="message-list" style="margin-top:22px">${arr.length?arr.map(m=>`<div class="bubble ${m.role===my?'mine':''}">${e(m.text)}<small>${e(m.role==='user'?'Guest':m.role==='runner'?'Runner':'Venue')} · ${e(m.at)}</small></div>`).join(''):`<div class="center" style="padding:58px 9px 15px;color:#a795a2">${ic('chat',37)}<p class="hint" style="margin-top:14px">Start a conversation about request details or status.</p></div>`}</div></div><div class="chat-input"><input class="field" id="chat-message" maxlength="500" placeholder="Type a demo message..." onkeydown="if(event.key==='Enter')App.sendMessage()"><button aria-label="Send message" onclick="App.sendMessage()">${ic('arrow')}</button></div></div>`}
 function ticketPass(){let t=DB.tickets.find(x=>x.id===UI.ticketId);if(!t)return activity();let ev=E(t.event);return `<div class="screen">${title('My demo ticket','Sample pass only · Not valid for admission')}<div class="pad" style="padding-top:25px"><div class="ticket-paper"><div class="micro" style="color:#8f4865">CHILL N’ KNOCK · EVENT PASS</div><div class="ticket-title" style="margin:13px 0">${e(ev.name)}</div><p>${niceDate(t.date)} · ${ev.time}<br>${e(V(ev.venue).name)}</p><div style="border-top:2px dashed #b9969d;margin:20px 0"></div><div class="ticket-qr" aria-label="Decorative demo code"></div><p class="demo-mark" style="margin-top:18px">NOT SCANNABLE · DEMO ONLY</p><div class="spread" style="margin-top:20px"><span>${t.qty} ticket(s)</span><b>${baht(t.price)}</b></div><div class="micro" style="margin-top:15px;color:#7d5361">${e(t.id)}</div></div><div class="safety" style="margin-top:17px">${ic('info',18)} This is a non-functional representation of a ticket. It is not a venue admission, payment receipt or confirmed booking.</div><button class="btn full ghost" style="margin-top:16px" onclick="App.switchRole('user');App.go('activity')">Back to my nights</button></div></div>`}
 function guide(){return `<div class="screen">${title('Introducing Table Runner','How our two helper services are intended to work')}<div class="pad"><div class="eyebrow">CHILL N’ KNOCK EXTRA</div><h1 class="s-title" style="font-size:50px;margin:14px 0">LESS WAIT.<br><span class="accent">MORE NIGHT.</span></h1><div class="feature-banner" style="margin:7px 0 24px;padding:33px 20px;background:linear-gradient(140deg,#7d2542,#250e25)"><div><div class="micro" style="color:#f1bccc">TABLE RUNNER / TWO SERVICES</div><h3 style="font-size:44px">WE HELP.<br>YOU CHILL.</h3><p>A research concept that connects nightlife guests and independent helpers.</p></div></div>${[['calendar','01 · Advance booking help','A runner contacts a venue about a future table request. The venue must approve it.'],['clock','02 · Walk-in queue help','A runner may queue on your behalf only if the venue expressly permits it. Queue transfer and entry cannot be guaranteed.'],['shield','03 · Clear responsibilities','Show the fee proposal, agreed task, rules, status evidence and venue response before calling a request complete.']].map(([i,t,d])=>`<div class="service-option" style="cursor:default"><div class="service-mark">${ic(i,21)}</div><div><strong>${e(t)}</strong><p>${e(d)}</p></div></div>`).join('')}<button class="btn full" onclick="App.go('discover')">FIND A VENUE ${ic('arrow')}</button>${demoFooter()}</div></div>`}
@@ -185,7 +504,22 @@ const App={go,back,auth,authTab,submitAuth,demoSocial,startApply,nextApply,prevA
 quick,shareVenue(id){copyLink(location.origin+location.pathname+'#venue-'+id)},shareEvent(id){copyLink(location.origin+location.pathname+'#event-'+id)},
 setArea(a){UI.area=a;render(true)},setGenre(g){UI.genre=g;render(true)},toggleMap(){UI.map=!UI.map;render(true)},setSort(x){UI.sort=x;render(true)},setPrice(p){UI.filterPrice=p;render(true)},resetFilters(){UI.area='All';UI.genre='All';UI.q='';UI.filterPrice=0;UI.sort='Recommended';render(true)},pickNeighborhood(a){UI.modal='';UI.area=a;UI.genre='All';UI.q='';go('discover')},
 setInfoTab(x){UI.infoTab=x;render(true)},toggleFav(id){let i=DB.favs.indexOf(id);i>=0?DB.favs.splice(i,1):DB.favs.push(id);save();render(true)},
-guests(n){UI.guests=Math.max(1,Math.min(20,UI.guests+n));render(true)},qty(n){UI.ticketQty=Math.max(1,Math.min(8,UI.ticketQty+n));render(true)},setActivityTab(t){UI.tab=t;render(true)},askCancel(id){UI.modalReq=id;UI.modal='cancel';render(true)},
+guests(n) {
+  UI.guests = Math.max(
+    1,
+    Math.min(20, UI.guests + n)
+  );
+
+  const count = document.getElementById(
+    'cnk-guest-count'
+  );
+
+  if (count) {
+    count.textContent = UI.guests;
+  } else {
+    render(true);
+  }
+},
 changeVenue(id){DB.merchantVenue=id;save();render(true)},togglePolicy(id){let p=DB.policies[DB.merchantVenue];p[id]=!p[id];save();notify('Sample venue policy changed: '+id+' / '+V(DB.merchantVenue).name);render(true)},
 rate(n){UI.rate=n;render(true)},toggleInterest(g){let a=DB.prefs.interests;let i=a.indexOf(g);i>=0?a.splice(i,1):a.push(g);save();render(true)},saveName(){let name=document.getElementById('display-name')?.value.trim().slice(0,25);if(!name)return toast('Please enter a display name.');DB.name=name;save();UI.modal='';render();toast('Demo name updated.')},
 clearNotifications(){DB.notifications=[];save();render(true)},resetAll(){DB=getBase();save();UI.modal='';UI.role='user';UI.stack=[];UI.screen='home';UI.q='';UI.tab='requests';render();toast('Local demo data reset.')},

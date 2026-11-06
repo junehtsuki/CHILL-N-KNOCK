@@ -1820,6 +1820,9 @@ App.cnkMoveMonth = function (n) {
               <small>
                 สถานะ: ${e(stateTh(r.status))}
               </small>
+              <small>
+                รหัสคำขอ: ${e(r.id)}
+              </small>
             </div>
           </div>
         </button>
@@ -1904,59 +1907,88 @@ App.cnkMoveMonth = function (n) {
               ${DB.tickets
                 .filter(t =>
                   DB.account &&
-                  t.owner === DB.account.email
-                )
-                .map(t => `
-                  <div class="mn-ticket">
-                    ${ic('ticket', 18)}
-                    <span>
-                      ${e(E(t.event).name)} ·
-                      ${e(t.tierName || 'บัตรทดลอง')}
+                  t.owner === DB.account.email)
+                .map(t => {
+                  const ev = E(t.event);
+                  const v = V(ev.venue);
+                  
+                return `
+                  <button
+                    type="button"
+                    class="mn-ticket"
+                    onclick="App.openTicket('${t.id}')"
+                    aria-label="ดูบัตร ${e(ev.name)}">
+                    
+                    <span
+                      class="mn-ticket-image image"
+                      style="${media(v.image, v.accent)}">
                     </span>
-                  </div>
-                `).join('')}
+                    <span class="mn-ticket-info">
+                      <b>${e(ev.name)}</b>
+                      <small>
+                        ${e(t.tierName || 'บัตรทั่วไป')}
+                        · ${t.qty} ใบ
+                      </small>
+                      <small>
+                        ${e(dateTh(t.date))} · บัตรทดลอง
+                      </small>
+                      <small>
+                        รหัสบัตร: ${e(t.id)}
+                      </small>
+                    </span>
+                    <span class="mn-ticket-arrow">
+                      ${ic('chevron', 18)}
+                    </span>
+                  </button>
+                `;
+              }).join('')}
             `
             : ''
           }
+        
+${tab === 'bookings' ? `
+  <h2 class="mn-subtitle">
+    เตรียมพร้อมสำหรับคืนนี้
+  </h2>
 
-          <h2 class="mn-subtitle">
-            เตรียมพร้อมสำหรับคืนนี้
-          </h2>
+  <div class="mn-tools">
 
-          <div class="mn-tools">
+    <button onclick="App.go('friends')">
+      ${ic('users', 32)}
 
-            <button onclick="App.go('friends')">
-              ${ic('users', 32)}
+      <b>หาเพื่อนเที่ยว</b>
+      <small>
+        ชวนเพื่อนหรือขอเพื่อนไปเที่ยวด้วยกัน
+      </small>
 
-              <b>หาเพื่อนเที่ยว</b>
-              <small>
-                ชวนเพื่อนหรือขอเพื่อนไปเที่ยวด้วยกัน
-              </small>
+      <span class="mn-tool-arrow">
+        ${ic('arrow', 16)}
+      </span>
+    </button>
 
-              <span class="mn-tool-arrow">
-                ${ic('arrow', 16)}
-              </span>
-            </button>
+    <button onclick="App.go('ride')">
+      ${ic('car', 32)}
 
-            <button onclick="App.go('ride')">
-              ${ic('car', 32)}
+      <b>เรียกรถกลับบ้าน</b>
+      <small>
+        เปิด Grab หรือ LINE MAN
+        เพื่อเดินทางกลับอย่างปลอดภัย
+      </small>
 
-              <b>เรียกรถกลับบ้าน</b>
-              <small>
-                เปิด Grab หรือ LINE MAN
-                เพื่อเดินทางกลับอย่างปลอดภัย
-              </small>
+      <span class="mn-tool-arrow">
+        ${ic('arrow', 16)}
+      </span>
+    </button>
 
-              <span class="mn-tool-arrow">
-                ${ic('arrow', 16)}
-              </span>
-            </button>
+  </div>
 
-          </div>
+  <h2 class="mn-subtitle">
+    คืนถัดไปของคุณ
+  </h2>
 
-          <h2 class="mn-subtitle">
-            คืนถัดไปของคุณ
-          </h2>
+  
+` : ''}
+
 
           <div class="mn-next">
             ${ic('calendar', 22)}
