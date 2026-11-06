@@ -543,10 +543,343 @@ function navItems(){if(UI.role==='runner')return [['home','Home','home'],['jobs'
 function welcome(){return `<div class="welcome-new"><div class="welcome-photo" style="background-image:linear-gradient(180deg,rgba(250,247,242,0) 0%,rgba(250,247,242,0) 75%, rgba(250,247,242,0.12) 80%,  rgba(250,247,242,0.45) 89%, rgba(250,247,242,0.85) 96%,#faf7f2 100%),url('assets/splash-cover.jpg')"><div class="welcome-brand"><img src="logo.png" alt="logo"><b>CHILL N’<br>KNOCK</b></div></div><div class="welcome-copy"><h1>ONE APP.<br><span>ONE NIGHT OUT.</span></h1><p>ค้นหาร้าน จองโต๊ะ ต่อคิว<br>หาเพื่อนเที่ยว เรียกรถ<br>ครบในแอปเดียว</p><button class="btn full" onclick="App.go('home')">เริ่มสำรวจเลย →</button><button class="btn full pale" onclick="App.auth('home')">เข้าสู่ระบบ / สมัครสมาชิก</button><button class="textbtn" onclick="App.go('home')">→ เลื่อนเพื่อดูเพิ่มเติม —</button></div></div>`}
 function authPage(){let signup=UI.authTab==='signup';return `<div class="auth-screen"><button class="circle-btn" onclick="App.back()">${ic('back')}</button><div class="auth-brand"><img src="logo.png"><b>CHILL N’<br>KNOCK</b></div><h1>เข้าสู่ระบบเพื่อจอง</h1><p class="auth-note">จองโต๊ะ ขอความช่วยเหลือจาก Runner<br>และจัดการค่ำคืนของคุณ</p><div class="auth-tabs"><button class="${!signup?'on':''}" onclick="App.authTab('login')">เข้าสู่ระบบ</button><button class="${signup?'on':''}" onclick="App.authTab('signup')">สมัครสมาชิก</button></div><form onsubmit="App.submitAuth(event)">${signup?`<label class="field-label">ชื่อที่แสดง</label><input id="auth-name" class="field" autocomplete="name" required placeholder="ชื่อของคุณ">`:''}<label class="field-label">อีเมล</label><input id="auth-email" class="field" type="email" autocomplete="email" required placeholder="your@email.com"><label class="field-label">รหัสผ่าน</label><input id="auth-pass" class="field" type="password" minlength="6" autocomplete="${signup?'new-password':'current-password'}" required placeholder="อย่างน้อย 6 ตัวอักษร"><button class="btn full" type="submit">${signup?'สมัครสมาชิก':'เข้าสู่ระบบ'} →</button></form><div class="auth-social"><p>หรือดำเนินการต่อด้วย</p><div class="row"><button onclick="App.demoSocial()">Apple</button><button onclick="App.demoSocial()">Google</button><button onclick="App.demoSocial()">LINE</button></div></div><button class="btn full outline" onclick="App.authTab(signup?'login':'signup')">${signup?'มีบัญชีแล้ว? เข้าสู่ระบบ':'ยังไม่มีบัญชี? สมัครสมาชิก'}</button><button class="partner-entry" onclick="App.go('partner-choice')">${ic('briefcase')} สำหรับ Runner / พาร์ตเนอร์ร้านค้า ${ic('arrow')}</button><p class="footer-small">Prototype เท่านั้น · ข้อมูลล็อกอินเก็บเฉพาะในเครื่อง ไม่ใช่ระบบยืนยันตัวตนจริง</p></div>`}
 function partnerChoice(){return `<div class="screen">${title('ร่วมงานกับ CHILL N’ KNOCK','Runner / Venue Partner')}<div class="pad"><h1 class="s-title" style="margin:25px 0">YOUR NIGHT.<br><span class="accent">YOUR ROLE.</span></h1><button class="partner-choice" onclick="App.startApply('runner')">${ic('users',30)}<strong>สมัครเป็น Table Runner</strong><small>ช่วยจองโต๊ะ รับโต๊ะ และต่อคิวภายใต้เงื่อนไขร้าน</small>${ic('arrow')}</button><button class="partner-choice" onclick="App.startApply('venue')">${ic('briefcase',30)}<strong>สมัครเป็นร้านพาร์ตเนอร์</strong><small>จัดการคำขอจองโต๊ะ ตารางเวลา และนโยบายบริการ</small>${ic('arrow')}</button><p class="content-note">ผู้สมัครต้องได้รับการตรวจสอบและอนุมัติก่อนใช้งานจริง การอนุมัติในต้นแบบเป็นเพียงสถานะตัวอย่าง</p></div></div>`}
-const applyRunner = [{title: 'ข้อมูลส่วนตัว', sub: 'แนะนำตัวและช่องทางที่สามารถติดต่อได้', fields: [['ชื่อ - นามสกุล', 'text'], ['วัน / เดือน / ปีเกิด', 'date'], ['เบอร์โทรศัพท์', 'tel'], ['อีเมล (ไม่บังคับ)', 'email:optional']]}, {title: 'ยืนยันตัวตน', sub: 'ขั้นตอนจำลองการยืนยันตัวตน กรุณาใช้ข้อมูลและเอกสารตัวอย่างเท่านั้น', fields: [['ประเภทเอกสาร', 'select:บัตรประชาชน|หนังสือเดินทาง'], ['เลขอ้างอิงเอกสาร', 'text'], ['เอกสารยืนยันตัวตน', 'file'], ['ภาพใบหน้าสำหรับตรวจสอบ', 'file']]}, {title: 'ที่อยู่และพื้นที่รับงาน', sub: 'ระบุที่อยู่และเลือกพื้นที่ที่สะดวกรับงาน', fields: [['ที่อยู่ปัจจุบัน (ใช้ข้อมูลสมมติ)', 'textarea'], ['พื้นที่ที่สะดวกรับงาน', 'select:ทองหล่อ|เอกมัย|RCA|รัชดา|เกษตร|อารีย์|สุขุมวิท|หลายพื้นที่'], ['ประเภทงานที่สนใจ', 'select:ช่วยจองโต๊ะล่วงหน้า|ช่วยรับโต๊ะ / เช็กอิน|ช่วยต่อคิว Walk-in|ทุกประเภท'], ['ช่วงเวลาที่สะดวก', 'select:18:00–21:00|21:00–00:00|หลังเที่ยงคืน|ยืดหยุ่นได้']]}, {title: 'ตรวจสอบและยืนยัน', sub: 'ตรวจสอบข้อมูลก่อนส่งใบสมัคร และอ่านเงื่อนไขการรับงาน', fields: []}];
-const applyVenue=[{title:'ข้อมูลร้าน',sub:'รายละเอียดเบื้องต้น',fields:[['ชื่อร้าน','text'],['ประเภทสถานที่','select:ไนต์คลับ|คลับดนตรีสด|สถานที่จัดอีเวนต์'],['คำอธิบายร้าน','textarea'],['โลโก้ร้าน','file'],['รูปบรรยากาศร้าน','file']]},{title:'สถานที่และการติดต่อ',sub:'ที่อยู่และช่องทางติดต่อ',fields:[['ที่อยู่ร้าน','textarea'],['Google Maps URL','url'],['เบอร์ติดต่อร้าน','tel'],['อีเมลธุรกิจ','email'],['Instagram / Facebook','url']]},{title:'เอกสารและผู้มีอำนาจ',sub:'ใช้ตรวจสอบความเกี่ยวข้องกับร้าน',fields:[['ชื่อผู้ติดต่อ/ผู้มีอำนาจ','text'],['ตำแหน่ง','text'],['เอกสารธุรกิจหรือใบอนุญาตที่เกี่ยวข้อง','file'],['หลักฐานความเกี่ยวข้องกับร้าน','file']]},{title:'รูปแบบการให้บริการ',sub:'กำหนดขอบเขตคำขอ',fields:[['รับคำขอแบบใด','select:จองตรงกับร้าน|Runner ช่วยจอง|Runner เช็กอินรับโต๊ะ|Runner ต่อคิว|หลายบริการ'],['ชนิดโต๊ะ','select:Regular|VIP|Standing|หลายประเภท'],['เวลาเปิดรับจอง','time'],['เวลาปิดรับจอง','time'],['เงื่อนไขการจอง / การต่อคิว','textarea']]},{title:'ตรวจทานและข้อตกลง',sub:'ตรวจสอบข้อมูลก่อนส่ง',fields:[]}];
-function partnerApply(){let kind=UI.applyRole||'runner',steps=kind==='runner'?applyRunner:applyVenue,step=UI.applyStep||0,obj=steps[step],total=steps.length;return `<div class="screen">${title(kind==='runner'?'สมัครเป็น Table Runner':'สมัครเป็นร้านพาร์ตเนอร์',`ขั้นตอน ${step+1} จาก ${total}`)}<div class="progress-steps">${steps.map((_,i)=>`<i class="${i<=step?'filled':''}"></i>`).join('')}</div><div class="pad"><p class="eyebrow" style="margin:22px 0 9px">STEP ${String(step+1).padStart(2,'0')} / ${total}</p><h1 class="s-title" style="font-size:43px;margin:0 0 6px">${e(obj.title)}</h1><p class="hint">${e(obj.sub)}</p><form id="apply-form" onsubmit="App.nextApply(event)">${obj.fields.map(([name,type],i)=>`<label class="field-label">${e(name)} <span class="accent">*</span></label>${type==='textarea'?`<textarea name="f${step}_${i}" class="field fieldarea" required placeholder="${e(name)}">${e((UI.applyData||{})['f'+step+'_'+i]||'')}</textarea>`:type.startsWith('select:')?`<select name="f${step}_${i}" class="field" required><option value="">เลือกข้อมูล</option>${type.slice(7).split('|').map(x=>`<option ${UI.applyData?.['f'+step+'_'+i]===x?'selected':''}>${e(x)}</option>`).join('')}</select>`:`<input name="f${step}_${i}" class="field" type="${type}" ${type==='file'?'accept="image/*,.pdf"':''} ${type==='file'?'':'required'} value="${type==='file'?'':e(UI.applyData?.['f'+step+'_'+i]||'')}" placeholder="${e(name)}">`}`).join('')}${step===total-1?`<div class="notice-card">${kind==='runner'?'รับทราบว่าการต่อคิวและเช็กอินแทนทำได้เฉพาะเมื่อร้านอนุญาต':'รับทราบว่าการเข้าร่วมเป็นพาร์ตเนอร์ต้องมีการยืนยันสิทธิ์จากร้านจริง'} และยอมรับเงื่อนไขความปลอดภัยและการจัดการข้อมูล</div><label class="apply-check"><input type="checkbox" required> อ่านและยอมรับข้อตกลงการสมัครต้นแบบ</label>`:''}<div class="row" style="margin:24px 0 80px">${step?`<button class="btn pale grow" type="button" onclick="App.prevApply()">ย้อนกลับ</button>`:''}<button class="btn grow" type="submit">${step===total-1?'ส่งใบสมัคร':'ถัดไป'} →</button></div></form></div></div>`}
-function applied() { let k = UI.applyRole || 'runner'; if (k === 'runner') { const stage = Math.max(1, Math.min(3, UI.runnerApprovalStep || 1)); const steps = ['ส่งใบสมัครแล้ว', 'ตรวจสอบข้อมูลและตัวตน (จำลอง)', 'อนุมัติและเปิดใช้งาน Runner (Sandbox)']; return `<div class="screen">${title('สถานะใบสมัคร', 'การอนุมัติจำลองสำหรับทดสอบ Runner')}<div class="pad center" style="padding-top:54px"><div class="app-success">${ic('check',42)}</div><h1>ส่งใบสมัครเรียบร้อยแล้ว</h1><p class="hint">${stage === 3 ? 'ผ่านขั้นตอนอนุมัติในโหมดทดสอบแล้ว' : 'ระบบกำลังแสดงขั้นตอนตรวจสอบตัวอย่าง'}<br>ยังไม่มีการตรวจเอกสารหรือยืนยันตัวตนจริง</p><div class="status-list">${steps.map((label, i) => `<div style="color:${stage > i ? '#8f1742' : '#8b7580'}; font-weight:${stage > i ? '700' : '400'};">${stage > i ? '✓' : '○'} ${label}</div>`).join('')}</div>${stage === 3 ? `<button class="btn full" onclick="App.switchRole('runner')">เข้าสู่พื้นที่ทำงาน Runner ${ic('arrow',16)}</button>` : `<p class="hint" style="margin-top:18px">กำลังดำเนินการในโหมดสาธิต...</p>`}<button class="btn full pale" style="margin-top:12px" onclick="App.go('profile')">กลับไปที่โปรไฟล์</button></div></div>`; } }
+const applyRunner = [{title: 'ข้อมูลส่วนตัว', sub: 'แนะนำตัวและช่องทางที่สามารถติดต่อได้', fields: [['ชื่อ - นามสกุล', 'text'], ['วัน / เดือน / ปีเกิด', 'date'], ['เบอร์โทรศัพท์', 'tel'], ['อีเมล (ไม่บังคับ)', 'email:optional']]}, {title: 'ยืนยันตัวตน', sub: 'ขั้นตอนจำลองการยืนยันตัวตน กรุณาใช้ข้อมูลและเอกสารตัวอย่างเท่านั้น', fields: [['ประเภทเอกสาร', 'select:บัตรประชาชน|หนังสือเดินทาง'], ['เอกสารยืนยันตัวตน', 'file'], ['ภาพใบหน้าสำหรับตรวจสอบ', 'file']]}, {title: 'ที่อยู่และพื้นที่รับงาน', sub: 'ระบุที่อยู่และเลือกพื้นที่ที่สะดวกรับงาน', fields: [['ที่อยู่ปัจจุบัน', 'textarea'], ['พื้นที่ที่สะดวกรับงาน', 'select:ทองหล่อ|เอกมัย|RCA|รัชดา|เกษตร|อารีย์|สุขุมวิท|หลายพื้นที่'], ['ประเภทงานที่สนใจ', 'select:ช่วยจองโต๊ะล่วงหน้า|ช่วยรับโต๊ะ / เช็กอิน|ช่วยต่อคิว Walk-in|ทุกประเภท'], ['ช่วงเวลาที่สะดวก', 'select:18:00–21:00|21:00–00:00|หลังเที่ยงคืน|ยืดหยุ่นได้']]}, {title: 'ตรวจสอบและยืนยัน', sub: 'ตรวจสอบข้อมูลก่อนส่งใบสมัคร และอ่านเงื่อนไขการรับงาน', fields: []}];
+
+const applyVenue = [
+  {
+    title: 'ข้อมูลร้าน',
+    sub: 'เลือกร้านที่มีอยู่ในระบบ หรือพิมพ์ชื่อร้านใหม่',
+    fields: [
+      ['ชื่อร้าน', 'venue-name'],
+      [
+        'ประเภทสถานที่',
+        'select:ไนต์คลับ|ร้านดนตรีสด|สถานที่จัดอีเวนต์|อื่น ๆ'
+      ],
+      ['ที่อยู่ร้าน', 'textarea'],
+      ['ลิงก์ Google Maps (ถ้ามี)', 'url-optional'],
+      ['เบอร์โทรศัพท์ร้าน', 'tel'],
+      ['อีเมลสำหรับติดต่อร้าน', 'email']
+    ]
+  },
+
+  {
+    title: 'ผู้ดูแลและยืนยันสิทธิ์',
+    sub: 'ใช้ข้อมูลตัวอย่างเท่านั้น ยังไม่มีระบบตรวจสอบสิทธิ์จริง',
+    fields: [
+      ['ชื่อ–นามสกุลผู้รับผิดชอบ', 'text'],
+      [
+        'ตำแหน่ง',
+        'select:เจ้าของร้าน|ผู้จัดการ|ผู้ได้รับมอบหมาย'
+      ],
+      ['เบอร์โทรศัพท์ผู้รับผิดชอบ', 'tel'],
+      [
+        'วิธียืนยันสิทธิ์ดูแลร้าน',
+        'select:เอกสารเจ้าของกิจการ|หนังสือมอบอำนาจ|อีเมลธุรกิจที่ตรวจสอบได้'
+      ],
+      [
+        'หลักฐานสิทธิ์ดูแลร้าน (เฉพาะไฟล์สมมติ)',
+        'file'
+      ]
+    ]
+  },
+
+  {
+    title: 'บริการและเวลาเปิดร้าน',
+    sub: 'เลือกบริการได้หลายข้อ เวลาเปิด–ปิดหมายถึงเวลาทำการของร้าน',
+    fields: [
+      [
+        'บริการที่ร้านรองรับ',
+        'multi:รับจองโต๊ะโดยตรง|อนุญาต Runner ช่วยจองล่วงหน้า|อนุญาต Runner เช็กอิน/รับโต๊ะ|อนุญาต Runner ต่อคิว Walk-in'
+      ],
+      [
+        'ประเภทโต๊ะ',
+        'select:Regular|VIP|Standing|หลายประเภท'
+      ],
+      ['เวลาเปิดร้าน', 'time'],
+      ['เวลาปิดร้าน', 'time']
+    ]
+  },
+
+  {
+    title: 'ตรวจสอบและยืนยัน',
+    sub: 'ตรวจทานข้อมูลและยอมรับเงื่อนไขก่อนส่งใบสมัคร',
+    fields: []
+  }
+];
+
+function partnerApply() {
+  const kind = UI.applyRole || 'runner';
+  const steps = kind === 'runner' ? applyRunner : applyVenue;
+  const step = UI.applyStep || 0;
+  const obj = steps[step];
+  const total = steps.length;
+
+  const fieldsHTML = obj.fields.map(([name, type], i) => {
+    const key = `f${step}_${i}`;
+    const saved = UI.applyData?.[key];
+
+    const optionalField =
+      type === 'file' || type === 'url-optional';
+
+    const label = `
+      <label class="field-label">
+        ${e(name)}
+        ${optionalField ? '' : '<span class="accent">*</span>'}
+      </label>
+    `;
+
+    // ชื่อร้าน: เลือกจากรายชื่อเดิมหรือพิมพ์ชื่อใหม่
+    if (kind === 'venue' && type === 'venue-name') {
+      return `${label}
+        <input
+          name="${key}"
+          class="field"
+          list="venue-options"
+          required
+          value="${e(saved || '')}"
+          placeholder="เลือกหรือพิมพ์ชื่อร้าน">
+
+        <datalist id="venue-options">
+          ${venues.map(v => `
+            <option value="${e(v.name)}"></option>
+          `).join('')}
+        </datalist>
+
+        <p class="hint">
+          ร้านที่ยังไม่มีในระบบส่งสมัครได้
+          แต่ต้องเพิ่มข้อมูลร้านก่อนจึงจะเปิด Dashboard ได้
+        </p>
+      `;
+    }
+
+    // เลือกบริการได้หลายข้อ เฉพาะร้านพาร์ตเนอร์
+    if (kind === 'venue' && type.startsWith('multi:')) {
+      const chosen = Array.isArray(saved) ? saved : [];
+
+      return `${label}
+        <div class="form-card">
+          ${type.slice(6).split('|').map(x => `
+            <label class="apply-check"
+              style="display:flex;gap:10px;margin:12px 0">
+
+              <input
+                type="checkbox"
+                name="${key}"
+                value="${e(x)}"
+                ${chosen.includes(x) ? 'checked' : ''}>
+
+              ${e(x)}
+            </label>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // กล่องข้อความ เช่น ที่อยู่ร้าน
+    if (type === 'textarea') {
+      return `${label}
+        <textarea
+          name="${key}"
+          class="field fieldarea"
+          required
+          placeholder="${e(name)}"
+        >${e(saved || '')}</textarea>
+      `;
+    }
+
+    // Dropdown
+    if (type.startsWith('select:')) {
+      return `${label}
+        <select name="${key}" class="field" required>
+          <option value="">เลือกข้อมูล</option>
+
+          ${type.slice(7).split('|').map(x => `
+            <option
+              value="${e(x)}"
+              ${saved === x ? 'selected' : ''}>
+              ${e(x)}
+            </option>
+          `).join('')}
+        </select>
+      `;
+    }
+
+    // ช่องกรอกข้อมูลปกติ
+    const optional =
+      type === 'file' || type === 'url-optional';
+
+    const inputType =
+      type === 'url-optional' ? 'url' : type;
+
+    return `${label}
+      <input
+        name="${key}"
+        class="field"
+        type="${inputType}"
+        ${optional ? '' : 'required'}
+        ${type === 'file'
+          ? 'accept="image/*,.pdf"'
+          : `value="${e(saved || '')}"`}
+        placeholder="${e(name)}">
+    `;
+  }).join('');
+
+  return `
+    <div class="screen">
+      ${title(
+        kind === 'runner'
+          ? 'สมัครเป็น Table Runner'
+          : 'สมัครเป็นร้านพาร์ตเนอร์',
+        `ขั้นตอน ${step + 1} จาก ${total}`
+      )}
+
+      <div class="progress-steps">
+        ${steps.map((_, i) => `
+          <i class="${i <= step ? 'filled' : ''}"></i>
+        `).join('')}
+      </div>
+
+      <div class="pad">
+        <p class="eyebrow" style="margin:22px 0 9px">
+          STEP ${String(step + 1).padStart(2, '0')} / ${total}
+        </p>
+
+        <h1 class="s-title"
+          style="font-size:43px;margin:0 0 6px">
+          ${e(obj.title)}
+        </h1>
+
+        <p class="hint">${e(obj.sub)}</p>
+
+        <form id="apply-form"
+          onsubmit="App.nextApply(event)">
+
+          ${fieldsHTML}
+
+          ${step === total - 1 ? `
+            <div class="notice-card">
+              ${kind === 'runner'
+                ? 'รับทราบว่าการต่อคิวและเช็กอินแทนทำได้เฉพาะเมื่อร้านอนุญาต'
+                : 'รับทราบว่าการเข้าร่วมเป็นพาร์ตเนอร์ต้องยืนยันสิทธิ์ดูแลร้านจริง'}
+              และยอมรับเงื่อนไขความปลอดภัยและการจัดการข้อมูล
+            </div>
+
+            <label class="apply-check">
+              <input type="checkbox" required>
+              อ่านและยอมรับข้อตกลงการสมัครต้นแบบ
+            </label>
+          ` : ''}
+
+          <div class="row" style="margin:24px 0 80px">
+
+            ${step ? `
+              <button
+                class="btn pale grow"
+                type="button"
+                onclick="App.prevApply()">
+                ย้อนกลับ
+              </button>
+            ` : ''}
+
+            <button class="btn grow" type="submit">
+              ${step === total - 1
+                ? 'ส่งใบสมัคร'
+                : 'ถัดไป'} →
+            </button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+}
+function applied() { let k = UI.applyRole || 'runner'; 
+if (k === 'venue') {
+  const venueName =
+    DB.applications?.venue?.fields?.venueName ||
+    'ร้านพาร์ตเนอร์';
+
+  const found = Boolean(
+    DB.applications?.venue?.venueId
+  );
+
+  const stage = Math.max(
+    1,
+    Math.min(3, UI.venueApprovalStep || 1)
+  );
+
+  const steps = [
+    'ส่งใบสมัครแล้ว',
+    'ตรวจสอบข้อมูลร้านและผู้ดูแล (จำลอง)',
+    'อนุมัติและเปิดใช้งาน Venue Partner (Sandbox)'
+  ];
+
+  return `
+    <div class="screen">
+      ${title(
+        'สถานะใบสมัครร้าน',
+        'การอนุมัติจำลองสำหรับ Venue Partner'
+      )}
+
+      <div class="pad center"
+        style="padding-top:54px">
+
+        <div class="app-success">
+          ${ic('check', 42)}
+        </div>
+
+        <h1>ส่งใบสมัครเรียบร้อยแล้ว</h1>
+
+        <p class="hint">
+          ${e(venueName)}
+          <br>
+          ${found
+            ? 'กำลังแสดงขั้นตอนอนุมัติแบบจำลอง'
+            : 'ยังไม่มีร้านนี้ในรายการ ต้องเพิ่มร้านก่อนเปิด Dashboard'
+          }
+          <br>
+          ไม่มีการยืนยันตัวตนหรือสิทธิ์ร้านจริง
+          ในต้นแบบนี้
+        </p>
+
+        <div class="status-list">
+          ${steps.map((label, i) => `
+            <div style="
+              color:${stage > i
+                ? '#8f1742'
+                : '#8b7580'};
+              font-weight:${stage > i
+                ? '700'
+                : '400'};
+            ">
+              ${stage > i ? '✓' : '○'}
+              ${label}
+            </div>
+          `).join('')}
+        </div>
+
+        ${stage === 3 && found ? `
+          <button
+            class="btn full"
+            onclick="App.switchRole('venue')">
+
+            เข้าสู่พื้นที่ทำงานร้าน
+            ${ic('arrow',16)}
+          </button>
+        ` : ''}
+
+        <button
+          class="btn full pale"
+          style="margin-top:12px"
+          onclick="App.go('profile')">
+
+          กลับไปที่โปรไฟล์
+        </button>
+
+      </div>
+    </div>
+  `;
+} if (k === 'runner') { const stage = Math.max(1, Math.min(3, UI.runnerApprovalStep || 1)); const steps = ['ส่งใบสมัครแล้ว', 'ตรวจสอบข้อมูลและตัวตน (จำลอง)', 'อนุมัติและเปิดใช้งาน Runner (Sandbox)']; return `<div class="screen">${title('สถานะใบสมัคร', 'การอนุมัติจำลองสำหรับทดสอบ Runner')}<div class="pad center" style="padding-top:54px"><div class="app-success">${ic('check',42)}</div><h1>ส่งใบสมัครเรียบร้อยแล้ว</h1><p class="hint">${stage === 3 ? 'ผ่านขั้นตอนอนุมัติในโหมดทดสอบแล้ว' : 'ระบบกำลังแสดงขั้นตอนตรวจสอบตัวอย่าง'}<br>ยังไม่มีการตรวจเอกสารหรือยืนยันตัวตนจริง</p><div class="status-list">${steps.map((label, i) => `<div style="color:${stage > i ? '#8f1742' : '#8b7580'}; font-weight:${stage > i ? '700' : '400'};">${stage > i ? '✓' : '○'} ${label}</div>`).join('')}</div>${stage === 3 ? `<button class="btn full" onclick="App.switchRole('runner')">เข้าสู่พื้นที่ทำงาน Runner ${ic('arrow',16)}</button>` : `<p class="hint" style="margin-top:18px">กำลังดำเนินการในโหมดสาธิต...</p>`}<button class="btn full pale" style="margin-top:12px" onclick="App.go('profile')">กลับไปที่โปรไฟล์</button></div></div>`; } }
 function myExtras(){return `<div class="extras"><h3>เตรียมค่ำคืนนี้ให้พร้อม</h3><button onclick="App.go('friends')">${ic('users',24)}<span><b>หาเพื่อนเที่ยว</b><small>สร้างกลุ่มและชวนเพื่อนออกไปสนุกด้วยกัน</small></span>${ic('arrow')}</button><button onclick="App.go('ride')">${ic('pin',24)}<span><b>เรียกรถกลับบ้าน</b><small>เลือกจุดรับส่งและดูแอปเดินทางที่รองรับ</small></span>${ic('arrow')}</button></div>`}
 function friendPage(){return `<div class="screen">${title('หาเพื่อนเที่ยว','My Nights · กลุ่มเที่ยว (Demo)')}<div class="pad"><h1 class="s-title" style="margin:20px 0">GOOD NIGHTS.<br><span class="accent">BETTER FRIENDS.</span></h1><div class="form-card"><h3>สร้างแพลนเที่ยว</h3><label class="field-label">ชื่อกลุ่ม / แพลน</label><input class="field" id="friend-name" placeholder="คืนนี้ไป ONYX กัน"><label class="field-label">รายละเอียด</label><textarea class="field fieldarea" id="friend-desc" placeholder="สถานที่ เวลา จำนวนเพื่อนที่อยากชวน"></textarea><button class="btn full" onclick="App.addFriend()">สร้างแพลน (Demo)</button></div><div class="section">${(DB.friends||[]).map(x=>`<div class="request-card"><strong>${e(x.name)}</strong><p class="hint">${e(x.desc)}</p><span class="pill rose">กลุ่มทดลอง · ยังไม่เผยแพร่สาธารณะ</span></div>`).join('')||'<div class="empty">ยังไม่มีแพลน เริ่มสร้างกลุ่มของคุณได้เลย</div>'}</div></div></div>`}
 function ridePage(){return `<div class="screen">${title('เรียกรถกลับบ้าน','My Nights · Travel safe')}<div class="pad"><h1 class="s-title" style="margin:20px 0">GET HOME<br><span class="accent">SAFE.</span></h1><div class="form-card"><label class="field-label">จุดรับ</label><input id="ride-from" class="field" placeholder="เช่น ONYX, RCA" value="RCA Bangkok"><label class="field-label">ปลายทาง</label><input id="ride-to" class="field" placeholder="กรอกพื้นที่ปลายทาง"><button class="btn full" onclick="App.openDirections()">เปิด Google Maps ${ic('external',15)}</button></div><p class="content-note">ต้นแบบยังไม่เรียกรถหรือส่งข้อมูลให้ Grab/Bolt/Taxi โดยตรง ระบบจริงต้องเชื่อมบริการและยืนยันราคา/คนขับจากผู้ให้บริการ</p></div></div>`}
@@ -555,7 +888,107 @@ function authTab(tab){UI.authTab=tab;render(true)}
 function submitAuth(ev){ev.preventDefault();let mail=document.getElementById('auth-email').value.trim(),pw=document.getElementById('auth-pass').value,signup=UI.authTab==='signup';if(signup){DB.account={email:mail,name:document.getElementById('auth-name').value.trim(),pass:pw};DB.name=DB.account.name}else if(!DB.account||DB.account.email!==mail||DB.account.pass!==pw){toast('ไม่พบบัญชีทดลอง กรุณาเลือกสมัครสมาชิกก่อน');return}save();let dest=UI.returnTo||'home';UI.stack=[];UI.screen=dest==='auth'?'home':dest;render();toast('เข้าสู่ระบบทดลองเรียบร้อย')}
 function demoSocial(){toast('การเข้าระบบผ่านผู้ให้บริการภายนอกยังไม่ได้เชื่อมต่อ')}
 function startApply(role){UI.applyRole=role;UI.applyStep=0;UI.applyData={};go('apply')}
-function nextApply(ev){ev.preventDefault();const f=new FormData(ev.target);for(let [k,v] of f)UI.applyData[k]=v instanceof File?(v.name||''):v;if (UI.applyStep < (UI.applyRole === 'runner' ? applyRunner.length : applyVenue.length) - 1) { UI.applyStep++; render(); return;}DB.applications = DB.applications || {}; const role = UI.applyRole; DB.applications[role] = { status: 'pending-demo', fields: role === 'runner' ? {} : UI.applyData }; save(); if (role !== 'runner') { go('applied'); return; } UI.runnerApprovalStep = 1; go('applied'); setTimeout(() => { if (UI.screen !== 'applied' || UI.applyRole !== 'runner') return; UI.runnerApprovalStep = 2; render(true); }, 700); setTimeout(() => { if (UI.screen !== 'applied' || UI.applyRole !== 'runner') return; UI.runnerApprovalStep = 3; DB.applications.runner.status = 'approved'; save(); render(true); setTimeout(() => { if (UI.screen === 'applied' && UI.applyRole === 'runner') { App.switchRole('runner'); } }, 1300); }, 1600);}
+function nextApply(ev){ev.preventDefault();
+const f = new FormData(ev.target);
+
+// เก็บบริการหลายตัวเลือกของ Venue
+if (UI.applyRole === 'venue' && UI.applyStep === 2) {
+  UI.applyData.f2_0 = f.getAll('f2_0');
+
+  if (!UI.applyData.f2_0.length) {
+    return toast(
+      'กรุณาเลือกบริการที่ร้านรองรับอย่างน้อย 1 ข้อ'
+    );
+  }
+}
+
+// บันทึกข้อมูลของขั้นตอนปัจจุบัน
+for (const [k, v] of f) {
+  if (UI.applyRole === 'venue' && k === 'f2_0') {
+    continue;
+  }
+
+  UI.applyData[k] =
+    v instanceof File ? (v.name || '') : v;
+} if (UI.applyStep < (UI.applyRole === 'runner' ? applyRunner.length : applyVenue.length) - 1) { UI.applyStep++; render(); return;}
+DB.applications = DB.applications || {}; const role = UI.applyRole; 
+
+DB.applications[role] = {
+  status: 'pending-demo',
+
+  // เก็บเฉพาะข้อมูลทั่วไปที่จำเป็นต่อ Sandbox
+  fields: role === 'venue'
+    ? {
+        venueName: UI.applyData.f0_0,
+        services: UI.applyData.f2_0 || []
+      }
+    : {}
+};
+
+if (role === 'venue') {
+  const name = String(
+    UI.applyData.f0_0 || ''
+  ).trim().toLocaleLowerCase();
+
+  const selectedVenue = venues.find(
+    v => v.name.trim().toLocaleLowerCase() === name
+  );
+
+  if (selectedVenue) {
+    DB.merchantVenue = selectedVenue.id;
+    DB.applications.venue.venueId = selectedVenue.id;
+  }
+
+  save();
+
+  UI.venueApprovalStep = 1;
+  go('applied');
+
+  // ร้านใหม่ต้องเพิ่มข้อมูลเข้าระบบก่อน
+  if (!selectedVenue) return;
+
+  // ขั้นตอน 2: กำลังตรวจสอบ (จำลอง)
+  setTimeout(() => {
+    if (
+      UI.screen !== 'applied' ||
+      UI.applyRole !== 'venue'
+    ) return;
+
+    UI.venueApprovalStep = 2;
+    render(true);
+  }, 700);
+
+  // ขั้นตอน 3: อนุมัติใน Sandbox
+  setTimeout(() => {
+    if (
+      UI.screen !== 'applied' ||
+      UI.applyRole !== 'venue'
+    ) return;
+
+    UI.venueApprovalStep = 3;
+
+    DB.applications.venue.status = 'approved';
+    save();
+    render(true);
+
+    // เปิด Venue Dashboard เดิม
+    setTimeout(() => {
+      if (
+        UI.screen === 'applied' &&
+        UI.applyRole === 'venue'
+      ) {
+        App.switchRole('venue');
+      }
+    }, 1300);
+
+  }, 1600);
+
+  return;
+}
+
+save();
+UI.runnerApprovalStep = 1; go('applied'); 
+setTimeout(() => { if (UI.screen !== 'applied' || UI.applyRole !== 'runner') return; UI.runnerApprovalStep = 2; render(true); }, 700); setTimeout(() => { if (UI.screen !== 'applied' || UI.applyRole !== 'runner') return; UI.runnerApprovalStep = 3; DB.applications.runner.status = 'approved'; save(); render(true); setTimeout(() => { if (UI.screen === 'applied' && UI.applyRole === 'runner') { App.switchRole('runner'); } }, 1300); }, 1600);}
 function addFriend(){let name=document.getElementById('friend-name').value.trim(),desc=document.getElementById('friend-desc').value.trim();if(!name)return toast('กรุณาใส่ชื่อแพลน');DB.friends=DB.friends||[];DB.friends.push({name,desc});save();render()}
 function openDirections(){let from=document.getElementById('ride-from').value.trim(),to=document.getElementById('ride-to').value.trim();if(!to)return toast('กรุณาระบุปลายทาง');window.open('https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(from)+'&destination='+encodeURIComponent(to)+'&travelmode=driving','_blank','noopener')}
 function prevApply() {
@@ -567,12 +1000,72 @@ function prevApply() {
 }
 function currentMain(){if(UI.screen==='welcome')return welcome();if(UI.screen==='auth')return authPage();if(UI.screen==='partner-choice')return partnerChoice();if(UI.screen==='apply')return partnerApply();if(UI.screen==='applied')return applied();if(UI.screen==='friends')return friendPage();if(UI.screen==='ride')return ridePage();if(UI.screen==='chat')return chat();if(UI.screen==='profile')return profile();if(UI.role==='user')return ({home,discover,events:eventList,activity,venue:venueDetail,event:eventDetail,service:serviceScreen,'booking-form':bookingForm,'booking-review':bookingReview,receipt:bookingReceipt,track:tracking,'ticket-pass':ticketPass,guide})[UI.screen]?.()||home();if(UI.role==='runner')return ({home:runnerHome,jobs:runnerJobs,'job-detail':jobDetail,active:runnerActive,'active-detail':activeDetail,wallet})[UI.screen]?.()||runnerHome();return ({home:venueHome,'venue-requests':()=>merchantList(false),'venue-queue':()=>merchantList(true),'venue-policies':venuePolicies,'venue-insights':insights})[UI.screen]?.()||venueHome()}
 function render(preserve=false){const old=window.scrollY||0;const app=document.getElementById('app');const active=UI.screen;app.innerHTML=`<div class="phone">${currentMain()}${['welcome','auth','partner-choice','apply','applied'].includes(UI.screen)?'':'<nav class="bottom-nav" aria-label="Primary navigation">'}${['welcome','auth','partner-choice','apply','applied'].includes(UI.screen)?'':navItems().map(([id,name,icon])=>`<button class="${active===id?'active':''}" onclick="App.go('${id}')" aria-label="${name}"><span class="nav-icon">${ic(icon,21)}</span><span>${name}</span></button>`).join('')}${['welcome','auth','partner-choice','apply','applied'].includes(UI.screen)?'':'</nav>'}${modal()}</div>${UI.toast?`<div class="toast" id="toast">${e(UI.toast)}</div>`:''}`;if(preserve)window.scrollTo({top:old,behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'})}
-function go(page){if(UI.screen!==page)UI.stack.push(UI.screen);UI.screen=page;UI.modal='';render()}
-function back(){UI.modal='';UI.screen=UI.stack.pop()||(UI.role==='user'?'home':'home');render()}
+
+function go(page) {
+  if (UI.screen !== page) {
+
+    // จำตำแหน่ง Scroll ของหน้าที่กำลังออก
+    UI.scrollMemory = UI.scrollMemory || {};
+
+    UI.scrollMemory[UI.screen] = window.scrollY;
+
+    UI.stack.push(UI.screen);
+  }
+
+  UI.screen = page;
+  UI.modal = '';
+
+  render();
+}
+
+function back() {
+  UI.modal = '';
+
+  const previous = UI.stack.pop() || 'home';
+
+  UI.screen = previous;
+
+  // ดึงตำแหน่ง Scroll ที่เคยบันทึกไว้
+  const targetY = UI.scrollMemory?.[previous] ?? 0;
+
+  render();
+
+  // คืนตำแหน่งหลังสร้างหน้ากลับมาแล้ว
+  requestAnimationFrame(() => {
+    window.scrollTo({
+      top: targetY,
+      behavior: 'instant'
+    });
+  });
+}
 function switchRole(role){if(!['user','runner','venue'].includes(role))return;UI.role=role;UI.screen='home';UI.stack=[];UI.modal='';UI.toast='';render()}
 function startBooking(venue){UI.venue=venue;UI.service=DB.policies[venue].direct?'direct':DB.policies[venue].runner?'runner_booking':'queue';UI.date=dateOffset(1);UI.time='21:00';UI.guests=2;UI.seat='Indoor';UI.note='';go('service')}
 function chooseService(s){UI.service=s;render(true)}
-function formChange(field,val,rerender=true){if(!['date','time','seat','note'].includes(field))return;UI[field]=String(val);if(rerender)render(true)}
+
+function formChange(field, val, rerender = true) {
+  if (!['date', 'time', 'seat', 'note'].includes(field)) return;
+
+  UI[field] = String(val);
+
+  if (!rerender) return;
+
+  // เปลี่ยนเฉพาะปุ่มเวลาและประเภทที่นั่ง
+  // ไม่ต้อง Render หน้าทั้งหมด
+  if (field === 'time' || field === 'seat') {
+    document.querySelectorAll('.selectrow .choice').forEach(btn => {
+      const text = btn.textContent.trim();
+      const isTime = /^\d{2}:\d{2}$/.test(text);
+
+      if ((field === 'time') === isTime) {
+        btn.classList.toggle('active', text === UI[field]);
+      }
+    });
+
+    return;
+  }
+
+  render(true);
+}
 function reviewBooking(){if(!DB.account){UI.returnTo='booking-form';return auth('booking-form')}if(!UI.date||UI.date<dateOffset(0))return toast('Please choose today or a future date.');if(UI.note.length>350)return toast('Please shorten your note.');go('booking-review')}
 function submitBooking(){const key=['runner_booking','runner_pickup'].includes(UI.service)?'runner':UI.service;const policy=DB.policies[UI.venue];if(!policy?.[key])return toast('This demo venue does not currently allow that service.');const now=Date.now();const r={id:'CKN-'+String(now).slice(-7),owner:'guest',venue:UI.venue,service:UI.service,guests:UI.guests,date:UI.date,time:UI.time,seat:UI.seat,note:UI.note,fee:feeFor(UI.service),runner:false,status:UI.service==='direct'?'pending_venue':'finding_runner',progressNote:'',created:now};DB.requests.push(r);UI.reqId=r.id;save();notify(`New ${serviceName(UI.service)} · ${V(r.venue).name}`);UI.stack=[];UI.screen='receipt';render()}
 function issueTicket(){let ev=E(UI.event);let t={id:'TKT-'+String(Date.now()).slice(-7),event:ev.id,qty:UI.ticketQty,price:ev.price*UI.ticketQty,date:dateOffset(ev.offset)};DB.tickets.push(t);UI.ticketId=t.id;save();notify('Demo event pass generated for '+ev.name);UI.stack=[];go('ticket-pass')}
@@ -599,7 +1092,43 @@ function openActive(id){UI.reqId=id;UI.proof='';go('active-detail')}
 const App={go,back,auth,authTab,submitAuth,demoSocial,startApply,nextApply,prevApply,addFriend,openDirections,switchRole,openVenue,openEvent,openTracking,openChat,openTicket,openJob,openActive,startBooking,chooseService,formChange,reviewBooking,submitBooking,issueTicket,acceptJob,submitProgress,merchantDecision,askDecline,declineConfirmed,cancelConfirmed,sendMessage,profileAction,addReview,openMap,openModal,closeModal,setQuery,
 quick,shareVenue(id){copyLink(location.origin+location.pathname+'#venue-'+id)},shareEvent(id){copyLink(location.origin+location.pathname+'#event-'+id)},
 setArea(a){UI.area=a;render(true)},setGenre(g){UI.genre=g;render(true)},toggleMap(){UI.map=!UI.map;render(true)},setSort(x){UI.sort=x;render(true)},setPrice(p){UI.filterPrice=p;render(true)},resetFilters(){UI.area='All';UI.genre='All';UI.q='';UI.filterPrice=0;UI.sort='Recommended';render(true)},pickNeighborhood(a){UI.modal='';UI.area=a;UI.genre='All';UI.q='';go('discover')},
-setInfoTab(x){UI.infoTab=x;render(true)},toggleFav(id){let i=DB.favs.indexOf(id);i>=0?DB.favs.splice(i,1):DB.favs.push(id);save();render(true)},
+setInfoTab(x){UI.infoTab=x;render(true)},
+toggleFav(id) {
+  const i = DB.favs.indexOf(id);
+
+  if (i >= 0) {
+    DB.favs.splice(i, 1);
+  } else {
+    DB.favs.push(id);
+  }
+
+  save();
+
+  const saved = DB.favs.includes(id);
+
+  // อัปเดตปุ่มหัวใจที่เกี่ยวข้อง
+  // โดยไม่ Render หน้าใหม่
+  document.querySelectorAll('button[onclick]').forEach(btn => {
+
+    if (
+      btn.getAttribute('onclick') !==
+      `App.toggleFav('${id}')`
+    ) return;
+
+    btn.setAttribute('aria-pressed', String(saved));
+    btn.classList.toggle('is-active', saved);
+
+    if (btn.classList.contains('cnk-explore-heart')) {
+      btn.style.backgroundColor = saved ? '#9b1748' : '';
+      btn.style.color = saved ? '#ffffff' : '';
+    }
+  });
+
+  // หน้ารายการโปรดต้องอัปเดตรายการเมื่อยกเลิกบันทึก
+  if (UI.screen === 'activity' && UI.tab === 'saved') {
+    render(true);
+  }
+},
 guests(n) {
   UI.guests = Math.max(
     1,

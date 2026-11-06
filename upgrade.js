@@ -157,8 +157,29 @@ serviceScreen=function(){const v=V(UI.venue);let opts=[
 const QA_RUNNERS=[{id:'r1',name:'Runner A',rating:'4.9',jobs:128,fee:300},{id:'r2',name:'Runner B',rating:'4.8',jobs:94,fee:350}];
 function runnerChoiceUI(){if(UI.service==='direct')return '';return `<div class="form-card section"><div class="spread"><b>เลือกผู้ช่วย Runner</b><span class="pill tiny gold">ตัวอย่าง QA</span></div><p class="hint">คะแนน งานสำเร็จ และป้ายตรวจสอบตัวตนด้านล่างเป็นข้อมูลสมมติ ยังไม่มี Runner ที่ผ่าน KYC จริง</p>${QA_RUNNERS.map(r=>`<button class="runner-pick ${UI.runnerChoice===r.id?'selected':''}" onclick="App.pickRunner('${r.id}')"><span class="runner-avatar">${ic('user',20)}</span><span class="grow"><b>${r.name}</b><small>✓ ตัวอย่างป้ายตรวจสอบตัวตน (QA)</small><small>★ ${r.rating} · ${r.jobs} งานสำเร็จ (จำลอง)</small><small>พร้อมรับงาน (จำลอง)</small></span><span><b>${baht(r.fee)}*</b><span class="radio ${UI.runnerChoice===r.id?'checked':''}"></span></span></button>`).join('')}<button class="runner-pick ${UI.runnerChoice==='none'?'selected':''}" onclick="App.pickRunner('none')"><span class="grow"><b>ให้ระบบจับคู่ Runner ภายหลัง</b><small>ไม่ต้องเลือกผู้รับงานตอนนี้</small></span><span class="radio"></span></button></div>`;}
 bookingReview=function(){let v=V(UI.venue),fee=feeFor(UI.service);return `<div class="screen">${title('ตรวจสอบก่อนส่งคำขอ','ขั้นตอนที่ 3 จาก 3')}<div class="stepper"><span class="done"></span><span class="done"></span><span class="done"></span></div><div class="pad"><div class="eyebrow" style="margin-top:15px">FINAL CHECK</div><h1 class="s-title" style="font-size:42px;margin:8px 0 19px">ตรวจสอบ<br><span class="accent">การจอง</span></h1><div class="form-card"><span class="pill rose">${e(serviceName(UI.service))}</span><h2>${e(v.name)}</h2>${[['ย่าน',v.area],['วันที่และเวลา',tinyDate(UI.date)+' · '+UI.time],['จำนวนคน',String(UI.guests)+' คน'],...(UI.service!=='queue'?[['ประเภทที่นั่ง',UI.seat]]:[]),['หมายเหตุ',UI.note||'ไม่มี']].map(([k,val])=>`<div class="spread review-row"><span class="hint">${e(k)}</span><strong>${e(val)}</strong></div>`).join('')}</div>${UI.service==='queue'?`<div class="queue-panel"><div class="spread"><b>สถานะคิวก่อนยืนยัน</b><span class="pill tiny gold">ตัวเลขตัวอย่าง</span></div><div class="queue-grid"><div><span>จำนวนคิวก่อนหน้า</span><b>8 คิว</b></div><div><span>เวลารอโดยประมาณ</span><b>30–45 นาที</b></div></div><p>ข้อมูลนี้เป็นสถานการณ์จำลอง ไม่ใช่คิวปัจจุบันของ ${e(v.name)} ระบบจริงต้องมีการอัปเดตจากร้านหรือ Runner พร้อมเวลาอัปเดตล่าสุด</p></div>`:`<div class="queue-panel"><b>สถานะโต๊ะ/เวลารอ</b><p>ยังไม่เชื่อมต่อจำนวนโต๊ะว่างหรือเวลารอจากร้าน จึงต้องรอการตอบรับก่อนยืนยันสถานะ</p></div>`}${runnerChoiceUI()}<div class="form-card section"><div class="spread"><span class="hint">ค่าบริการ Runner (ตัวอย่าง)</span><b>${baht(fee)}</b></div><details class="deposit-details"><summary>เงินประกัน (Deposit) และเงื่อนไขการคืนเงิน ${ic('chevron',16)}</summary><p>เงินประกันของร้าน **ยังไม่ทราบจำนวนที่ยืนยัน** และไม่รวมอยู่ในค่าบริการตัวอย่าง การเก็บเงินประกันต้องแสดงจำนวน ผู้รับเงิน วันคืนเงิน เงื่อนไขยกเลิก และนโยบายแต่ละร้านก่อนชำระเงินจริง</p><p>ต้นแบบนี้ไม่มีการเรียกเก็บเงินหรือคืนเงินจริง</p></details></div><div class="safety">${ic('shield',18)}<span>คำขอจะถูกบันทึกในเบราว์เซอร์เพื่อทดสอบการเชื่อม User → Runner → Venue เท่านั้น ยังไม่มีการส่งคำขอถึงร้านจริง</span></div><button class="btn full" style="margin:18px 0 10px" onclick="App.submitBooking()">ยืนยันส่งคำขอทดลอง ${ic('arrow',17)}</button><button class="btn ghost full" onclick="App.back()">ย้อนกลับไปแก้ไข</button></div></div>`;};
-App.pickRunner=function(id){UI.runnerChoice=id;render(true)};
 
+App.pickRunner = function(id) {
+  UI.runnerChoice = id;
+
+  document.querySelectorAll(
+    '.cnk-runner-row, .runner-pick'
+  ).forEach(btn => {
+
+    const selected =
+      btn.getAttribute('onclick') ===
+      `App.pickRunner('${id}')`;
+
+    btn.classList.toggle('selected', selected);
+
+    btn.setAttribute(
+      'aria-pressed',
+      String(selected)
+    );
+
+    btn.querySelector('.radio')
+      ?.classList.toggle('checked', selected);
+  });
+};
 // Role permissions and QA-only cross-role testing.
 const originalSwitchRole=App.switchRole;
 App.switchRole=function(role){if(role==='user')return originalSwitchRole('user');const approved=DB.applications?.[role]?.status==='approved';if(QA||approved)return originalSwitchRole(role);toast('ต้องสมัครและผ่านการตรวจสอบก่อนเข้าใช้งานบทบาทนี้');};
@@ -179,7 +200,56 @@ venueSelect=function(){return QA?`<label class="field-label" for="managedVenue">
 // Registration uses hashed local TEST passwords, never claims secure production authentication.
 async function hashLocal(value){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));return Array.from(new Uint8Array(b)).map(n=>n.toString(16).padStart(2,'0')).join('');}
 App.submitAuth=async function(ev){ev.preventDefault();let mail=document.getElementById('auth-email')?.value.trim().toLowerCase(),pw=document.getElementById('auth-pass')?.value||'',signup=UI.authTab==='signup';if(!mail||pw.length<6)return toast('กรุณากรอกอีเมลและรหัสผ่านอย่างน้อย 6 ตัวอักษร');try{let hashed=await hashLocal(pw);let record=DB.accounts[mail];if(signup){if(record)return toast('อีเมลนี้มีบัญชีทดลองแล้ว กรุณาเข้าสู่ระบบ');let name=document.getElementById('auth-name')?.value.trim()||'สมาชิก';record={email:mail,name,hash:hashed,created:Date.now()};DB.accounts[mail]=record;}else if(!record||record.hash!==hashed){return toast('อีเมลหรือรหัสผ่านไม่ถูกต้อง');}DB.sessionEmail=mail;DB.account={email:mail,name:record.name};DB.name=record.name;UI.role='user';save();let dest=UI.returnTo||'home';UI.stack=[];UI.screen=dest==='auth'?'home':dest;render();toast('เข้าสู่ระบบในเบราว์เซอร์นี้แล้ว');}catch(err){console.error(err);toast('เปิดผ่าน HTTPS หรือ Live Server เพื่อใช้งานบัญชีทดลอง');}};
-App.authTab=function(x){UI.authTab=x;render(true)};
+
+App.authTab = function(x) {
+  if (UI.authTab === x) return;
+
+  UI.authTab = x;
+
+  const screen = document.querySelector(
+    '#app .auth-screen'
+  );
+
+  // หน้าที่ไม่ใช่ Login / Signup ใช้การ Render เดิม
+  if (!screen || !['login', 'signup'].includes(x)) {
+    render(true);
+    return;
+  }
+
+  // สร้างเนื้อหาฟอร์มใหม่ใน Element ชั่วคราว
+  const draft = document.createElement('div');
+
+  draft.innerHTML = authPage();
+
+  const next = draft.querySelector('.auth-screen');
+  const brand = screen.querySelector('.auth-brand');
+
+  if (!next || !brand) {
+    render(true);
+    return;
+  }
+
+  // เก็บปุ่มย้อนกลับและโลโก้เดิมไว้
+  const backButton = screen.firstElementChild;
+
+  [...screen.children].forEach(child => {
+    if (child !== brand && child !== backButton) {
+      child.remove();
+    }
+  });
+
+  // เปลี่ยนเฉพาะเนื้อหาใต้โลโก้
+  [...next.children].forEach(child => {
+    if (
+      child.matches('.auth-brand') ||
+      child.matches('.circle-btn')
+    ) return;
+
+    screen.appendChild(child);
+  });
+
+  localizePage();
+};
 function providerIcon(provider){if(provider==='apple')return `<svg viewBox="0 0 24 24" width="23" height="23" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.04 2.58 2.25 3.43 2.27 3.44-.02.06-.35 1.19-1.16 2.35-.7 1-1.43 1.99-2.58 2.01-1.13.02-1.5-.66-2.8-.66-1.3 0-1.72.64-2.79.68-1.12.04-1.97-1.06-2.68-2.06-1.45-2.06-2.56-5.81-1.07-8.35.74-1.26 2.06-2.05 3.49-2.07 1.1-.02 2.13.74 2.81.74.69 0 1.97-.91 3.32-.78.57.02 2.17.23 3.19 1.73-.08.05-1.9 1.11-1.88 3.25zM14.98 6.4a4.51 4.51 0 0 0 1.03-3.35c-.99.04-2.2.66-2.92 1.51-.64.74-1.2 1.94-1.05 3.08 1.11.09 2.25-.57 2.94-1.24z"/></svg>`;if(provider==='google')return `<svg viewBox="0 0 24 24" width="23" height="23" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.2c0-.7-.06-1.39-.18-2.05H12v3.9h5.25a4.5 4.5 0 0 1-1.96 2.97v2.47h3.18c1.86-1.7 2.88-4.18 2.88-7.29Z"/><path fill="#34A853" d="M12 21.8c2.65 0 4.88-.87 6.5-2.31l-3.18-2.47c-.88.59-2.01.93-3.32.93a5.87 5.87 0 0 1-5.51-4.07H3.22v2.55A9.83 9.83 0 0 0 12 21.8Z"/><path fill="#FBBC05" d="M6.49 13.88a5.97 5.97 0 0 1 0-3.76V7.57H3.22a9.81 9.81 0 0 0 0 8.86l3.27-2.55Z"/><path fill="#EA4335" d="M12 6.05c1.44 0 2.73.5 3.74 1.46l2.81-2.81A9.48 9.48 0 0 0 12 2.2a9.83 9.83 0 0 0-8.78 5.37l3.27 2.55A5.87 5.87 0 0 1 12 6.05Z"/></svg>`;return `<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="9" fill="#1877F2"/><path d="M13 20v-7h2.2l.3-2.5H13V9c0-.72.2-1.2 1.3-1.2h1.3V5.6a18 18 0 0 0-1.8-.1C11.8 5.5 11 6.7 11 8.8v1.7H9v2.5h2V20z" fill="white"/></svg>`;}
 
 authPage = function () {
@@ -428,7 +498,11 @@ modal=function(){if(UI.modal!=='cancel')return oldModal();const r=requestById(UI
 
 // Add a safe account check for applications, without collecting KYC documents in localStorage.
 const oldStartApply=App.startApply;
-App.startApply=function(role){  if (role === 'runner') {oldStartApply(role); return;} if (!DB.account) {UI.pendingApply = role;App.auth('partner-choice');return;}  oldStartApply(role); };
+App.startApply = function(role) {
+  if (role !== 'runner' && role !== 'venue') return;
+  UI.pendingApply = null;
+  oldStartApply(role);
+};
 const oldNextApply=App.nextApply;
 App.nextApply=function(ev){oldNextApply(ev);};
 // Social login icons show a clearly disabled integration, never an impression of active OAuth.
