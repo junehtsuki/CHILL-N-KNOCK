@@ -1472,10 +1472,7 @@ App.cnkMoveMonth = function (n) {
                 onclick="App.closeModal()">แสดงผลลัพธ์</button>
             </div>
 
-            <p class="hint">
-              ราคาและคะแนนเป็นข้อมูลที่รวบรวมไว้
-              ไม่ใช่ข้อมูลสดของร้าน
-            </p>
+            
           </div>
         </div>
       `;
