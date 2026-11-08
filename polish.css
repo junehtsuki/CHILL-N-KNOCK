@@ -1839,6 +1839,227 @@ html {
     bottom: calc(78px + 16px + 12px);
   }
 }
+/* Runner screens ONLY — independent styles for the approved 5-screen preview. */
+#app .cnk-runner-screen{background:#FCF8F6;color:#34212A;padding-bottom:112px}
+#app .cnk-runner-wrap{padding:20px 17px 28px;max-width:470px;margin:auto}
+#app .cnk-runner-header,#app .cnk-runner-pagehead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 17px}
+#app .cnk-runner-header h1,#app .cnk-runner-pagehead h1{font:800 21px/1.35 'Noto Sans Thai',sans-serif;letter-spacing:-.025em;color:#2E1C24;margin:0}
+#app .cnk-runner-header p{font-size:11px;margin:4px 0 0;color:#947B86;display:none}
+#app .cnk-runner-bell{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;position:relative;background:#F8E9EE;color:#73263F;border:1px solid #EFD5DE;flex:none}
+#app .cnk-runner-bell i{position:absolute;right:7px;top:6px;width:6px;height:6px;background:#A31C4B;border-radius:50%}
+#app .cnk-runner-earn{border-radius:16px;padding:18px 17px;color:#fff;background:linear-gradient(115deg,#811C40,#BA3B65);position:relative;overflow:hidden;margin-bottom:11px;min-height:105px;box-shadow:0 6px 16px #79334B16}
+#app .cnk-runner-earn small{display:block;color:#FAE0E9;font-weight:700;font-size:10px;max-width:200px}
+#app .cnk-runner-earn strong{display:block;font-size:31px;line-height:1.2;margin-top:10px;font-weight:900}
+#app .cnk-runner-earn-decoration{position:absolute;right:17px;top:37px;color:#F9B5CD}
+#app .cnk-runner-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 20px}
+#app .cnk-runner-stats>div{border:1px solid #EEDFE3;border-radius:13px;background:#fff;padding:12px 9px;min-height:84px;min-width:0}
+#app .cnk-runner-stats small{display:block;color:#806C75;font-size:10px;line-height:1.4}
+#app .cnk-runner-stats strong{font-size:23px;line-height:1.4;color:#321D29;display:block;font-weight:900;margin-top:5px}
+#app .cnk-runner-stats strong span{color:#ECA14A;font-size:12px}
+#app .cnk-runner-stats em{font-size:8px;color:#998792;display:block;font-style:normal}
+#app .cnk-runner-heading{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:12px 0 12px}
+#app .cnk-runner-heading h2{font-size:16px;font-weight:800;line-height:1.3;margin:0;color:#341E29}
+#app .cnk-runner-heading button{background:none;border:0;color:#A11A4A;display:flex;align-items:center;gap:3px;font-size:11px;font-weight:750;flex:none}
+#app .cnk-runner-job,#app .cnk-runner-active-card{width:100%;border-radius:15px;border:1px solid #EEDFE4;background:#fff;box-shadow:0 2px 8px #4A233110;display:flex;padding:10px;gap:11px;text-align:left;color:#331E29;margin:0 0 10px;min-width:0}
+#app .cnk-runner-photo{background-size:cover;background-position:center;background-color:#EDDBE2;display:block;flex:none}
+#app .cnk-runner-job-photo{height:70px;width:67px;border-radius:11px}
+#app .cnk-runner-job-body{min-width:0;display:block;flex:1}
+#app .cnk-runner-job-head{display:flex;justify-content:space-between;align-items:flex-start;gap:7px;margin-bottom:5px}
+#app .cnk-runner-job-head strong{font-size:12px;line-height:1.35;color:#2C1A23;font-weight:850;overflow-wrap:anywhere}
+#app .cnk-runner-job-head b{font-size:11px;color:#9F2350;white-space:nowrap;flex:none}
+#app .cnk-runner-job-meta{font-size:10px;color:#70616B;line-height:1.55;display:flex;align-items:center;gap:4px}
+#app .cnk-runner-job-sub{display:block;color:#A27A89;font-size:9px;margin-top:3px}
+#app .cnk-runner-filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:5px 0 16px;padding:2px 0 5px}
+#app .cnk-runner-filters button{flex:none;border-radius:22px;border:1px solid #E9DADF;background:#fff;color:#695561;padding:8px 11px;font-size:10px;font-weight:800;white-space:nowrap}
+#app .cnk-runner-filters button.active{background:#981C49;color:#fff;border-color:#981C49;box-shadow:0 3px 8px #881B4621}
+#app .cnk-runner-pagehead>span{color:#7B5265}
+#app .cnk-runner-pagehead.cnk-runner-back{justify-content:flex-start}
+#app .cnk-runner-back button{border:0;background:transparent;color:#39212D;display:grid;place-items:center;padding:5px}
+#app .cnk-runner-detail-card{background:#fff;border:1px solid #EBDDE2;border-radius:17px;overflow:hidden;margin-bottom:16px}
+#app .cnk-runner-cover{height:154px;width:100%;border-radius:0}
+#app .cnk-runner-detail-body{padding:15px}
+#app .cnk-runner-detail-name{display:flex;align-items:flex-start;justify-content:space-between;gap:9px}
+#app .cnk-runner-detail-name h2{font-size:22px;margin:0;color:#2B1923;font-weight:850;line-height:1.25}
+#app .cnk-runner-detail-name p{display:flex;align-items:center;gap:4px;color:#85707A;font-size:10px;margin:6px 0 0}
+#app .cnk-runner-detail-name>span{background:#FADEE8;color:#A11F50;border-radius:20px;padding:7px 10px;white-space:nowrap;font-size:10px;font-weight:800}
+#app .cnk-runner-detail-rows{display:grid;gap:0;margin:18px 0 16px}
+#app .cnk-runner-detail-rows>div{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #F0E6EA;padding:11px 0;font-size:11px}
+#app .cnk-runner-detail-rows>div>span{display:flex;align-items:center;gap:7px;color:#85707A}
+#app .cnk-runner-detail-rows>div>strong{font-size:11px;color:#3E2733}
+#app .cnk-runner-detail-rows .cnk-runner-fee{color:#9D1A47;font-size:13px}
+#app .cnk-runner-detail-body h3{font-size:12px;color:#402533;margin:15px 0 8px}
+#app .cnk-runner-job-note{font-size:11px;color:#796471;line-height:1.65;margin:0 0 12px;white-space:pre-wrap}
+#app .cnk-runner-policy{font-size:10px;color:#568267;margin:12px 0;background:#EAF5EF;padding:10px;border-radius:10px;line-height:1.6}
+#app .cnk-runner-primary{display:flex;align-items:center;justify-content:center;gap:7px;border:0;width:100%;background:linear-gradient(120deg,#80163B,#B13161);color:#fff;border-radius:12px;min-height:46px;font-size:12px;font-weight:900;margin:12px 0}
+#app .cnk-runner-primary:disabled{opacity:.5}
+#app .cnk-runner-secondary{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #DECBD3;border-radius:12px;background:#fff;color:#7D2647;padding:12px;font-size:11px;font-weight:800}
+#app .cnk-runner-disclaimer{font-size:9px;color:#9B828E;line-height:1.6;margin:18px 0 0}
+#app .cnk-runner-empty{padding:24px 16px;border-radius:15px;background:#fff;border:1px dashed #E5CED8;text-align:center;color:#8C7380;font-size:11px}
+#app .cnk-runner-empty strong{color:#422739;font-size:13px}
+#app .cnk-runner-empty p{font-size:11px;line-height:1.6;margin:7px 0 13px}
+#app .cnk-runner-empty button{background:#F8E5EC;border:0;color:#8A1A42;font-weight:800;border-radius:12px;padding:10px 14px;font-size:10px}
+#app .cnk-runner-active-card{display:block}
+#app .cnk-runner-active-head{display:flex;gap:10px;align-items:flex-start}
+#app .cnk-runner-active-photo{width:52px;height:52px;border-radius:10px}
+#app .cnk-runner-active-head>div:last-child{flex:1;min-width:0}
+#app .cnk-runner-active-head strong{font-size:12px;color:#35222E}
+#app .cnk-runner-active-head p{font-size:10px;color:#85717E;margin:4px 0 6px}
+#app .cnk-runner-status{display:inline-flex;border-radius:15px;padding:5px 8px;background:#EDF3FD;color:#466EA2;font-size:9px;font-weight:800}
+#app .cnk-runner-status.done{background:#E5F4EB;color:#33764F}
+#app .cnk-runner-status.waiting{background:#F9EDDE;color:#96672F}
+#app .cnk-runner-mini-progress{display:flex;gap:5px;margin:11px 0 0}
+#app .cnk-runner-mini-progress span{height:6px;flex:1;background:#EDE3E8;border-radius:5px}
+#app .cnk-runner-mini-progress span.done{background:#9B224E}
+#app .cnk-runner-mini-progress span.current{background:#D7A1B5}
+#app .cnk-runner-timeline{display:grid;gap:12px;margin:20px 0 14px}
+#app .cnk-runner-timeline>div{display:flex;align-items:center;gap:9px;font-size:11px;color:#927F89}
+#app .cnk-runner-timeline i{height:19px;width:19px;border-radius:50%;border:1px solid #DCD0D5;display:grid;place-items:center;font-style:normal;color:#fff;flex:none}
+#app .cnk-runner-timeline .done{color:#37232D}
+#app .cnk-runner-timeline .done i{background:#942149;border-color:#942149}
+#app .cnk-runner-timeline .current i{border-color:#952149;box-shadow:0 0 0 3px #F5D9E3}
+#app .cnk-runner-note-label{display:block;font-size:11px;color:#412938;font-weight:800;margin:16px 0 8px}
+#app .cnk-runner-detail-body .fieldarea{background:#fff;color:#392330;border-color:#E6D0D9;min-height:90px}
+#app .cnk-runner-period{justify-content:center}
+#app .cnk-runner-period button{flex:1;text-align:center}
+#app .cnk-runner-income{background:#fff;border:1px solid #EADBE1;border-radius:16px;padding:17px 16px;margin-bottom:24px}
+#app .cnk-runner-income>small{display:block;color:#796670;font-size:11px}
+#app .cnk-runner-income>strong{display:block;color:#961D49;font-size:32px;margin:8px 0 4px;font-weight:900}
+#app .cnk-runner-income>p{font-size:10px;color:#957F89;margin:0 0 12px}
+#app .cnk-runner-bars{height:130px;display:flex;gap:9px;align-items:flex-end;justify-content:space-around;padding:10px 0 0}
+#app .cnk-runner-bar-col{display:flex;flex:1;align-items:center;justify-content:flex-end;flex-direction:column;height:110px;gap:7px}
+#app .cnk-runner-bar{width:100%;max-width:29px;border-radius:5px 5px 1px 1px;background:linear-gradient(180deg,#E27F9D,#F4BDD0);display:block;min-height:4px}
+#app .cnk-runner-bar-col small{font-size:9px;color:#987F89}
+#app .cnk-runner-income-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #F0E5E9}
+#app .cnk-runner-income-photo{height:40px;width:40px;border-radius:9px}
+#app .cnk-runner-income-row>div:nth-child(2){flex:1;min-width:0}
+#app .cnk-runner-income-row strong{font-size:11px;color:#34212B;display:block}
+#app .cnk-runner-income-row small{display:block;font-size:9px;color:#94828D;margin-top:3px}
+#app .cnk-runner-income-row b{font-size:12px;color:#1E985A;white-space:nowrap}
+
+
+/* Runner navigation: 4 equal tabs */
+#app > .phone > .bottom-nav:has(> button[onclick="App.go('active')"]) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: stretch;
+}
+
+#app > .phone > .bottom-nav:has(> button[onclick="App.go('active')"]) > button {
+  width: 100%;
+  min-width: 0;
+  justify-self: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Runner detail only */
+#app > .phone:has(> .cnk-runner-screen .cnk-runner-wrap-detail) > .bottom-nav {
+  display: none;
+}
+
+#app .cnk-runner-wrap-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 45px);
+}
+
+#app .cnk-runner-wrap-detail > .cnk-runner-primary {
+  margin-top: auto;
+  position: sticky;
+  bottom: 10px;
+  z-index: 4;
+}
+
+/* Runner work progress */
+#app .cnk-runner-work-steps {
+  display: grid;
+  gap: 0;
+  padding: 12px 8px 2px 15px;
+}
+
+#app .cnk-runner-work-step {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  min-height: 32px;
+  color: #8C7881;
+  font-size: 11px;
+  position: relative;
+}
+
+#app .cnk-runner-work-step:not(:last-child):after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 16px;
+  left: 8px;
+  top: 24px;
+  background: #E7DBE0;
+}
+
+#app .cnk-runner-step-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid #DCD0D5;
+  background: #ECE7E8;
+  color: #fff;
+  flex: none;
+}
+
+#app .cnk-runner-work-step.done {
+  color: #432B37;
+  font-weight: 700;
+}
+
+#app .cnk-runner-work-step.done .cnk-runner-step-dot {
+  background: #9B2350;
+  border-color: #9B2350;
+}
+
+#app .cnk-runner-work-step.current {
+  color: #9C214C;
+  font-weight: 800;
+}
+
+#app .cnk-runner-work-step.current .cnk-runner-step-dot {
+  background: #F6DDE8;
+  border: 2px solid #9C214C;
+}
+/* Runner flow V2 — only within existing Runner-only style block */
+#app .cnk-runner-filter-button{width:34px;height:34px;border:1px solid #E9DADF;border-radius:10px;color:#79344E;background:#FFF;display:grid;place-items:center}
+#app .cnk-runner-advanced{background:#fff;border:1px solid #EEDDE3;border-radius:14px;padding:13px;display:grid;gap:7px;margin-bottom:12px}
+#app .cnk-runner-advanced strong{font-size:13px;color:#392333}
+#app .cnk-runner-advanced label{font-size:11px;font-weight:750;color:#664654;margin-top:5px}
+#app .cnk-runner-advanced select,#app .cnk-runner-cancel-sheet select,#app .cnk-runner-cancel-sheet textarea{width:100%;background:#FFFBFC;border:1px solid #E6CED7;border-radius:10px;min-height:39px;color:#3F2A34;padding:8px 10px;font-size:12px}
+#app .cnk-runner-geo-msg{font-size:11px;line-height:1.6;color:#775B69;background:#FCF1F5;border-radius:10px;padding:10px;margin:8px 0 12px}
+#app .cnk-runner-near-card{position:relative}
+#app .cnk-runner-distance{display:block;text-align:right;font-size:10px;color:#9B2350;margin:-5px 8px 11px}
+#app .cnk-runner-active-tabs{gap:5px}
+#app .cnk-runner-active-tabs button{font-size:9px;padding:8px 9px}
+#app .cnk-runner-active-fee{color:#19815D!important;font-size:10px!important;font-weight:700}
+#app .cnk-runner-active-card .cnk-runner-work-steps{padding-top:9px;padding-bottom:8px}
+#app .cnk-runner-stage-hint{font-size:11px;line-height:1.65;color:#7D6170;margin:13px 0}
+#app .cnk-runner-file{width:100%;font-size:11px;color:#6C5160;padding:8px 0}
+#app .cnk-runner-proof-review{background:#FFF9FA;border:1px solid #EEDDE4;border-radius:12px;padding:13px;font-size:11px;color:#4D3340;margin:12px 0}
+#app .cnk-runner-proof-review p{line-height:1.6;color:#836B77}
+#app .cnk-runner-proof-review img{width:100%;max-width:240px;border-radius:10px;display:block}
+#app .cnk-runner-paid-card{background:#F2FAF4;border:1px solid #CFE8D6;padding:15px;border-radius:13px;color:#28734A;font-size:12px;margin:12px 0}
+#app .cnk-runner-paid-card strong{display:flex;align-items:center;gap:6px}
+#app .cnk-runner-paid-card p{font-size:11px;line-height:1.6}
+#app .cnk-runner-cancel-link{margin:13px auto 4px;display:block;background:transparent;border:0;color:#9E3558;text-decoration:underline;font-size:11px;min-height:32px}
+#app .cnk-runner-cancel-note{font-size:10px;color:#907B85;line-height:1.6}
+#app .cnk-runner-cancel-overlay{position:fixed;inset:0;background:#22101B99;z-index:100;display:flex;align-items:flex-end;justify-content:center}
+#app .cnk-runner-cancel-sheet{background:#fff;border-radius:22px 22px 0 0;padding:20px;width:100%;max-width:470px;max-height:85dvh;overflow-y:auto;color:#35202D}
+#app .cnk-runner-cancel-sheet h2{font-size:20px;margin:0 0 8px}
+#app .cnk-runner-cancel-sheet p{font-size:12px;line-height:1.65;color:#705C67}
+#app .cnk-runner-cancel-sheet label{display:block;font-size:11px;font-weight:800;margin:13px 0 5px}
+#app .cnk-runner-cancel-actions{display:flex;gap:9px;margin-top:16px}
+#app .cnk-runner-cancel-actions button{flex:1;min-height:44px;border-radius:12px;border:1px solid #DECBD2;background:#fff;color:#6C3C50;font-weight:800;font-size:11px}
+#app .cnk-runner-cancel-actions button.danger{background:#9B2350;border-color:#9B2350;color:#fff}
+
+/* END Runner-only styles */
 
 /* ==========================================
    FIX 09.2 — EVENTS LIST

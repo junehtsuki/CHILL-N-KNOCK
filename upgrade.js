@@ -859,7 +859,7 @@ demoFooter=function(){return `<p class="footer-small">CHILL N’ KNOCK · UX TES
 // Fake sample events have been made explicit and tied to an existing listed venue.
 events.splice(0,events.length,
   {
-    id:'e4',name:'SEK LOSO LIVE — MIL',subtitle:'New Date · 8 NOV',venue:'mil',
+    id:'e4',name:'SEK LOSO LIVE',subtitle:'New Date · 8 NOV',venue:'mil',
     date:'2026-11-08',time:'21:00',endTime:'Late',price:null,status:'rescheduled',
     art:'poster-bg4',label:'Live Concert / Rock',tag:'8 พ.ย. · วันใหม่',
     lineup:['SEK LOSO'],lineupNote:'รายชื่อศิลปินตามโปสเตอร์วันจัดใหม่',
@@ -971,7 +971,7 @@ Object.assign(translatePairs,{
  '03 · Clear responsibilities':'03 · แสดงเงื่อนไขให้ชัดเจน',
  'FIND A VENUE':'ค้นหาร้าน'
 });
-navItems=function(){if(UI.role==='runner') {return [['jobs','งานใหม่','briefcase'],['active','งานของฉัน','clock'],['profile','โปรไฟล์','user']];} if(UI.role==='venue') {return [['home','ภาพรวม','home'],['venue-requests','คำขอจอง','calendar'],['venue-policies','จัดการร้าน','shield'],['profile','โปรไฟล์','user']];} return [['home','หน้าหลัก','home'],['discover','ค้นหาร้าน','compass'],['events','อีเวนต์','ticket'],['activity','คืนของฉัน','calendar'],['profile','โปรไฟล์','user']];};
+navItems=function(){if(UI.role==='runner') {return [['home','หน้าหลัก','home'],['active','งานของฉัน','clock'],['wallet','รายได้','wallet'],['profile','โปรไฟล์','user']];} if(UI.role==='venue') {return [['home','ภาพรวม','home'],['venue-requests','คำขอจอง','calendar'],['venue-policies','จัดการร้าน','shield'],['profile','โปรไฟล์','user']];} return [['home','หน้าหลัก','home'],['discover','ค้นหาร้าน','compass'],['events','อีเวนต์','ticket'],['activity','คืนของฉัน','calendar'],['profile','โปรไฟล์','user']];};
 
 // Native select menus vary across browsers: replace them with in-app sheets on phones.
 document.addEventListener('pointerdown',event=>{let s=event.target.closest('select.field');if(s&&s.id!=='managedVenue'){event.preventDefault();event.stopPropagation();openSelectPicker(s);}},true);
