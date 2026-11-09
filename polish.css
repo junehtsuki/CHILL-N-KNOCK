@@ -2037,7 +2037,7 @@ html {
 #app .cnk-runner-near-card{position:relative}
 #app .cnk-runner-distance{display:block;text-align:right;font-size:10px;color:#9B2350;margin:-5px 8px 11px}
 #app .cnk-runner-active-tabs{gap:5px}
-#app .cnk-runner-active-tabs button{font-size:9px;padding:8px 9px}
+#app .cnk-runner-active-tabs button{font-size:10px;padding:9px 10px}
 #app .cnk-runner-active-fee{color:#19815D!important;font-size:10px!important;font-weight:700}
 #app .cnk-runner-active-card .cnk-runner-work-steps{padding-top:9px;padding-bottom:8px}
 #app .cnk-runner-stage-hint{font-size:11px;line-height:1.65;color:#7D6170;margin:13px 0}
@@ -2058,6 +2058,87 @@ html {
 #app .cnk-runner-cancel-actions{display:flex;gap:9px;margin-top:16px}
 #app .cnk-runner-cancel-actions button{flex:1;min-height:44px;border-radius:12px;border:1px solid #DECBD2;background:#fff;color:#6C3C50;font-weight:800;font-size:11px}
 #app .cnk-runner-cancel-actions button.danger{background:#9B2350;border-color:#9B2350;color:#fff}
+/* Runner V4: filter sheet and QA helper (only Runner-specific classes) */
+#app .cnk-runner-qa-helper{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#FFF3F6;border:1px solid #E9CED8;border-radius:12px;padding:9px 11px;margin:8px 0 12px;font-size:10px;color:#7A3551}
+#app .cnk-runner-qa-helper button{border:1px solid #E6C7D2;border-radius:999px;background:#fff;color:#952649;padding:8px 10px;font-size:10px;font-weight:800;display:flex;align-items:center;gap:5px}
+#app .cnk-runner-filter-scrim{position:fixed;inset:0;background:#2A10204D;z-index:66}
+#app .cnk-runner-filter-sheet{
+  position:fixed;
+  z-index:67;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(calc(100% - 28px),450px);
+  max-height:calc(82dvh - 24px);
+  overflow-y:auto;
+  box-sizing:border-box;
+  border-radius:22px;
+  border:1px solid #EDD5DE;
+  background:#FFFBFA;
+  box-shadow:0 12px 34px #35162630;
+  padding:20px 18px max(18px,env(safe-area-inset-bottom));
+  gap:12px;
+}
+#app .cnk-runner-filter-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+#app .cnk-runner-filter-title strong{font-size:18px;color:#3C2130}
+#app .cnk-runner-filter-title button{width:34px;height:34px;border:1px solid #EAD5DE;background:#fff;border-radius:50%;color:#742846;font-size:18px}
+#app .cnk-runner-filter-sheet label{font-size:12px;font-weight:800;color:#583348;margin-top:4px}
+#app .cnk-runner-filter-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#app .cnk-runner-filter-options button{
+  min-height:45px;
+  border:1px solid #E8D1DB;
+  border-radius:13px;
+  background:#fff;
+  color:#673A4F;
+  font-size:12px;
+  font-weight:750;
+  text-align:center;
+  padding:10px 12px;
+  line-height:1.4;
+}
+#app .cnk-runner-filter-options button.selected{background:#8D1942;border-color:#8D1942;color:#fff}
+#app .cnk-runner-filter-sheet p{font-size:10px;color:#876D7A;margin:2px 0 0}
+#app .cnk-runner-proof-details strong{display:block;font-size:12px;color:#7D2548}
+#app .cnk-runner-proof-details p{font-size:11px;line-height:1.55;color:#7E6571}
+#app .cnk-runner-cancel-note{background:#FFF7F8;border:1px solid #EFDBE2;border-radius:12px;padding:11px 12px;line-height:1.65}
+
+/* V4 booking confirmation and service details only */
+#app .cnk-runner-v4-proof{background:#FFF7F9;border:1px solid #E9CBD7;border-radius:14px;padding:13px;margin:13px 0;color:#532C3E}
+#app .cnk-runner-v4-proof h3{font-size:13px;margin:0 0 9px;color:#722C49;display:flex;align-items:center;gap:6px}
+#app .cnk-runner-v4-proof p{font-size:12px;margin:0 0 7px;line-height:1.6}
+#app .cnk-runner-v4-proof small{font-size:10px;line-height:1.5;color:#876B79}
+#app .cnk-runner-v4-servicelabel{font-size:11px;font-weight:700;color:#8A2D53;margin:10px 0 14px}
+#app .cnk-runner-v4-qa-actions{display:flex;gap:5px;align-items:center}
+#app .cnk-runner-v4-qa-actions button{font-size:10px;white-space:nowrap}
+#app .cnk-runner-v4-qa-actions button[aria-pressed="true"]{background:#8E244B;color:#fff}
+#app .cnk-runner-v4-cancel-history{margin:16px 0;border:1px solid #E9D6DD;border-radius:13px;background:#fff;padding:12px;color:#603048}
+#app .cnk-runner-v4-cancel-history summary{font-size:12px;font-weight:800;cursor:pointer}
+#app .cnk-runner-v4-cancel-item{border-top:1px solid #F0E5E9;margin-top:10px;padding-top:10px;display:grid;gap:4px;font-size:11px}
+#app .cnk-runner-v4-cancel-item span{color:#9A3154}
+#app .cnk-runner-v4-cancel-item small{color:#8A747E}
+#app .cnk-runner-v5-cancel-card{background:#fff;border:1px solid #EAD7DE;border-radius:14px;padding:15px;margin:11px 0;display:grid;gap:7px;color:#412835}
+#app .cnk-runner-v5-cancel-card strong{font-size:13px}
+#app .cnk-runner-v5-cancel-card span{font-size:11px;color:#9A3154}
+#app .cnk-runner-v5-cancel-card small{font-size:10px;color:#907B85}
+#app .cnk-runner-v5-cancel-pending{background:#FFF7F9;border:1px solid #E9CCD8;border-radius:14px;padding:14px;margin:12px 0}
+#app .cnk-runner-v5-cancel-pending strong{font-size:12px;color:#82274C}
+#app .cnk-runner-v5-cancel-pending p{font-size:11px;line-height:1.6;color:#805B6E}
+#app .cnk-runner-v5-qa-row{display:flex;gap:8px;margin-top:12px}
+#app .cnk-runner-v5-qa-row button{flex:1;min-height:39px;border:1px solid #E7C7D4;border-radius:10px;background:white;color:#8B2950;font-size:10px;font-weight:800;padding:7px}
+#app .cnk-runner-v5-customer-proof{background:#FFF7FA;border:1px solid #E9CED8;border-radius:13px;padding:13px;margin:15px 0;color:#652A43}
+#app .cnk-runner-v5-customer-proof.done{background:#F1FAF4;border-color:#CCE7D4;color:#226542}
+#app .cnk-runner-v5-customer-proof strong{font-size:13px;display:flex;align-items:center;gap:6px}
+#app .cnk-runner-v5-customer-proof p{font-size:12px;line-height:1.5;margin:8px 0}
+#app .cnk-runner-v5-customer-proof small{display:block;font-size:10px;line-height:1.6;opacity:.8}
+#app .cnk-runner-active-tabs{scrollbar-width:none}
+/* Guided demo V6 — Runner only, does not affect Guest / Venue. */
+#app .cnk-runner-v6-seat{border:1px solid #efd2dd;border-radius:13px;padding:13px 14px;background:#fff5f8;margin:12px 0;display:grid;gap:5px}
+#app .cnk-runner-v6-seat strong{font-size:12px;color:#652944}
+#app .cnk-runner-v6-seat p{font-size:14px;color:#9a1f4b;font-weight:800;margin:0;line-height:1.5}
+#app .cnk-runner-v6-seat small{font-size:11px;color:#8b707c;line-height:1.5}
+#app .cnk-runner-v6-stage-hint{padding:12px 14px;background:#f7f9f5;border-radius:12px;color:#3a674e;margin:12px 0}
+#app .cnk-runner-v6-stage-hint strong{font-size:12px}
+#app .cnk-runner-v6-stage-hint p{font-size:11px;line-height:1.6;margin:6px 0 0}
 
 /* END Runner-only styles */
 
