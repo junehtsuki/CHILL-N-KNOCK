@@ -7,6 +7,8 @@
 #app .cnk-vp-icon{height:32px;width:32px;display:grid;place-items:center;border:none;background:transparent;color:#563143;border-radius:10px}
 #app .cnk-vp-venue-switch{border:none;background:transparent;font-size:19px;font-weight:800;color:#301D27;padding:3px 0 12px;display:flex;gap:8px;align-items:center;padding-bottom:3px}
 #app .cnk-vp-venue-picker{display:grid;gap:4px;max-height:210px;overflow:auto;background:#fff;border:1px solid #F1DDE3;border-radius:13px;padding:8px;margin-bottom:12px}
+#app .cnk-vp-venue-picker .cnk-vp-switch-help{font-size:10px;line-height:1.6;color:#856b78;margin:4px 7px 6px;padding-bottom:6px;border-bottom:1px solid #f5e4e9}
+#app .cnk-vp-venue-picker button.cnk-vp-demo-reset{background:#FFF0F5;border:1px solid #F0CFDB;color:#9A1C4F;font-weight:800;margin:2px 0 5px}
 #app .cnk-vp-venue-picker button{border:none;text-align:left;background:transparent;padding:8px 12px;font-size:12px;color:#46303B;border-radius:8px}
 #app .cnk-vp-venue-picker button.active{background:#FBE4EB;color:#9C1C4F}
 #app .cnk-vp-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:6px 0 23px}

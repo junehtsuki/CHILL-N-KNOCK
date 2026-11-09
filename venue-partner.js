@@ -7,7 +7,7 @@
   'use strict';
   if (window.__cnkVPInstalled) return;
   window.__cnkVPInstalled = true;
-  window.__cnkVPVersion = 'v3-reference-20261110';
+  window.__cnkVPVersion = 'v3.1-venue-selector-20261110';
 
   const $ = (s) => document.querySelector(s);
   const safe = (s) => e(s == null ? '' : String(s));
@@ -44,9 +44,9 @@
     <div class="cnk-vp-header-right">${action || `<button type="button" class="cnk-vp-icon" onclick="App.openModal('notifications')" aria-label="แจ้งเตือน">${ic('bell',18)}</button>`}</div>
   </header>`;
   const footnote = () => `<p class="cnk-vp-notice">ข้อมูลต้นแบบในเบราว์เซอร์ · การจอง การยืนยันโต๊ะ และการชำระเงินยังไม่เกิดขึ้นจริง</p>`;
-  const layout = (body) => `<div class="screen cnk-vp ${DB.cnkVPFont==='large'?'cnk-vp-large':''}" data-vp-version="v3-reference"><div class="cnk-vp-content">${body}</div></div>`;
-  const vSelect = () => `<button type="button" class="cnk-vp-venue-switch" onclick="App.vpToggleVenuePicker()">${safe(venue().name)} ${ic('chevron',15)}</button>
-    ${UI.vpVenuePicker ? `<div class="cnk-vp-venue-picker">${venues.map(v => `<button type="button" onclick="App.vpSelectVenue('${v.id}')" class="${v.id===DB.merchantVenue?'active':''}">${safe(v.name)}</button>`).join('')}</div>` : ''}`;
+  const layout = (body) => `<div class="screen cnk-vp ${DB.cnkVPFont==='large'?'cnk-vp-large':''}" data-vp-version="v3.1-onyx-preview"><div class="cnk-vp-content">${body}</div></div>`;
+  const vSelect = () => `<button type="button" class="cnk-vp-venue-switch" onclick="App.vpToggleVenuePicker()" aria-expanded="${!!UI.vpVenuePicker}" aria-label="เลือกดูร้านตัวอย่าง">${safe(venue().name)} ${ic('chevron',15)}</button>
+    ${UI.vpVenuePicker ? `<div class="cnk-vp-venue-picker"><p class="cnk-vp-switch-help">เลือกร้านเพื่อดูข้อมูลสาธิตในเบราว์เซอร์นี้ · ไม่ใช่บัญชีร้านจริง</p><button type="button" class="cnk-vp-demo-reset" onclick="App.vpRestoreOnyxSamples()">คืนคำขอ ONYX ตัวอย่าง 3 รายการ</button>${[...venues].sort((a,b)=>(a.id==='onyx'?-1:b.id==='onyx'?1:0)).map(v => `<button type="button" onclick="App.vpSelectVenue('${v.id}')" class="${v.id===DB.merchantVenue?'active':''}">${safe(v.name)}${v.id==='onyx'?' · พรีวิว ONYX':''}</button>`).join('')}</div>` : ''}`;
   const stat = (n,txt) => `<div class="cnk-vp-stat"><span>${safe(txt)}</span><b>${n}</b></div>`;
   const menuButton = (label,icon,screen) => `<button type="button" class="cnk-vp-menu-shortcut" onclick="App.vpGo('${screen}')">${ic(icon,22)}<span>${safe(label)}</span></button>`;
   // Reference-preview data for ONYX when no actual ONYX pending customer requests exist.
@@ -280,8 +280,27 @@
     return value;
   };
 
-  App.vpToggleVenuePicker = () => { if (!(typeof QA !== 'undefined' && QA)) return toast('สลับร้านได้เฉพาะโหมด QA');UI.vpVenuePicker=!UI.vpVenuePicker;render(true); };
-  App.vpSelectVenue = id => { if (!(typeof QA !== 'undefined' && QA)) return toast('บัญชีร้านที่ได้รับอนุมัติไม่สามารถสลับร้านเอง'); if (!venues.some(v=>v.id===id))return; DB.merchantVenue=id;UI.vpVenuePicker=false;save();render(true); };
+  // Local interactive prototype only: allow explicit demo-venue selection from the Venue screen.
+  // This does not change the registered venueId on a partner application or any real account.
+  App.vpToggleVenuePicker = () => { if (UI.role !== 'venue') return; UI.vpVenuePicker=!UI.vpVenuePicker;render(true); };
+  App.vpSelectVenue = id => {
+    if (UI.role !== 'venue') return;
+    if (!venues.some(v=>v.id===id)) return;
+    DB.merchantVenue=id; // Selected demo view stored locally; no real server-side privileges.
+    UI.vpVenuePicker=false;UI.vpRequestTab='pending';UI.vpEventTab='upcoming';UI.vpTrail=[];
+    save();render(true);toast('กำลังดูร้าน '+V(id).name+' ในต้นแบบ');
+  };
+  App.vpRestoreOnyxSamples = () => {
+    if (UI.role !== 'venue') return;
+    const sampleIds = new Set(['CKN-VP004','CKN-VP005','CKN-VP006']);
+    // Reset only these flagged demo entries; NEVER delete a customer-created request.
+    DB.requests = DB.requests.filter(r => !(r.vpSample === true && sampleIds.has(r.id)));
+    DB.cnkVPDemoSeeded = false;
+    DB.merchantVenue = 'onyx';
+    UI.vpVenuePicker=false; UI.vpRequestTab='pending'; UI.vpEventTab='upcoming';
+    seedOnyxDemo(); save(); render(true);
+    toast('คืนคำขอ ONYX ตัวอย่างแล้ว · ไม่ได้ลบคำขอจริง');
+  };
   App.vpSetRequestTab = id => {if (!['pending','confirmed','history'].includes(id)) return; UI.vpRequestTab=id;render(true);};
   App.vpSetTableZone = zone => {if (!['Main','VIP','Outdoor'].includes(zone))return;UI.vpTableZone=zone;render(true);};
   App.vpToggleTableHelp = () => {UI.vpTableHelp=!UI.vpTableHelp;render(true);};
