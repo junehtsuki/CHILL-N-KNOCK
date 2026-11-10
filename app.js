@@ -1541,7 +1541,7 @@ if (k === 'venue') {
           ${e(venueName)}
           <br>
           ${found
-            ? 'กำลังแสดงขั้นตอนอนุมัติแบบจำลอง'
+            ? 'สถานะอนุมัติทดลอง · เมื่อเสร็จจะเข้าสู่ Dashboard ตัวอย่างร้าน ONYX'
             : 'ยังไม่มีร้านนี้ในรายการ ต้องเพิ่มร้านก่อนเปิด Dashboard'
           }
           <br>
@@ -1633,26 +1633,31 @@ DB.applications[role] = {
 };
 
 if (role === 'venue') {
-  const name = String(
-    UI.applyData.f0_0 || ''
-  ).trim().toLocaleLowerCase();
+  
+  // เปิดพื้นที่ร้าน ONYX สำหรับการทดสอบเท่านั้น
+  // ไม่ถือเป็นการยืนยันสิทธิ์ดูแลร้านจริง
+  DB.merchantVenue = 'onyx';
+  DB.applications.venue.venueId = 'onyx';
+  DB.applications.venue.previewOnly = true;
 
-  const selectedVenue = venues.find(
-    v => v.name.trim().toLocaleLowerCase() === name
+  // คืนเฉพาะคำขอ ONYX ที่เป็นข้อมูลสาธิต
+  // ไม่ลบคำขอที่ลูกค้าสร้างเอง
+  const previewIds = new Set([
+    'CKN-VP004',
+    'CKN-VP005',
+    'CKN-VP006'
+  ]);
+
+  DB.requests = DB.requests.filter(r =>
+    !(r.vpSample === true && previewIds.has(r.id))
   );
 
-  if (selectedVenue) {
-    DB.merchantVenue = selectedVenue.id;
-    DB.applications.venue.venueId = selectedVenue.id;
-  }
+  DB.cnkVPDemoSeeded = false;
 
   save();
 
   UI.venueApprovalStep = 1;
   go('applied');
-
-  // ร้านใหม่ต้องเพิ่มข้อมูลเข้าระบบก่อน
-  if (!selectedVenue) return;
 
   // ขั้นตอน 2: กำลังตรวจสอบ (จำลอง)
   setTimeout(() => {

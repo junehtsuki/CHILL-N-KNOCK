@@ -531,29 +531,13 @@ profile = function () {
   ]);
 
   // สลับบทบาทผ่านเมนูย่อย ไม่โชว์พื้นที่ทำงานบน Profile ลูกค้า
-  const choices = [
-    ['user', 'ลูกค้า', true],
-    ['runner', 'Table Runner', canRunner],
-    ['venue', 'ร้านพาร์ตเนอร์', canVenue]
-  ].filter(([, , allowed]) => allowed);
+  
+  // แยกพื้นที่โปรไฟล์ตามบทบาท
+  // ไม่แสดงเมนูสลับไปยังบทบาทอื่น
+  const switcher = '';
 
-  const switcher = choices.length > 1 ? `
-    <details class="subtle-card" style="margin:16px 0">
-      <summary style="cursor:pointer;font-weight:700;color:#8F1742">
-        เปลี่ยนโหมดการใช้งาน
-      </summary>
-      <div style="display:grid;gap:8px;margin-top:12px">
-        ${choices.map(([id, label]) => `
-          <button class="btn full ghost" type="button"
-            onclick="App.switchRole('${id}')">
-            ${e(label)} ${role === id ? '✓' : ''}
-          </button>
-        `).join('')}
-      </div>
-    </details>
-  ` : '';
 
-  const signOut = auth ? `
+  const signOut = (auth || role === 'runner') ? `
     <button class="menu-row" onclick="App.signOut()">
       ${ic('arrow',18)}
       <span>ออกจากระบบ</span>
