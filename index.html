@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="polish.css" />
   <link rel="stylesheet" href="cnk-event-ui.css">
   <link rel="stylesheet" href="venue-partner.css">
+  <link rel="stylesheet" href="cnk-guest-features.css?v=1">
+
 </head>
 <body>
   <div id="app" aria-live="polite"></div>
@@ -25,6 +27,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="cnk-event-ui.js"></script>
   <script src="venue-partner.js"></script>
+  <script src="cnk-guest-features.js?v=1"></script>
   <script>
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
       window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.warn));

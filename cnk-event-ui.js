@@ -105,7 +105,7 @@
     const ev=E(t.event),v=V(ev.venue), end=ev.endTime||'02:00';
     return `<div class="screen cnk-ts-screen">
       <div class="cnk-ts-top"><div class="cnk-ts-icon">${ic('ticket',54)}<span>${ic('check',23)}</span></div>
-        <h1>บันทึกบัตรสำเร็จ!</h1><p>ขอบคุณที่ใช้ CHILL N’ KNOCK</p><span class="cnk-ts-demo">บัตรทดลอง · ไม่สามารถใช้เข้างานจริง</span></div>
+        <h1>ชำระเงินจำลองสำเร็จ !</h1><p>ขอบคุณที่ใช้ CHILL N’ KNOCK</p><span class="cnk-ts-demo">บัตรทดลอง · ไม่สามารถใช้เข้างานจริง</span></div>
       <div class="cnk-ts-ticket"><div class="cnk-ts-banner">${image(ev)}<div><h2>${e(v.name)}</h2><b>${e(ev.name)}</b></div></div>
         <div class="cnk-ts-details"><div class="cnk-ts-facts">
           <p>${ic('calendar',17)} ${e(thaiDate(t.date))}</p>
