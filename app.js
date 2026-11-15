@@ -1302,12 +1302,49 @@ const isRunnerQA=UI.role==='runner';
 
         <p class="cnk-runner-hello">สวัสดี,</p>
 
-        <h1>${e(runnerName)}</h1>
+        
+        <div class="cnk-runner-identity-name-row">
+          <h1>${e(runnerName)}</h1>
+
+          ${isRunnerQA?`
+            <span
+              class="cnk-runner-demo-badge"
+              title="สถานะยืนยันตัวตนจำลอง ไม่ใช่การตรวจสอบจริง">
+
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false">
+                <path
+                  d="M12 2 20 5v6c0 5.3-3.1 9.2-8 11-4.9-1.8-8-5.7-8-11V5l8-3Z"
+                  fill="#1689E8">
+                </path>
+                <path
+                  d="m8 12 2.5 2.5L16 9"
+                  fill="none"
+                  stroke="#FFFFFF"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                </path>
+              </svg>
+
+              <span>Verified · Demo</span>
+            </span>
+          `:''}
+        </div>
 
         <div class="cnk-runner-identity-meta">
-          ${ic('shield',15)}
           <span>${isRunnerQA?'Runner ทดลอง · '+e(runnerId||'r1'):'Runner Partner'}</span>
         </div>
+
+        ${isRunnerQA?`
+          <span class="cnk-runner-identity-caption">
+            โปรไฟล์และสถานะยืนยันตัวตนจำลอง
+          </span>
+        `:''}
 
       </div>
 

@@ -2039,6 +2039,46 @@ html {
   line-height:1.35;
 }
 
+/* Runner Home: blue demo verification badge */
+#app .cnk-runner-identity-name-row{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:5px;
+}
+
+#app .cnk-runner-demo-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:5px 9px;
+  border:1px solid #E7E7ED;
+  border-radius:999px;
+  background:#FFFFFF;
+  color:#302A32;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px;
+  font-weight:700;
+  line-height:1.2;
+  white-space:nowrap;
+}
+
+#app .cnk-runner-demo-badge svg{
+  width:16px;
+  height:16px;
+  flex:none;
+}
+
+#app .cnk-runner-identity-caption{
+  display:block;
+  color:#90818A;
+  font-size:10px;
+  line-height:1.4;
+  margin-top:5px;
+}
+
 #app .cnk-runner-identity-card .cnk-runner-bell{
   background:transparent;
   border:0;
