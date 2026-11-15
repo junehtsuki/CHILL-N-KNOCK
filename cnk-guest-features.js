@@ -168,7 +168,31 @@ function cnkGuestPaymentMethodIcon(type){
   ];
   const runnerLabel = id => ({r1:'Runner A',r2:'Runner B',r3:'Runner C'})[id] || 'รอจับคู่';
   const previousPickRunner = App.pickRunner;
-  App.pickRunner = function (id) {previousPickRunner(id);render(true);};
+  
+
+App.pickRunner = function (id) {
+  const phoneBefore = document.querySelector('#app > .phone');
+  const phoneY = phoneBefore ? phoneBefore.scrollTop : 0;
+  const screenY = phoneBefore?.querySelector('.screen')?.scrollTop || 0;
+  const windowY = window.scrollY || 0;
+
+  previousPickRunner(id);
+  render(true);
+
+  const phoneAfter = document.querySelector('#app > .phone');
+
+  if (phoneAfter) {
+    phoneAfter.scrollTop = phoneY;
+
+    const screenAfter = phoneAfter.querySelector('.screen');
+    if (screenAfter) screenAfter.scrollTop = screenY;
+  }
+
+  window.scrollTo({
+    top: windowY,
+    behavior: 'instant'
+  });
+};
 
   const previousSubmitBooking = App.submitBooking;
   App.submitBooking = function () {
@@ -181,8 +205,11 @@ function cnkGuestPaymentMethodIcon(type){
     r.fee=r.service==='direct'?0:feeFor(r.service);
     const deposit=r.service==='queue'?0:500; // DEMO only: not a venue's actual rate.
     r.cnkPayment={status:'pending_demo',runnerFee:r.fee,deposit,total:r.fee+deposit,method:null};
-    save();App.cnkGuestPayOpen({kind:'booking',id:r.id});
-  };
+save();App.cnkGuestPayOpen({
+  kind:'booking',
+  id:r.id,
+  from:'booking-review'
+});  };
   const previousTicketConfirm = App.cnkConfirmTicket;
   App.cnkConfirmTicket = function () {
     if(!DB.account)return App.auth('cnk-ticket-select');
@@ -197,11 +224,51 @@ function cnkGuestPaymentMethodIcon(type){
   App.cnkGuestPayNext = () => {const p=UI.cnkGuestPayment;if(!p)return;p.step=p.method;render(true);};
   App.cnkGuestPayBank = bank => {const p=UI.cnkGuestPayment;if(p&&bankList.some(b=>b.id===bank)){p.bank=bank;render(true);}};
   App.cnkGuestPayBack = () => {
-    const p=UI.cnkGuestPayment;if(!p)return App.go('activity');
-    if(p.step!=='methods'){p.step='methods';return render(true);}
-    if(p.draft.kind==='booking')return App.openTracking(p.draft.id);
-    return App.go('cnk-ticket-select');
-  };
+  const p=UI.cnkGuestPayment;
+
+  if(!p) return App.go('activity');
+
+  if(p.step!=='methods'){
+    p.step='methods';
+    return render(true);
+  }
+
+  if(p.draft.kind==='booking'){
+
+    if(p.draft.from==='booking-review'){
+      const r=requestById(p.draft.id);
+
+      if(
+        !r ||
+        r.owner!==DB.account?.email ||
+        r.cnkPayment?.status!=='pending_demo' ||
+        r.runner
+      ){
+        return App.openTracking(p.draft.id);
+      }
+
+      // ลบเฉพาะคำขอทดลองที่ยังไม่ได้ชำระ
+      // ป้องกันรายการซ้ำเมื่อกลับไปยืนยันใหม่
+      DB.requests=DB.requests.filter(
+        item=>item.id!==r.id
+      );
+      save();
+
+      UI.cnkGuestPayment=null;
+      UI.reqId='';
+      UI.stack=['booking-form'];
+      UI.screen='booking-review';
+      UI.modal='';
+
+      render();
+      return;
+    }
+
+    return App.openTracking(p.draft.id);
+  }
+
+  return App.go('cnk-ticket-select');
+};
   App.cnkGuestPayResume = id => {
     const r=requestById(id);
     if(!r||r.owner!==DB.account?.email||r.cnkPayment?.status!=='pending_demo'||['declined','cancelled'].includes(r.status))return toast('คำขอนี้ไม่พร้อมชำระเงิน');

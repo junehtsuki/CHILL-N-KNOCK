@@ -13,7 +13,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "EDM, แสงเสียงใหญ่, คนเยอะ, international DJs",
     "address": "RCA Alley, Bang Kapi, Huai Khwang, Bangkok 10310",
     "area": "RCA, Ratchadaphisek",
-    "hours": "",
+    "hours": "21:00 น.- 04:00 น.",
     "price_per_person": {
       "min": 400,
       "max": 1500,
@@ -81,7 +81,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "Korean-style club, หลายโซน, ดีไซน์ทันสมัย, DJ เยอะ",
     "address": "5th Floor, Donki Mall Thonglor, 107 Soi Sukhumvit 63, Khlong Tan Nuea, Watthana, Bangkok 10110",
     "area": "Thonglor / Ekkamai",
-    "hours": "21:00-05:00",
+    "hours": "21:00 น.- 05:00 น.",
     "price_per_person": {
       "min": 500,
       "max": 2000,
@@ -169,7 +169,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "หรู, มืดมี mood, Asian-modern, วิวสูง, คึกช่วงหลัง 23:00",
     "address": "45th floor, T ONE Building, Sukhumvit Road, Bangkok",
     "area": "Phra Khanong / Thonglor edge",
-    "hours": "",
+    "hours": "20:00 น. – 02:00 น.",
     "price_per_person": {
       "min": 400,
       "max": 1200,
@@ -263,7 +263,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "หรู, โทนม่วง-ชมพู, dating bar, ดนตรีสดช่วงหัวค่ำ, DJ ช่วงดึก",
     "address": "5th Floor, EM WONDER, Emsphere, 628 Sukhumvit Road, Khlong Tan, Khlong Toei, Bangkok 10110",
     "area": "Phrom Phong",
-    "hours": "19:00-late",
+    "hours": "19:00 น. เป็นต้นไปจนถึงดึก",
     "price_per_person": {
       "min": 400,
       "max": 1000,
@@ -344,7 +344,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "บรรยากาศผับ/บาร์",
     "address": "",
     "area": "Ari, Bangkok",
-    "hours": "",
+    "hours": "18:30 น. - 02:00 น.",
     "price_per_person": {
       "min": null,
       "max": null,
@@ -385,7 +385,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "คึกคัก, ดนตรีสด, สวนกลางแจ้ง, จอใหญ่ดูกีฬา, โซนผับ",
     "address": "455 Soi Sukhumvit 63, Khlong Tan Nuea, Watthana, Bangkok 10110",
     "area": "Ekkamai, Bangkok",
-    "hours": "18:00-02:00 (จันทร์-เสาร์ ตามรีวิว)",
+    "hours": "18:00 น.- 02:00 น.",
     "price_per_person": {
       "min": 500,
       "max": 1200,
@@ -501,7 +501,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "หรู, speakeasy, มืดมี mood, electronic music",
     "address": "2nd Floor, SILQ Hotel & Residence, 41 Sukhumvit 24 Alley, Khlong Tan, Khlong Toei, Bangkok 10110",
     "area": "Phrom Phong, Bangkok",
-    "hours": "21:00-late, อังคาร-อาทิตย์",
+    "hours": "21:00 น. - 04:00 น., อังคาร-อาทิตย์",
     "price_per_person": {
       "min": 500,
       "max": 2000,
@@ -597,7 +597,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "หรูแต่สนุก, Hip-hop/R&B/trap, กลุ่มเพื่อน",
     "address": "3rd Floor, J Avenue, 15 Soi Thong Lo, Khlong Tan Nuea, Watthana, Bangkok 10110",
     "area": "Thonglor, Bangkok",
-    "hours": "21:00-02:00",
+    "hours": "21:00 น. - 02:00 น.",
     "price_per_person": {
       "min": 1000,
       "max": 1200,
@@ -684,7 +684,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "glam, mood lighting, ถ่ายรูปสวย, คึกคัก",
     "address": "5th Floor, Emsphere, Sukhumvit, Bangkok",
     "area": "Phrom Phong, Bangkok",
-    "hours": "",
+    "hours": "19.00 – 03.00 น.",
     "price_per_person": {
       "min": 700,
       "max": 1500,
@@ -764,7 +764,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "soft-glam, หรู, R&B/House",
     "address": "2nd Floor, 24 BLVD, 22/2 Sukhumvit 24 Alley, Khlong Tan, Khlong Toei, Bangkok 10110",
     "area": "Phrom Phong, Bangkok",
-    "hours": "21:00-03:00",
+    "hours": "21:00 น. - 03:00 น.",
     "price_per_person": {
       "min": 1000,
       "max": 2000,
@@ -865,7 +865,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "คึกคัก, local crowd, ดนตรีสด/DJ",
     "address": "Ratchayothin underpass, Phahonyothin Road, Chatuchak, Bangkok",
     "area": "Ratchayothin / Chatuchak, Bangkok",
-    "hours": "เริ่ม 19:00",
+    "hours": "19:00 น. - 02:00 น.",
     "price_per_person": {
       "min": 200,
       "max": 1000,
@@ -939,7 +939,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "สนุก, ดนตรีสด, ราคาเข้าถึงได้",
     "address": "",
     "area": "Ratchayothin, Bangkok",
-    "hours": "",
+    "hours": "19:00 น. - 02:00 น.",
     "price_per_person": {
       "min": 251,
       "max": 600,
@@ -1021,7 +1021,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "แกลม, ไฟแดง, มี DJ/เวที, ใกล้ BTS",
     "address": "1st floor, beside BTS Ratchayothin Exit 4, Phahonyothin Road, Chatuchak, Bangkok",
     "area": "Ratchayothin, Chatuchak",
-    "hours": "",
+    "hours": "19:00 น. - 02:00 น.",
     "price_per_person": {
       "min": 300,
       "max": 800,
@@ -1086,9 +1086,9 @@ window.CNK_RESEARCH = {
     "identity_note": "",
     "overview": "ผับไทยบรรยากาศผ่อนคลาย มีวงดนตรีสดทุกคืน นั่งได้ราว 150 คน",
     "atmosphere": "สบาย ๆ, ดนตรีสด, Thai pub",
-    "address": "",
+    "address": "126/1 ซอยสุขุมวิท 63 (เอกมัย) แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
     "area": "Ekkamai, Bangkok",
-    "hours": "",
+    "hours": "19:00 น. - 02:00 น.",
     "price_per_person": {
       "min": 300,
       "max": 700,
@@ -1218,9 +1218,9 @@ window.CNK_RESEARCH = {
     "identity_note": "ไฟล์บันทึกเรียก VIRAL ว่า Tichuca ซึ่งยังยืนยันไม่ได้ว่าเป็นร้านเดียวกัน จึงไม่นำข้อมูล Tichuca มาอ้างเป็น VIRAL",
     "overview": "",
     "atmosphere": "",
-    "address": "",
+    "address": "2020/1 ถนนพหลโยธิน แขวงเสนานิคม เขตจตุจักร กรุงเทพมหานคร 10900",
     "area": "",
-    "hours": "",
+    "hours": "19:00 น. - 02:00 น.",
     "price_per_person": null,
     "menu": [],
     "menu_highlights": [],
@@ -1248,7 +1248,7 @@ window.CNK_RESEARCH = {
     "atmosphere": "retro-vintage, outdoor/live band + indoor DJ, คึกคัก",
     "address": "1st floor, The Duchess Hotel, 61 Lang Suan Road, Lumphini, Pathum Wan, Bangkok 10330",
     "area": "Langsuan / Chidlom, Bangkok",
-    "hours": "19:00-04:00",
+    "hours": "19:00 น. - 04:00 น.",
     "price_per_person": {
       "min": 500,
       "max": 1500,
@@ -1396,9 +1396,9 @@ window.CNK_RESEARCH = {
     "identity_note": "ไฟล์ Master กล่าวถึง Guest House Kaset แต่ยังไม่ยืนยันว่าเป็น GUEST HOUSE ตามโลโก้เดิม จึงไม่อ้างข้อมูลสาขานั้นเป็นร้านนี้",
     "overview": "",
     "atmosphere": "",
-    "address": "",
+    "address": "2095/2 ถนนพหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพมหานคร 10900",
     "area": "",
-    "hours": "",
+    "hours": "19:00 น. - 02:00 น.",
     "price_per_person": null,
     "menu": [],
     "menu_highlights": [],
@@ -1424,9 +1424,9 @@ window.CNK_RESEARCH = {
     "identity_note": "",
     "overview": "ไนท์คลับสไตลิชย่านทองหล่อ เด่นเรื่องค็อกเทลพรีเมียม ดีเจสด แสงไฟ immersive",
     "atmosphere": "สไตลิช, smart-casual, LGBTQ+-friendly",
-    "address": "",
+    "address": "121 ซอยสุขุมวิท 55 (ทองหล่อ) แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110",
     "area": "Thonglor, Bangkok",
-    "hours": "พุธ-เสาร์ 22:00-late",
+    "hours": "พุธ-เสาร์ 22:00 น. เป็นต้นไป",
     "price_per_person": {
       "min": 400,
       "max": 1000,
@@ -1622,7 +1622,7 @@ window.CNK_RESEARCH = {
       'ร้านแฮงเอาต์ย่านเกษตร บรรยากาศคึกคัก มีความคิดเห็นจากผู้ใช้บริการเกี่ยวกับเพลงและความหนาแน่นของร้าน',
 
     address:
-      '19/6 ถนนงามวงศ์วาน แขวงลาดยาว กรุงเทพฯ 10900 (อ้างอิง Wongnai)',
+      '2020/1 ถนนพหลโยธิน แขวงเสนานิคม เขตจตุจักร กรุงเทพมหานคร 10900',
 
     area: 'Kaset, Bangkok',
     hours: 'รอร้านยืนยันเวลาเปิด–ปิด',
@@ -1679,7 +1679,7 @@ window.CNK_RESEARCH = {
       'ดนตรีสดและพื้นที่นั่งสังสรรค์สำหรับกลุ่มเพื่อน',
 
     address:
-      '2095/2 ถนนพหลโยธิน กรุงเทพฯ (ตามฐานข้อมูลร้าน)',
+      '2095/2 ถนนพหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพมหานคร 10900',
 
     area: 'Kaset, Bangkok',
 

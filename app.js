@@ -578,6 +578,20 @@ function tracking() {
           </div>
         ` : ''}
 
+<button
+  class="btn full ghost"
+  style="margin-top:18px"
+  onclick="App.go('activity')">
+  ดูรายละเอียดในคืนของฉัน
+</button>
+
+<button
+  class="btn full"
+  style="margin-top:10px"
+  onclick="App.go('home')">
+  กลับสู่หน้าหลัก
+</button>
+
       </div>
     </div>
   `;
@@ -1367,7 +1381,8 @@ function partnerApply() {
         <div class="form-card">
           ${type.slice(6).split('|').map(x => `
             <label class="apply-check"
-              style="display:flex;gap:10px;margin:12px 0">
+              
+style="display:flex;align-items:center;gap:10px;margin:14px 0;font-size:18px;line-height:1.5">
 
               <input
                 type="checkbox"
@@ -1721,6 +1736,20 @@ function go(page) {
 
     UI.scrollMemory[UI.screen] = window.scrollY;
 
+if (UI.role === 'user' && UI.screen === 'home') {
+  const phone = document.querySelector('#app > .phone');
+
+  if (phone) {
+    UI.cnkHomeBackCache = {
+      phone,
+      y: window.scrollY || 0,
+      docY: document.scrollingElement?.scrollTop || 0,
+      phoneY: phone.scrollTop || 0,
+      screenY: phone.querySelector('.screen')?.scrollTop || 0
+    };
+  }
+}
+
     UI.stack.push(UI.screen);
   }
 
@@ -1730,8 +1759,6 @@ function go(page) {
   render();
 }
 
-
-
 function back() {
   const leavingVenue = UI.screen === 'venue';
 
@@ -1739,6 +1766,41 @@ function back() {
 
   const previous = UI.stack.pop() || 'home';
   UI.screen = previous;
+
+  // กลับสู่ตำแหน่งเดิมใน Home
+
+if (
+  previous === 'home' &&
+  UI.role === 'user' &&
+  UI.cnkHomeBackCache?.phone
+) {
+  const cache = UI.cnkHomeBackCache;
+  const app = document.getElementById('app');
+
+  if (app) {
+    app.replaceChildren(cache.phone);
+
+    cache.phone.scrollTop = cache.phoneY || 0;
+
+    const screen = cache.phone.querySelector('.screen');
+    if (screen) {
+      screen.scrollTop = cache.screenY || 0;
+    }
+
+    window.scrollTo({
+      top: cache.y,
+      behavior: 'instant'
+    });
+
+    if (document.scrollingElement) {
+      document.scrollingElement.scrollTop = cache.docY;
+    }
+
+    UI.cnkHomeBackCache = null;
+    return;
+  }
+}
+
 
   // กลับจากรายละเอียดร้านไป Explore
   if (

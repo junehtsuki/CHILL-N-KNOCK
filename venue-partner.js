@@ -76,7 +76,8 @@
     if(UI.role!=='venue') return App.go(page);
     if(UI.screen===page) return;
     UI.vpTrail ||= [];
-    UI.vpTrail.push({screen:UI.screen,top:window.scrollY||0,phoneTop:document.querySelector('#app>.phone')?.scrollTop||0});
+    UI.vpTrail.push({screen:UI.screen,top:window.scrollY||0,phoneTop:document.querySelector('#app>.phone')?.scrollTop||0});    
+    if(page==='venue-event-new') UI.vpPosterData='';
     UI.screen=page;UI.modal='';render();
   };
   App.vpBack = () => {
@@ -146,12 +147,23 @@
     const tab=UI.vpEventTab||'upcoming',chosen=tab==='upcoming'?upcoming:past;
     return layout(`${hdr('อีเวนต์',`<button type="button" class="cnk-vp-icon cnk-vp-event-plus" onclick="App.vpGo('venue-event-new')" aria-label="สร้างอีเวนต์ใหม่">${ic('plus',22)}</button>`)}
       <div class="cnk-vp-tabs cnk-vp-tabs-wide"><button type="button" class="${tab==='upcoming'?'active':''}" onclick="App.vpEventTab('upcoming')">กำลังจะถึง</button><button type="button" class="${tab==='past'?'active':''}" onclick="App.vpEventTab('past')">ที่ผ่านมา</button></div>
-      <div class="cnk-vp-events-list">${chosen.length?chosen.map(ev=>`<article class="cnk-vp-event">${eventPoster(ev)}<div><strong>${safe(ev.name)}</strong><span>${vpDate(ev.date||dateOffset(ev.offset||0))}</span><small>${safe(ev.subtitle||'Live Music')} · ${safe(ev.time||'21:00')}</small></div><span class="cnk-vp-status ok">เผยแพร่</span></article>`).join(''):`<div class="cnk-vp-empty">ยังไม่มีอีเวนต์ในหมวดนี้</div>`}
+      <div class="cnk-vp-events-list">${chosen.length?chosen.map(ev=>`<article class="cnk-vp-event">${eventPoster(ev)}<div><strong>${safe(ev.name)}</strong><span>${vpDate(ev.date||dateOffset(ev.offset||0))}</span><small>${safe(ev.subtitle||'Live Music')} · ${safe(ev.time||'21:00')}</small></div>
+<div style="flex:0 0 auto;display:grid;gap:6px;justify-items:end">
+  <span class="cnk-vp-status ok">เผยแพร่</span>
+  ${(DB.cnkVPEvents||[]).some(item=>item.id===ev.id) ? `
+    <button type="button"
+      class="cnk-vp-secondary"
+      onclick="App.vpDeleteEvent('${safe(ev.id)}')">
+      ลบ
+    </button>
+  ` : ''}
+</div></article>
+`).join(''):`<div class="cnk-vp-empty">ยังไม่มีอีเวนต์ในหมวดนี้</div>`}
       <button type="button" class="cnk-vp-event-add-inline" onclick="App.vpGo('venue-event-new')">${ic('plus',17)} สร้างอีเวนต์ใหม่</button></div>${footnote()}`);
   }
   function eventNew() {
     return layout(`${hdr('สร้างอีเวนต์ใหม่','',true)}<div class="cnk-vp-form cnk-vp-event-form">
-      <div class="cnk-vp-poster-row"><div class="cnk-vp-poster-preview"><img id="vp-poster-preview" src="${safe(UI.vpPosterData||'assets/events/e1.jpg')}" alt="ตัวอย่างโปสเตอร์อีเวนต์"><button type="button" class="cnk-vp-poster-clear" onclick="App.vpClearPoster()" aria-label="ล้างโปสเตอร์">${ic('x',14)}</button></div>
+      <div class="cnk-vp-poster-row"><div class="cnk-vp-poster-preview" ${UI.vpPosterData ? '' : 'hidden'}><img id="vp-poster-preview" src="${safe(UI.vpPosterData||'')}" alt="โปสเตอร์อีเวนต์"><button type="button" class="cnk-vp-poster-clear" onclick="App.vpClearPoster()" aria-label="ล้างโปสเตอร์">${ic('x',14)}</button></div>
       <label class="cnk-vp-poster-upload" for="vp-event-poster">${ic('camera',25)}<strong>อัปโหลดโปสเตอร์</strong><small>JPG, PNG<br>ขนาดไม่เกิน 10 MB</small><input id="vp-event-poster" type="file" accept="image/jpeg,image/png" onchange="App.vpPosterSelected(this)" hidden></label></div>
       <label>ชื่ออีเวนต์ <span class="cnk-vp-required">*</span><input id="vp-event-name" maxlength="70" placeholder="เช่น ONYX Throwback 90s" required></label>
       <label>วันที่จัดงาน <span class="cnk-vp-required">*</span><input id="vp-event-date" type="date" min="${dateOffset(0)}" value="${dateOffset(1)}" required></label>
@@ -351,26 +363,138 @@
         canvas.width=Math.max(1,Math.round(img.width*ratio));canvas.height=Math.max(1,Math.round(img.height*ratio));
         const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
         UI.vpPosterData=canvas.toDataURL('image/jpeg',.75);
-        const preview=document.getElementById('vp-poster-preview');if(preview)preview.src=UI.vpPosterData;
+
+const preview=document.getElementById('vp-poster-preview');
+if(preview){
+  preview.src=UI.vpPosterData;
+  preview.closest('.cnk-vp-poster-preview').hidden=false;
+}
         // Update the preview without rerendering so typed event details are preserved.
       };
       img.onerror=()=>toast('ไม่สามารถอ่านไฟล์รูปภาพนี้ได้');img.src=reader.result;
     };
     reader.onerror=()=>toast('อ่านรูปไม่สำเร็จ กรุณาเลือกใหม่');reader.readAsDataURL(file);
   };
-  App.vpClearPoster = () => {UI.vpPosterData='';const img=$('#vp-poster-preview');if(img)img.src='assets/events/e1.jpg';const file=$('#vp-event-poster');if(file)file.value='';toast('ล้างภาพที่เลือกแล้ว');};
+ 
+App.vpClearPoster = () => {
+  UI.vpPosterData='';
+  const img=document.getElementById('vp-poster-preview');
+  if(img){
+    img.removeAttribute('src');
+    img.closest('.cnk-vp-poster-preview').hidden=true;
+  }
+  const file=document.getElementById('vp-event-poster');
+  if(file) file.value='';
+};
+
+  
+App.vpDeleteEvent = id => {
+  if(UI.role!=='venue') return;
+
+  const mine=(DB.cnkVPEvents||[]).find(
+    ev=>ev.id===id && ev.venue===DB.merchantVenue
+  );
+
+  if(!mine) return toast('ลบได้เฉพาะอีเวนต์ที่ร้านสร้างเอง');
+
+  if((DB.tickets||[]).some(t=>t.event===id)){
+    return toast('อีเวนต์นี้มีบัตรทดลองแล้ว จึงยังลบไม่ได้');
+  }
+
+  if(!window.confirm('ลบอีเวนต์ "'+mine.name+'" ใช่ไหม?')) return;
+
+  DB.cnkVPEvents=DB.cnkVPEvents.filter(ev=>ev.id!==id);
+
+  const index=events.findIndex(ev=>ev.id===id);
+  if(index!==-1) events.splice(index,1);
+
+  save();
+  render(true);
+  toast('ลบอีเวนต์ทดลองแล้ว');
+};
+
   App.vpCreateEvent = () => {
-    const name=($('#vp-event-name')?.value||'').trim(),date=$('#vp-event-date')?.value,time=$('#vp-event-time')?.value||'21:00',desc=($('#vp-event-desc')?.value||'').trim(),kind=$('#vp-event-type')?.value||'Live Music';
-    if(!name||!date||!time)return toast('กรุณากรอกชื่อ วัน และเวลา');
-    if(date<dateOffset(0))return toast('กรุณาเลือกวันที่วันนี้หรือหลังจากนี้');
-    if(!UI.vpPosterData)return toast('กรุณาอัปโหลดโปสเตอร์ก่อนสร้างอีเวนต์');
-    DB.cnkVPEvents ||= [];
-    const id='vp'+Date.now();
-    const ev={id,name,venue:DB.merchantVenue,date,time,subtitle:kind,price:0,art:'poster-bg1',posterData:UI.vpPosterData,label:kind,tag:'New',desc:desc||'รายละเอียดกิจกรรมของร้าน',offset:Math.max(0,Math.round((new Date(date+'T12:00:00')-new Date(dateOffset(0)+'T12:00:00'))/86400000))};
-    DB.cnkVPEvents.push(ev);events.push(ev);
-    UI.vpPosterData='';UI.vpEventTab='upcoming';
-    save();App.vpBack();toast('สร้างอีเวนต์ในระบบทดลองแล้ว');
+  if(UI.role!=='venue') return;
+
+  const name=($('#vp-event-name')?.value||'').trim();
+  const date=($('#vp-event-date')?.value||'').trim();
+  const kind=($('#vp-event-type')?.value||'Live Music').trim();
+  const time=($('#vp-event-time')?.value||'21:00').trim();
+  const desc=($('#vp-event-desc')?.value||'').trim();
+
+  if(!name){
+    return toast('กรุณากรอกชื่ออีเวนต์');
+  }
+
+  const eventDate=new Date(date+'T12:00:00');
+
+  if(
+    !date ||
+    !Number.isFinite(eventDate.getTime()) ||
+    date<dateOffset(0)
+  ){
+    return toast('กรุณาเลือกวันที่ตั้งแต่วันนี้เป็นต้นไป');
+  }
+
+  const offset=Math.round(
+    (eventDate-new Date(dateOffset(0)+'T12:00:00'))/86400000
+  );
+
+  const item={
+    id:'vp-'+Date.now(),
+    venue:DB.merchantVenue,
+    name,
+    date,
+    offset,
+    time,
+    subtitle:kind,
+    label:kind,
+    desc:desc||'อีเวนต์ที่ร้านสร้างในระบบทดลอง',
+    posterData:UI.vpPosterData||'',
+    price:0,
+    ticketTiers:[],
+    tag:'ร้านสร้าง'
   };
+
+  if(!Array.isArray(DB.cnkVPEvents)){
+    DB.cnkVPEvents=[];
+  }
+
+  DB.cnkVPEvents.push(item);
+  save();
+
+  // ตรวจว่าบันทึกลง localStorage สำเร็จจริง
+  let persisted=false;
+
+  try{
+    persisted=JSON.parse(
+      localStorage.getItem(KEY)
+    )?.cnkVPEvents?.some(ev=>ev.id===item.id)===true;
+  }catch(_){
+    persisted=false;
+  }
+
+  if(!persisted){
+    DB.cnkVPEvents=DB.cnkVPEvents.filter(
+      ev=>ev.id!==item.id
+    );
+
+    return toast(
+      'บันทึกอีเวนต์ไม่สำเร็จ อาจมีรูปขนาดใหญ่หรือพื้นที่เบราว์เซอร์เต็ม'
+    );
+  }
+
+  events.push(item);
+
+  UI.vpPosterData='';
+  UI.vpEventTab='upcoming';
+  UI.vpTrail=[];
+  UI.screen='venue-events';
+  UI.modal='';
+
+  render();
+  toast('สร้างอีเวนต์ทดลองสำเร็จ');
+};
   App.vpSaveVenueInfo=()=>{const v=infoFor();v.hours=($('#vp-hours')?.value||'').trim().slice(0,35);v.phone=($('#vp-phone')?.value||'').trim().slice(0,25);save();toast('บันทึกข้อมูลร้านแล้ว');};
   App.vpSavePersonal=()=>{const v=($('#vp-personal-name')?.value||'').trim();if(!v)return toast('กรุณาระบุชื่อ');DB.name=v;save();toast('บันทึกชื่อแล้ว');};
   App.vpToggleAlerts=()=>{const v=infoFor();v.alerts=v.alerts===false;save();render(true);};

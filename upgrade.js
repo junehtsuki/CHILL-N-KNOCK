@@ -687,7 +687,38 @@ profile = function () {
     </div>
   `;
 };
-App.signOut=function(){DB.account=null;DB.sessionEmail=null;DB.name='Guest';UI.role='user';save();UI.screen='profile';render();toast('ออกจากบัญชีทดลองแล้ว');};
+
+App.signOut=function(){
+  if(UI.role==='runner'){
+    DB.requests=DB.requests.filter(
+      r=>!(r.owner==='sample' && r.sourceJob)
+    );
+
+    UI.cnkRunnerDemoIdentity='r1';
+    UI.cnkRunnerQaBootChecked=true;
+    UI.cnkRunnerActiveFilter='running';
+    UI.cnkRunnerJobFilter='all';
+    UI.cnkRunnerAdvancedFilters=false;
+    UI.cnkRunnerServiceFilter='all';
+    UI.cnkRunnerMinFee=0;
+    UI.cnkRunnerFilterPickedService=false;
+    UI.cnkRunnerFilterPickedFee=false;
+    UI.cnkRunnerCancelId='';
+    UI.job='';
+    UI.reqId='';
+    UI.proof='';
+  }
+
+  DB.account=null;
+  DB.sessionEmail=null;
+  DB.name='Guest';
+  UI.role='user';
+
+  save();
+  UI.screen='profile';
+  render();
+  toast('ออกจากบัญชีทดลองแล้ว');
+};
 App.toggleLang=function(){DB.lang=DB.lang==='th'?'en':'th';save();render(true);toast(DB.lang==='th'?'ภาษาไทยเป็นภาษาเริ่มต้น':'English mode (some research content remains Thai)');};
 
 // Queue estimate and cancel rules are surfaced before a status change, not a fake cash refund.
@@ -776,7 +807,17 @@ App.demoSocial = function(provider) {
 };
 
 // Extra UI improvements: take users directly to one of the four methods, not an unrelated new flow.
-App.openMap=function(id){let v=V(id);window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(v.place.includes('รอยืนยัน')?v.name+' กรุงเทพฯ':v.place),'_blank','noopener');};
+
+App.openMap = function(id) {
+  const v = V(id);
+  const address = CNK_MAP_ADDRESS[id] || CNK_RES[id]?.address || v.place;
+
+  window.open(
+    'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address),
+    '_blank',
+    'noopener'
+  );
+};
 
 // Apply app-core+improvements once initial state is ready.
 UI.screen=location.hash.startsWith('#venue-') ? 'venue' : 'welcome';
@@ -906,7 +947,7 @@ render();
 Object.assign(translatePairs,{
  'Jobs':'งาน','Active':'งานของฉัน','Wallet':'รายได้','Bookings':'คำขอจอง','Queue':'จัดการคิว','Policies':'นโยบายร้าน',
  'PARTY CALENDAR':'ปฏิทินอีเวนต์','WHAT’S':'อีเวนต์','ON TONIGHT?':'คืนนี้มีอะไร?','UPCOMING EVENTS':'อีเวนต์ตัวอย่าง',
- 'Curated event concepts, illustrated ticket flow. Dates and prices are demo-only.':'ตัวอย่างหน้ารวมอีเวนต์ ไม่ใช่กำหนดการจริงของร้าน',
+ 'Curated event concepts, illustrated ticket flow. Dates and prices are demo-only.':'',
  'LIVE-LIKE DEMO TRACKING':'ติดตามคำขอในต้นแบบ','STATUS TIMELINE':'ลำดับสถานะ','Status notes':'หมายเหตุสถานะ',
  'No new updates. Switch roles to test the end-to-end experience.':'ยังไม่มีความคืบหน้าใหม่ ในโหมด QA สามารถสลับบทบาทเพื่อทดสอบ flow ได้',
  'MESSAGES':'แชต','Cancel':'ยกเลิก','LIVE MUSIC':'ดนตรีสด',
@@ -1613,13 +1654,46 @@ const tdermPrices = {
 };
 
 const previousDetailInfo = detailInfo;
+const CNK_MAP_ADDRESS = {
+  thay: '126/1 ซอยสุขุมวิท 63 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110',
+  viral: '2020/1 ถนนพหลโยธิน แขวงเสนานิคม เขตจตุจักร กรุงเทพมหานคร 10900',
+  guest: '2095/2 ถนนพหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพมหานคร 10900',
+  mirror: '121 ซอยสุขุมวิท 55 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110'
+};
 
     // หมวดเมนูใช้เฉพาะหน้า Venue Detail; ไม่เปลี่ยนข้อมูลเมนูต้นฉบับ
-  App.cnkVenueMenuCategory = function (category) {
-    if (!['drinks','table','bottle'].includes(category)) return;
-    UI.cnkVenueMenuCategory = category;
+  
+App.cnkVenueMenuCategory = function (category) {
+  if (!['drinks', 'table', 'bottle'].includes(category)) return;
+  if (UI.cnkVenueMenuCategory === category) return;
+
+  UI.cnkVenueMenuCategory = category;
+
+  const current = document.querySelector('.cnk-menu-section');
+
+  if (!current || UI.screen !== 'venue' || UI.infoTab !== 'menu') {
     render(true);
-  };
+    return;
+  }
+
+  const y = window.scrollY;
+  const minHeight = current.offsetHeight;
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = detailInfo(V(UI.venue)).trim();
+
+  const next = wrap.firstElementChild;
+  if (!next) return;
+
+  next.style.minHeight = minHeight + 'px';
+
+  current.replaceWith(next);
+
+  window.scrollTo({
+    top: y,
+    behavior: 'instant'
+  });
+};
 
     detailInfo = function (v) {
     const d = CNK_RES[v.id] || {};
@@ -1639,10 +1713,11 @@ const previousDetailInfo = detailInfo;
           <div class="venue-map-card venue-map-card--flat">
             
             <div class="venue-map-thumb venue-map-thumb--streets" aria-label="แผนที่ของ ${e(v.name)}">
-              ${v.verified && d.identity_status !== 'unconfirmed'
+
+${(Boolean(CNK_MAP_ADDRESS[v.id]) || (v.verified && d.identity_status !== 'unconfirmed'))
                 ? `<iframe
                     title="แผนที่ ${e(v.name)}"
-                    src="https://maps.google.com/maps?hl=th&amp;q=${encodeURIComponent(`${v.name}, ${d.address || v.place}, Bangkok, Thailand`)}&amp;z=16&amp;output=embed"
+src="https://maps.google.com/maps?hl=th&amp;q=${encodeURIComponent(CNK_MAP_ADDRESS[v.id] || d.address || v.place)}&amp;z=16&amp;output=embed"
                     loading="lazy"
                     tabindex="-1"
                     referrerpolicy="strict-origin-when-cross-origin"
@@ -1671,22 +1746,28 @@ const previousDetailInfo = detailInfo;
     }
 
     if (UI.infoTab === 'menu') {
-      const list = [...(d.menu || [])];
-      for (const [name,price] of extraMenu[v.id] || []) {
-        if (!list.some(x => x.name === name)) list.push({name,price});
-      }
+      
+const newMenu = window.CNK_MENU_V2?.[v.id];
+
+const list = Array.isArray(newMenu?.items) ? newMenu.items : [];
+
       if (UI.cnkVenueMenuFor !== v.id) {
         UI.cnkVenueMenuFor = v.id;
-        UI.cnkVenueMenuCategory = 'drinks';
+
+UI.cnkVenueMenuCategory = list.some(m => m.category === 'drinks') ? 'drinks'
+  : list.some(m => m.category === 'table') ? 'table' : 'bottle';
       }
       const category = UI.cnkVenueMenuCategory || 'drinks';
       const hasBottle = name => /bottle|johnnie|hennessy|monkey shoulder|เหล้า|ขวด|whisk|moët|champagne/i.test(name);
       const hasTable = name => /โต๊ะ|table|package|แพ็กเกจ|minimum|set\b/i.test(name) && !hasBottle(name);
-      const visible = category === 'table'
-        ? list.filter(m => hasTable(m.name))
-        : category === 'bottle'
-          ? list.filter(m => hasBottle(m.name))
-          : list;
+      
+const visible = list.filter(m =>
+  m.category ? m.category === category
+    : category === 'table' ? hasTable(m.name)
+    : category === 'bottle' ? hasBottle(m.name)
+    : true
+);
+
 
       const imageOf = (name, custom) => {
         if (custom && /^(https?:\/\/|assets\/)/i.test(custom)) return custom;
@@ -1697,12 +1778,12 @@ const previousDetailInfo = detailInfo;
         return 'assets/bar.jpg';
       };
 
-      const priceText = m => {
-        const exact = Number.isFinite(m.price) ? m.price : tdermPrices[m.name];
-        if (Number.isFinite(exact)) return `${money(exact)}`;
-        const range = String(m.note || '').match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)\s*บาท/);
-        return range ? `ประมาณ ฿${range[1]}–${range[2]}` : 'สอบถามร้าน';
-      };
+
+const priceText = m => {
+  const label = m.priceLabel || (Number.isFinite(m.price) ? money(m.price) : '');
+  return String(label).replace(/\+\+/g, '').trim();
+};
+
       return `
         <div class="info-copy cnk-menu-section">
           <h3>เมนูและแพ็กเกจ</h3>
@@ -1725,7 +1806,6 @@ const previousDetailInfo = detailInfo;
                 </div>
                 <div class="cnk-menu-price">
                   <b>${e(priceText(m))}</b>
-                  <small>${m.verified_in_team_file ? 'ตามข้อมูลทีม' : 'ราคาอ้างอิง'}</small>
                 </div>
               </div>
             `).join('')}
