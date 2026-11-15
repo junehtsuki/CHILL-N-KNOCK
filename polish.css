@@ -1862,6 +1862,120 @@ html {
   }
 }
 /* Runner screens ONLY — independent styles for the approved 5-screen preview. */
+
+/* Runner Profile — Availability Toggle */
+
+/* Runner Profile — Integrated Availability */
+#app .cnk-runner-profile-integrated {
+  background: #FCF8F6;
+  border-bottom: 1px solid #E6CED9;
+}
+
+#app .cnk-runner-profile-integrated .profile-hero {
+  background: linear-gradient(130deg,#F2D6DC,#FFF3EE);
+  border: 0;
+  padding-bottom: 16px;
+}
+
+#app .cnk-runner-availability-inline {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 48px;
+  align-items: center;
+  column-gap: 14px;
+  padding: 16px 0 20px;
+  margin: 0 22px;
+  border-top: 1px solid rgba(155,79,108,.20);
+}
+
+#app .cnk-runner-availability-inline
+.cnk-runner-availability-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+#app .cnk-runner-availability-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+#app .cnk-runner-availability-copy strong {
+  font-size: 15px;
+  color: #36212C;
+}
+
+#app .cnk-runner-availability-copy small {
+  font-size: 12px;
+  color: #82707A;
+}
+
+#app .cnk-runner-availability-switch {
+  appearance: none;
+  width: 48px;
+  height: 29px;
+  border: 0;
+  border-radius: 999px;
+  padding: 3px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: #B9ADB3;
+  cursor: pointer;
+}
+
+#app .cnk-runner-availability-switch.is-on {
+  background: #981C49;
+  justify-content: flex-end;
+}
+
+#app .cnk-runner-availability-switch span {
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px #0002;
+}
+
+#app .cnk-runner-availability-switch:focus-visible {
+  outline: 3px solid #1689E8;
+  outline-offset: 3px;
+}
+
+
+#app .cnk-runner-availability-inline
+.cnk-runner-availability-copy p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #88767E;
+}
+
+#app .cnk-runner-availability-copy
+.cnk-runner-availability-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #A51E50;
+}
+
+#app .cnk-runner-availability-copy
+.cnk-runner-availability-state.is-paused {
+  color: #92818A;
+}
+
+#app .cnk-runner-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
 #app .cnk-runner-screen{background:#FCF8F6;color:#34212A;padding-bottom:112px}
 #app .cnk-runner-wrap{padding:20px 17px 28px;max-width:470px;margin:auto}
 #app .cnk-runner-header,#app .cnk-runner-pagehead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 17px}

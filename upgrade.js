@@ -187,11 +187,55 @@ App.qaSwitch=function(role){if(!QA)return;App.switchRole(role);};
 const oldStartBooking=App.startBooking;
 App.startBooking=function(id){UI.runnerChoice='none';oldStartBooking(id);};
 const oldSubmitBooking=App.submitBooking;
-App.submitBooking=function(){if(!DB.account)return App.auth('booking-review');oldSubmitBooking();const r=requestById(UI.reqId);if(r){r.owner=DB.account.email;r.runnerChoice=UI.runnerChoice;save();}};
+App.submitBooking = function() {
+  if (!DB.account) return App.auth('booking-review');
+
+  if (
+    UI.service !== 'direct' &&
+    UI.runnerChoice !== 'none' &&
+    !cnkRunnerAvailable(UI.runnerChoice)
+  ) {
+    return toast(
+      'Runner คนนี้พักรับงานแล้ว กรุณาเลือกคนที่พร้อมรับงาน'
+    );
+  }
+
+  oldSubmitBooking();
+
+  const r = requestById(UI.reqId);
+
+  if (r) {
+    r.owner = DB.account.email;
+    r.runnerChoice = UI.runnerChoice;
+    save();
+  }
+};
 const oldReviewBooking=App.reviewBooking;
 App.reviewBooking=function(){if(!DB.account){UI.returnTo='booking-review';return App.auth('booking-review')}oldReviewBooking();};
 const oldAcceptJob=App.acceptJob;
-App.acceptJob=function(id){if(!QA&&UI.role!=='runner')return toast('เฉพาะ Runner ที่มีสิทธิ์เท่านั้น');oldAcceptJob(id);let r=requestById(UI.reqId);if(r&&r.runner) {r.runnerAccount=DB.account?.email||'qa-runner';save();}};
+App.acceptJob = function(id) {
+  if (!QA && UI.role !== 'runner') {
+    return toast('เฉพาะ Runner ที่มีสิทธิ์เท่านั้น');
+  }
+
+  if (
+    UI.role === 'runner' &&
+    !cnkRunnerAvailable(cnkRunnerIdentity())
+  ) {
+    return toast(
+      'สถานะพักรับงานอยู่ เปิดพร้อมรับงานก่อนรับงานใหม่'
+    );
+  }
+
+  oldAcceptJob(id);
+
+  const r = requestById(UI.reqId);
+
+  if (r && r.runner) {
+    r.runnerAccount = DB.account?.email || 'qa-runner';
+    save();
+  }
+};
 const oldMerchantDecision=App.merchantDecision;
 App.merchantDecision=function(id,approve){if(!QA&&UI.role!=='venue')return toast('เฉพาะร้านที่มีสิทธิ์เท่านั้น');oldMerchantDecision(id,approve);};
 App.changeVenue=function(id){if(!QA)return toast('ร้านที่จัดการถูกผูกกับบัญชีพาร์ตเนอร์');if(venues.some(v=>v.id===id)){DB.merchantVenue=id;save();render(true)}};
@@ -484,6 +528,47 @@ authPage = function () {
 };
 // Role-based profile rather than unrestricted switch experience.
 
+const CNK_RUNNER_READY_DEFAULTS = {
+  r1: true,
+  r2: true,
+  r3: false
+};
+
+function cnkRunnerAvailable(id) {
+  if (!Object.prototype.hasOwnProperty.call(
+    CNK_RUNNER_READY_DEFAULTS, id
+  )) return false;
+
+  const value = DB.cnkRunnerAvailability?.[id];
+
+  return typeof value === 'boolean'
+    ? value
+    : CNK_RUNNER_READY_DEFAULTS[id];
+}
+
+App.cnkRunnerSetAvailable = function(id) {
+  if (
+    UI.role !== 'runner' ||
+    !Object.prototype.hasOwnProperty.call(
+      CNK_RUNNER_READY_DEFAULTS, id
+    )
+  ) return;
+
+  DB.cnkRunnerAvailability ||= {};
+
+  const ready = !cnkRunnerAvailable(id);
+  DB.cnkRunnerAvailability[id] = ready;
+
+  save();
+  render(true);
+
+  toast(
+    ready
+      ? 'เปิดรับงานใหม่แล้ว'
+      : 'พักรับงานใหม่ชั่วคราว'
+  );
+};
+
 profile = function () {
   const role = UI.role || 'user';
   const auth = !!DB.account;
@@ -557,22 +642,60 @@ const name=role==='runner'
   // PROFILE — TABLE RUNNER
   // ===========================
   if (role === 'runner') {
+    const runnerId = cnkRunnerIdentity() || 'r1';
+    const ready = cnkRunnerAvailable(runnerId);
+
     return `
       <div class="screen">
         ${brandHeader()}
 
-        ${hero(
-          'TABLE RUNNER',
-          name,
-          canRunner
-            ? 'บัญชี Runner · อนุมัติทดลอง'
-            : 'บัญชี Runner · รอตรวจสอบ',
-          (name || 'R').slice(0,1).toUpperCase()
-        )}
+        
+        <div class="cnk-runner-profile-integrated">
+
+          ${hero(
+            'TABLE RUNNER',
+            name,
+            canRunner
+              ? 'บัญชี Runner · อนุมัติทดลอง'
+              : 'บัญชี Runner · รอตรวจสอบ',
+            (name || 'R').slice(0,1).toUpperCase()
+          )}
+
+          <div class="cnk-runner-availability-inline">
+
+            <div class="cnk-runner-availability-copy">
+              <strong>สถานะการรับงาน</strong>
+
+              <small class="cnk-runner-availability-state ${ready?'is-ready':'is-paused'}">
+                <span class="cnk-runner-status-dot"></span>
+                ${ready?'พร้อมรับงานใหม่':'พักรับงานชั่วคราว'}
+              </small>
+
+              <p>
+                ${ready
+                  ? 'ลูกค้าสามารถเลือก Runner คนนี้สำหรับคำขอใหม่'
+                  : 'พักรับงานใหม่ชั่วคราว แต่งานที่รับแล้วทำต่อได้'}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="cnk-runner-availability-switch ${ready?'is-on':''}"
+              role="switch"
+              aria-checked="${ready}"
+              aria-label="${ready?'พักรับงานใหม่':'เปิดรับงานใหม่'}"
+              onclick="App.cnkRunnerSetAvailable('${runnerId}')">
+              <span></span>
+            </button>
+
+          </div>
+
+        </div>
 
         <div class="pad">
           <div class="section">
             <h2 class="body-title">งานของฉัน</h2>
+
 
             ${rows([
               ['briefcase', 'งานใหม่ที่เปิดรับ', "App.go('jobs')"],
@@ -1195,7 +1318,7 @@ function cnkDemoAvatar(n) {
 runnerChoiceUI = function () {
   if (UI.service==='direct') return '';
   return `<div class="form-card section cnk-runner-section"><h3>เลือกผู้ช่วย Runner</h3><p class="hint">ภาพ ชื่อ ค่าบริการ และสถานะเป็นข้อมูลจำลองเพื่อทดสอบหน้าจอ ยังไม่ใช่ผู้รับงานที่ยืนยันตัวตนจริง</p>
-    ${CNK_RUNNER_DEMOS.map((r,i)=>`<button class="cnk-runner-row ${UI.runnerChoice===r.id?'selected':''}" ${r.ready?'':'disabled'} onclick="App.pickRunner('${r.id}')">
+    ${CNK_RUNNER_DEMOS.map((r,i)=>`<button class="cnk-runner-row ${UI.runnerChoice===r.id?'selected':''}" ${cnkRunnerAvailable(r.id)?'':'disabled'} onclick="App.pickRunner('${r.id}')">
 <span
   class="cnk-runner-avatar"
   role="img"
@@ -1206,8 +1329,8 @@ runnerChoiceUI = function () {
   <strong>${e(r.name)}</strong>
   <small>${ic('shield',13)} ป้ายยืนยันตัวตน (จำลอง)</small>
   <small>ยังไม่มีคะแนนรีวิวจากผู้ใช้จริง</small>
-  <small class="${r.ready?'cnk-status-ready':'cnk-status-busy'}">
-    ● ${e(r.status)} (ทดลอง)
+  <small class="${cnkRunnerAvailable(r.id)?'cnk-status-ready':'cnk-status-busy'}">
+    ● ${cnkRunnerAvailable(r.id)?'พร้อมรับงาน':'พักรับงาน'} (ทดลอง)
   </small>
 </span>      <span class="cnk-runner-side"><b>${CNK_NUMBER(r.fee)}*</b><span class="cnk-runner-radio"></span></span>
     </button>`).join('')}
@@ -1223,7 +1346,8 @@ const cnkStartBookingBase = App.startBooking;
 App.startBooking = function (id) {
   UI.cnkMonth = null;
   cnkStartBookingBase(id);
-  UI.runnerChoice='r1';
+  UI.runnerChoice =
+  CNK_RUNNER_DEMOS.find(r => cnkRunnerAvailable(r.id))?.id || 'none';
 };
 
 // ----- CALENDAR: one authoritative implementation -----
@@ -2384,7 +2508,7 @@ const priceText = m => {
       /(<button class="menu-row" onclick="App\.profileAction\('name'\)"[\s\S]*?<\/button>)/,
       `$1<button class="menu-row"
         onclick="App.openModal('cnk-font')">
-        ${ic('settings',18)}
+        ${ic('fontT',18)}
         ขนาดตัวอักษร
         <span class="right-arrow">
           ${ic('chevron',16)}
