@@ -709,8 +709,11 @@ App.signOut=function(){
     UI.proof='';
   }
 
-  DB.account=null;
-  DB.sessionEmail=null;
+ DB.cnkRunnerDemoRunId=null;
+
+DB.account=null;
+DB.sessionEmail=null;
+
   DB.name='Guest';
   UI.role='user';
 
