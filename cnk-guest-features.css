@@ -5,7 +5,13 @@
 /* Ride home: two clean app-launch cards as in the approved reference */
 #app .cnk-g-ride-body{padding:17px 16px 25px}
 #app .cnk-g-ride-card{background:#fff;border:1px solid #edd5de;border-radius:15px;box-shadow:0 4px 13px #5125350d;padding:13px;margin-bottom:15px}
-#app .cnk-g-ride-row{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:12px;margin-bottom:12px}
+#app .cnk-g-ride-row{
+  display:grid;
+  grid-template-columns:112px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
 #app .cnk-g-ride-row>div:first-child{border-right:1px solid #edd7df;min-height:45px;display:flex;align-items:center;justify-content:center}
 #app .cnk-g-grab{font:bold 26px 'DM Sans',sans-serif;letter-spacing:-1.8px;color:#06a957}
 #app .cnk-g-lineman{gap:5px;line-height:1.05;font:800 11px 'DM Sans',sans-serif;color:#202020}

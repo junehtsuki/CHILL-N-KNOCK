@@ -54,11 +54,21 @@ function cnkGuestPaymentMethodIcon(type){
       ${title('เรียกรถกลับบ้าน','เลือกแอปสำหรับดูราคาและยืนยันการเดินทาง')}
       <div class="cnk-g-ride-body">
         <div class="cnk-g-ride-card">
-          <div class="cnk-g-ride-row"><div class="cnk-g-grab">Grab</div><div><b>Grab</b><p>เปิดแอปเพื่อดูราคา<br>และยืนยันการเดินทาง</p></div></div>
+          <div class="cnk-g-ride-row"><div class="cnk-g-grab">
+  <img
+    src="assets/grab-logo.png"
+    alt="Grab"
+    style="display:block;width:100%;max-width:106px;height:88px;object-fit:contain;">
+</div><div><b>Grab</b><p>เปิดแอปเพื่อดูราคา<br>และยืนยันการเดินทาง</p></div></div>
           <button type="button" class="cnk-g-ride-cta" onclick="App.cnkRideProvider('grab')">เปิด Grab ${ic('external',15)}</button>
         </div>
         <div class="cnk-g-ride-card">
-          <div class="cnk-g-ride-row"><div class="cnk-g-lineman"><span>M</span><b>LINE MAN<br>RIDE</b></div><div><b>LINE MAN Ride</b><p>เปิดแอปเพื่อดูราคา<br>และยืนยันการเดินทาง</p></div></div>
+          <div class="cnk-g-ride-row"><div class="cnk-g-lineman">
+  <img
+    src="assets/lineman-ride-logo.png"
+    alt="LINE MAN Ride"
+    style="display:block;width:100%;max-width:106px;height:88px;object-fit:contain;">
+</div><div><b>LINE MAN Ride</b><p>เปิดแอปเพื่อดูราคา<br>และยืนยันการเดินทาง</p></div></div>
           <button type="button" class="cnk-g-ride-cta" onclick="App.cnkRideProvider('lineman')">เปิด LINE MAN ${ic('external',15)}</button>
         </div>
         <div class="cnk-g-ride-tip">${ic('info',18)}<span>ราคาค่าโดยสารและสถานะรถจะแสดงในแอปผู้ให้บริการ (Grab / LINE MAN)</span></div>
@@ -166,7 +176,7 @@ function cnkGuestPaymentMethodIcon(type){
     {id:'krungthai',name:'ธนาคารกรุงไทย',app:'Krungthai NEXT',src:'assets/payments/krungthai.png'},
     {id:'scb',name:'ธนาคารไทยพาณิชย์',app:'SCB EASY',src:'assets/payments/scb.png'}
   ];
-  const runnerLabel = id => ({r1:'Runner A',r2:'Runner B',r3:'Runner C'})[id] || 'รอจับคู่';
+  const runnerLabel = id => ({r1:'แพรว',r2:'ภูมิ',r3:'เจ'})[id] || 'รอจับคู่';
   const previousPickRunner = App.pickRunner;
   
 

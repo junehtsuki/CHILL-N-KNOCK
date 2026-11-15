@@ -101,7 +101,7 @@
     const who = r.customerName || r.ownerName || (r.owner === 'sample' ? 'ลูกค้าทดลอง' : (r.owner && r.owner !== 'guest' ? String(r.owner).split('@')[0] : 'ลูกค้า'));
     const suggestion = can && r.service !== 'queue' ? preferredTable(r) : '';
     return `<div class="cnk-vp-request">
-      <div class="cnk-vp-request-top"><div class="cnk-vp-avatar">${ic('user',18)}</div><div class="cnk-vp-request-main"><strong>${safe(who)}</strong><p>${safe(r.id)} · ${safe(serviceText(r.service))}</p><p>โต๊ะ ${Number(r.guests)||0} คน · ${safe(r.time || '—')}</p><p>โซน ${safe(r.seat || 'ตามที่ร้านจัดให้')}</p>${r.runnerChoice && r.runnerChoice !== 'none' ? `<p>Runner ที่เลือก: ${safe(r.runnerChoice)}</p>` : ''}</div><span class="cnk-vp-status ${confirmed(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</span></div>
+      <div class="cnk-vp-request-top"><div class="cnk-vp-avatar">${ic('user',18)}</div><div class="cnk-vp-request-main"><strong>${safe(who)}</strong><p>${safe(r.id)} · ${safe(serviceText(r.service))}</p><p>โต๊ะ ${Number(r.guests)||0} คน · ${safe(r.time || '—')}</p><p>โซน ${safe(r.seat || 'ตามที่ร้านจัดให้')}</p>${r.runnerChoice && r.runnerChoice !== 'none' ? `<p>Runner ที่เลือก: ${safe(({r1:'สิบทิศ',r2:'เบน',r3:'ปัณ'})[r.runnerChoice]||r.runnerChoice)}</p>` : ''}</div><span class="cnk-vp-status ${confirmed(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</span></div>
       <div class="cnk-vp-request-foot"><span>ขั้นต่ำร้าน: ${safe(infoFor().minimum || 'รอร้านระบุ')} ${suggestion ? `· แนะนำโต๊ะ ${safe(suggestion)} (ตัวอย่าง)` : ''}</span></div>
       ${r.cnkRunnerCancelPending?`<div class="cnk-vp-tip"><strong>Runner ขอถอนตัวจากงาน</strong><p>คำขอยังไม่ถูกยกเลิก โปรดพิจารณาผลกระทบต่อลูกค้าก่อนอนุมัติ</p><div class="cnk-vp-request-buttons"><button class="cnk-vp-secondary" onclick="App.vpResolveRunnerCancel('${safe(r.id)}',false)">ไม่อนุมัติ</button><button class="cnk-vp-primary" onclick="App.vpResolveRunnerCancel('${safe(r.id)}',true)">อนุมัติยกเลิก</button></div></div>`:''}
       ${can ? `<div class="cnk-vp-request-buttons"><button type="button" class="cnk-vp-primary" onclick="App.vpApprove('${safe(r.id)}')">ยืนยัน</button><button type="button" class="cnk-vp-secondary" onclick="App.vpAskDecline('${safe(r.id)}')">ไม่รับคำขอ</button></div>` : `<button type="button" class="cnk-vp-link" onclick="App.openChat('${safe(r.id)}')">${ic('chat',14)} แชตเกี่ยวกับคำขอ</button>`}
@@ -199,8 +199,23 @@
       personal:['แก้ไขข้อมูลส่วนตัว',`<label>ชื่อที่แสดง<input id="vp-personal-name" maxlength="50" value="${safe(DB.name||'Venue Partner')}"></label><button class="cnk-vp-primary cnk-vp-full" onclick="App.vpSavePersonal()">บันทึก</button>`],
       notifications:['การแจ้งเตือน',`<div class="cnk-vp-settings-row"><strong>การแจ้งเตือนคำขอใหม่</strong><button class="cnk-vp-toggle ${conf.alerts!==false?'on':''}" onclick="App.vpToggleAlerts()" aria-pressed="${conf.alerts!==false}"><i></i></button></div><p class="cnk-vp-tip">การแจ้งเตือนอยู่ภายในต้นแบบ ยังไม่มี Push Notification ข้ามอุปกรณ์</p>`],
       font:['ขนาดตัวอักษร',`<div class="cnk-vp-font-choices"><button class="${DB.cnkVPFont!=='large'?'active':''}" onclick="App.vpFont('standard')">ปกติ</button><button class="${DB.cnkVPFont==='large'?'active':''}" onclick="App.vpFont('large')">ขนาดใหญ่</button></div>`],
-      help:['ศูนย์ช่วยเหลือ',`<div class="cnk-vp-info-card"><strong>ช่วยเหลือการใช้งาน Venue Partner</strong><p>การจัดการคำขอ: ยืนยันหรือไม่รับ พร้อมเหตุผล</p><p>การจัดการโต๊ะ: แตะสถานะแล้วกดบันทึก</p><p>อีเวนต์: เลือกโปสเตอร์ กรอกข้อมูล และสร้างอีเวนต์ในต้นแบบ</p></div>`],
-      privacy:['ข้อมูลและความเป็นส่วนตัว',`<div class="cnk-vp-info-card"><strong>ข้อมูลภายในต้นแบบ</strong><p>คำขอ การยืนยัน อีเวนต์ และรูปที่อัปโหลดถูกเก็บในเบราว์เซอร์นี้ ไม่ได้แชร์ข้ามเครื่องหรือส่งข้อมูลไปยังระบบร้านจริง</p><p>ควรปกป้องข้อมูลลูกค้าและกำหนดสิทธิ์ก่อนเปิดบริการจริง</p></div>`],
+help:['ศูนย์ช่วยเหลือ',`
+  <div class="cnk-vp-info-card">
+    <strong>ช่วยเหลือการใช้งาน Venue Partner</strong>
+
+    <p>การจัดการคำขอ: ยืนยันหรือไม่รับ พร้อมเหตุผล</p>
+    <p>การจัดการโต๊ะ: แตะสถานะแล้วกดบันทึก</p>
+    <p>อีเวนต์: เลือกโปสเตอร์ กรอกข้อมูล และสร้างอีเวนต์ในต้นแบบ</p>
+
+    <a
+      class="cnk-vp-primary cnk-vp-full"
+      href="docs/CHILL_N_KNOCK_User_Guide.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      style="margin-top:12px;text-decoration:none">
+      เปิดคู่มือ PDF
+    </a>
+  </div>`],      privacy:['ข้อมูลและความเป็นส่วนตัว',`<div class="cnk-vp-info-card"><strong>ข้อมูลภายในต้นแบบ</strong><p>คำขอ การยืนยัน อีเวนต์ และรูปที่อัปโหลดถูกเก็บในเบราว์เซอร์นี้ ไม่ได้แชร์ข้ามเครื่องหรือส่งข้อมูลไปยังระบบร้านจริง</p><p>ควรปกป้องข้อมูลลูกค้าและกำหนดสิทธิ์ก่อนเปิดบริการจริง</p></div>`],
       insights:['ภาพรวมการดำเนินงาน',`<div class="cnk-vp-info-card"><strong>คำขอทั้งหมด ${rs().length} รายการ</strong><p>รอดำเนินการ ${rs().filter(pending).length} รายการ · ยืนยันแล้ว ${rs().filter(confirmed).length} รายการ</p><p>ข้อมูลนี้เป็นตัวเลขจากเบราว์เซอร์ปัจจุบัน ไม่ใช่ยอดจองจริงจากร้าน</p></div>`]
     };
     const [title,body]=common[kind]||common.info;

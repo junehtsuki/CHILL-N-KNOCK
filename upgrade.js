@@ -488,8 +488,16 @@ profile = function () {
   const role = UI.role || 'user';
   const auth = !!DB.account;
 
-  const name = auth
-    ? (DB.name || DB.account?.name || 'สมาชิก')
+  const runnerDemoNames={
+  r1:'สิบทิศ',
+  r2:'เบน',
+  r3:'ปัณ'
+};
+
+const name=role==='runner'
+  ? (runnerDemoNames[cnkRunnerIdentity()]||'Runner')
+  : auth
+    ? (DB.name||DB.account?.name||'สมาชิก')
     : 'ผู้เยี่ยมชม';
 
   const apps = DB.applications || {};
@@ -1176,9 +1184,9 @@ modal = function () {
 
 // ----- RUNNER: visible avatar and status; no later automatic matching -----
 const CNK_RUNNER_DEMOS = [
-  {id:'r1', name:'Runner A',fee:300, ready:true,status:'พร้อมรับงาน'},
-  {id:'r2', name:'Runner B',fee:350,ready:true,status:'พร้อมรับงาน'},
-  {id:'r3', name:'Runner C',fee:300,ready:false,status:'กำลังรับงานอื่น'}
+  {id:'r1', name:'สิบทิศ',fee:300,ready:true,status:'พร้อมรับงาน'},
+  {id:'r2', name:'เบน',fee:350,ready:true,status:'พร้อมรับงาน'},
+  {id:'r3', name:'ปัณ',fee:300,ready:false,status:'กำลังรับงานอื่น'}
 ];
 function cnkDemoAvatar(n) {
   const tones=['#DBAC8D','#EAB79F','#CA9375'], shirts=['#873854','#425678','#735B57'],hairs=['#31262A','#503228','#25252B'];
@@ -1188,8 +1196,20 @@ runnerChoiceUI = function () {
   if (UI.service==='direct') return '';
   return `<div class="form-card section cnk-runner-section"><h3>เลือกผู้ช่วย Runner</h3><p class="hint">ภาพ ชื่อ ค่าบริการ และสถานะเป็นข้อมูลจำลองเพื่อทดสอบหน้าจอ ยังไม่ใช่ผู้รับงานที่ยืนยันตัวตนจริง</p>
     ${CNK_RUNNER_DEMOS.map((r,i)=>`<button class="cnk-runner-row ${UI.runnerChoice===r.id?'selected':''}" ${r.ready?'':'disabled'} onclick="App.pickRunner('${r.id}')">
-      <span class="cnk-runner-avatar">${cnkDemoAvatar(i)}</span><span class="cnk-runner-data"><strong>${e(r.name)}</strong><small>ยังไม่มีคะแนนรีวิวจากผู้ใช้จริง</small><small class="${r.ready?'cnk-status-ready':'cnk-status-busy'}">● ${e(r.status)} (ทดลอง)</small></span>
-      <span class="cnk-runner-side"><b>${CNK_NUMBER(r.fee)}*</b><span class="cnk-runner-radio"></span></span>
+<span
+  class="cnk-runner-avatar"
+  role="img"
+  aria-label="รูปโปรไฟล์ ${e(r.name)}"
+  style="background:#F5E6E9 url('assets/runner-${r.id}.jpg') center / cover no-repeat;">
+</span>
+<span class="cnk-runner-data">
+  <strong>${e(r.name)}</strong>
+  <small>${ic('shield',13)} ป้ายยืนยันตัวตน (จำลอง)</small>
+  <small>ยังไม่มีคะแนนรีวิวจากผู้ใช้จริง</small>
+  <small class="${r.ready?'cnk-status-ready':'cnk-status-busy'}">
+    ● ${e(r.status)} (ทดลอง)
+  </small>
+</span>      <span class="cnk-runner-side"><b>${CNK_NUMBER(r.fee)}*</b><span class="cnk-runner-radio"></span></span>
     </button>`).join('')}
     <p class="hint">* ค่าบริการเป็นตัวอย่าง และต้องได้รับอนุญาตจากร้านก่อนดำเนินงาน ไม่ใช่ราคาเรียกเก็บจริง</p>
   </div>`;

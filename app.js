@@ -359,7 +359,49 @@ function bookingReceipt() {
     </div>
   `;
 }
-function statusPlan(r){if(r.service==='direct')return[{t:'Request submitted',ok:true,d:'The venue has received a sample request.'},{t:'Venue reviewing',ok:!['pending_venue'].includes(r.status),active:r.status==='pending_venue',d:'The venue needs to confirm availability and terms.'},{t:'Venue confirmation',ok:r.status==='confirmed',active:false,d:'Only the venue can confirm a table.'}];if(['runner_booking','runner_pickup'].includes(r.service))return[{t:'Request submitted',ok:true,d:'Booking help requested.'},{t:'Runner assigned',ok:!['finding_runner'].includes(r.status),active:r.status==='finding_runner',d:'Runner availability is not guaranteed.'},{t:'Venue contacted',ok:['awaiting_venue','confirmed'].includes(r.status),active:r.status==='contacting',d:'Runner contacts the venue and submits details.'},{t:'Venue confirmation',ok:r.status==='confirmed',active:r.status==='awaiting_venue',d:'Only the venue can confirm the request.'}];return[{t:'Request submitted',ok:true,d:'Walk-in queue help requested.'},{t:'Runner assigned',ok:!['finding_runner'].includes(r.status),active:r.status==='finding_runner',d:'Venue policy needs to permit queue help.'},{t:'Queue progress verified by runner',ok:['awaiting_venue','queue_verified'].includes(r.status),active:r.status==='queuing',d:'Progress is reported by the runner, not guaranteed.'},{t:'Venue review',ok:r.status==='queue_verified',active:r.status==='awaiting_venue',d:'Venue decides whether queue assistance is accepted; entry not guaranteed.'}]}
+function statusPlan(r){if(r.service==='direct')return[{t:'Request submitted',ok:true,d:'The venue has received a sample request.'},{t:'Venue reviewing',ok:!['pending_venue'].includes(r.status),active:r.status==='pending_venue',d:'The venue needs to confirm availability and terms.'},{t:'Venue confirmation',ok:r.status==='confirmed',active:false,d:'Only the venue can confirm a table.'}];
+if(r.service==='runner_pickup'){
+  const confirmed=!!r.cnkBookingConfirmedAt ||
+    ['finding_runner','contacting','awaiting_venue','confirmed'].includes(r.status);
+
+  const assigned=!!r.runner;
+  const proof=!!r.cnkRunnerProofAt;
+  const completed=!!r.cnkRunnerPaidAt;
+  const closed=['cancelled','declined'].includes(r.status);
+
+  return [
+    {
+      t:'ส่งคำขอจองให้ร้าน',
+      ok:true,
+      d:'ส่งรายละเอียดการจองให้ร้านตรวจสอบ'
+    },
+    {
+      t:'ร้านตรวจสอบและยืนยันโต๊ะ',
+      ok:confirmed,
+      active:!confirmed&&r.status==='pending_venue',
+      d:'รอร้านยืนยันการจองก่อนมอบหมายงาน'
+    },
+    {
+      t:'รอ Runner รับงาน',
+      ok:assigned,
+      active:confirmed&&!assigned&&!closed,
+      d:'งานเปิดให้ Runner ที่เลือกเข้ามารับ'
+    },
+    {
+      t:'Runner รับโต๊ะแทน',
+      ok:proof,
+      active:assigned&&!proof&&!closed,
+      d:'Runner ดำเนินการและส่งหลักฐานจำลอง'
+    },
+    {
+      t:'เสร็จสิ้น',
+      ok:completed,
+      active:proof&&!completed&&!closed,
+      d:'ปิดงานเมื่อเสร็จขั้นตอนค่าบริการจำลอง'
+    }
+  ];
+}
+if(['runner_booking','runner_pickup'].includes(r.service))return[{t:'Request submitted',ok:true,d:'Booking help requested.'},{t:'Runner assigned',ok:!['finding_runner'].includes(r.status),active:r.status==='finding_runner',d:'Runner availability is not guaranteed.'},{t:'Venue contacted',ok:['awaiting_venue','confirmed'].includes(r.status),active:r.status==='contacting',d:'Runner contacts the venue and submits details.'},{t:'Venue confirmation',ok:r.status==='confirmed',active:r.status==='awaiting_venue',d:'Only the venue can confirm the request.'}];return[{t:'Request submitted',ok:true,d:'Walk-in queue help requested.'},{t:'Runner assigned',ok:!['finding_runner'].includes(r.status),active:r.status==='finding_runner',d:'Venue policy needs to permit queue help.'},{t:'Queue progress verified by runner',ok:['awaiting_venue','queue_verified'].includes(r.status),active:r.status==='queuing',d:'Progress is reported by the runner, not guaranteed.'},{t:'Venue review',ok:r.status==='queue_verified',active:r.status==='awaiting_venue',d:'Venue decides whether queue assistance is accepted; entry not guaranteed.'}]}
 function requestCard(r){const v=V(r.venue);return `<div class="request-card"><div class="request-top"><span class="pill tiny rose">${e(serviceName(r.service))}</span><span class="pill tiny ${r.status==='confirmed'||r.status==='queue_verified'?'mint':r.status==='declined'||r.status==='cancelled'?'outline':'gold'}">${e(statusLabel(r.status))}</span></div><h3>${e(v.name)}</h3><div class="request-meta">${ic('calendar',12)} ${niceDate(r.date)} · ${e(r.time)} &nbsp; ${ic('users',12)} ${r.guests} guests<br>${e(v.area)} · ${e(r.id)}</div><div class="row" style="margin-top:12px"><button class="btn smallbtn grow" onclick="App.openTracking('${r.id}')">View status ${ic('arrow',14)}</button><button class="btn smallbtn ghost" onclick="App.openChat('${r.id}')">${ic('chat',15)} Message</button></div></div>`}
 function activity(){return `<div class="screen">${brandHeader()}<div class="pad discovery-header"><div class="eyebrow">ALL YOUR PLANS</div><h1>YOUR<br><span class="accent">NIGHTS.</span></h1>${myExtras()}<div class="chips" style="margin:21px 0 22px"><button class="chip ${UI.tab==='requests'?'active':''}" onclick="App.setActivityTab('requests')">Bookings & queue</button><button class="chip ${UI.tab==='tickets'?'active':''}" onclick="App.setActivityTab('tickets')">Event tickets</button><button class="chip ${UI.tab==='saved'?'active':''}" onclick="App.setActivityTab('saved')">Saved venues</button></div>${UI.tab==='requests'?DB.requests.filter(r=>r.owner==='guest').length?DB.requests.filter(r=>r.owner==='guest').slice().reverse().map(requestCard).join(''):`<div class="empty"><div class="emptyicon">${ic('calendar',27)}</div><h3>No night plans yet</h3><p>Discover a venue and create your first sample request.</p><button class="btn smallbtn" onclick="App.go('discover')">Explore venues ${ic('arrow',15)}</button></div>`:UI.tab==='tickets'?DB.tickets.length?DB.tickets.slice().reverse().map(t=>`<button class="request-card" style="display:block;text-align:left;width:100%;color:inherit" onclick="App.openTicket('${t.id}')"><div class="spread"><span class="pill tiny rose">DEMO TICKET</span><span class="hint">${e(t.id)}</span></div><h3>${e(E(t.event).name)}</h3><p class="hint">${t.qty} ticket(s) · ${niceDate(t.date)}</p><span class="inline-link">View pass ${ic('chevron',14)}</span></button>`).join(''):`<div class="empty"><h3>No tickets yet</h3><p>Choose a demo event and generate a sample ticket.</p><button class="btn smallbtn" onclick="App.go('events')">Explore events</button></div>`:DB.favs.length?venues.filter(v=>DB.favs.includes(v.id)).map(wideVenue).join(''):`<div class="empty"><h3>No saved venues</h3><p>Tap the heart on any venue to save it here.</p><button class="btn smallbtn" onclick="App.go('discover')">Find places</button></div>`}${demoFooter()}</div></div>`}
 
@@ -545,7 +587,7 @@ function tracking() {
         <div class="divider"></div>
 
         ${(['runner_pickup','runner_booking','queue'].includes(r.service)&&r.cnkBookingConfirmedAt)?`<div class="cnk-runner-v5-customer-proof"><strong>ข้อมูลการจองที่ระบบแนบให้</strong><p>รหัสยืนยันการจอง: ${e(r.cnkPickupRef||'ระบบกำลังจัดเตรียม')}</p><small>รหัสสาธิตจากต้นแบบ ไม่ใช่การจองจริงจากร้าน</small></div>`:''}
-        ${r.cnkNeedsGuestReselect&&DB.account&&r.owner===DB.account.email?`<div class="cnk-runner-v5-customer-proof"><strong>Runner ยกเลิกงาน · เลือกคนใหม่</strong><p>คำขอจองของคุณยังอยู่ในระบบ กรุณาเลือก Runner อีกครั้ง</p><div class="cnk-runner-v5-qa-row"><button type="button" onclick="App.cnkRunnerGuestReselect('${r.id}','r1')">Runner A</button><button type="button" onclick="App.cnkRunnerGuestReselect('${r.id}','r2')">Runner B</button></div></div>`:''}
+        ${r.cnkNeedsGuestReselect&&DB.account&&r.owner===DB.account.email?`<div class="cnk-runner-v5-customer-proof"><strong>Runner ยกเลิกงาน · เลือกคนใหม่</strong><p>คำขอจองของคุณยังอยู่ในระบบ กรุณาเลือก Runner อีกครั้ง</p><div class="cnk-runner-v5-qa-row"><button type="button" onclick="App.cnkRunnerGuestReselect('${r.id}','r1')">สิบทิศ</button><button type="button" onclick="App.cnkRunnerGuestReselect('${r.id}','r2')">เบน</button></div></div>`:''}
         ${(['runner_pickup','runner_booking','queue'].includes(r.service)&&r.cnkRunnerProofAt)?`<div class="cnk-runner-v5-customer-proof done"><strong>${ic('check',17)} Runner ส่งหลักฐานปิดงานแล้ว</strong><p>${e(r.cnkRunnerProof?.note||'ระบบบันทึกการดำเนินงานสำเร็จแล้ว')}</p>${r.cnkRunnerProof?.bookingCode?`<small>รหัสอ้างอิง: ${e(r.cnkRunnerProof.bookingCode)}</small>`:''}<small>${r.cnkRunnerPaidAt?'ปิดงานและบันทึกการจ่ายค่าบริการจำลองแล้ว':'กำลังรอขั้นตอนชำระค่าบริการจำลอง'}</small></div>`:''}
 
         <strong style="font-size:13px">
@@ -818,12 +860,40 @@ function cnkRunnerGuidedSendProgress(id){
 
 // Runner V4 helpers: demo-only data and actions. Does not alter Guest/Venue logic.
 function cnkRunnerIdentity(){
-  if(typeof QA!=='undefined'&&QA)return UI.cnkRunnerDemoIdentity||'r1';
-  return DB.account?.runnerId||DB.applications?.runner?.runnerId||null;
+  if(UI.role==='runner'){
+    return UI.cnkRunnerDemoIdentity
+      || DB.account?.runnerId
+      || DB.applications?.runner?.runnerId
+      || 'r1';
+  }
+
+  if(typeof QA!=='undefined'&&QA){
+    return UI.cnkRunnerDemoIdentity||'r1';
+  }
+
+  return DB.account?.runnerId
+    || DB.applications?.runner?.runnerId
+    || null;
 }
+const cnkRunnerDemoProfiles = [
+  {id:'r1',name:'สิบทิศ',photo:'assets/runner-r1.jpg'},
+  {id:'r2',name:'เบน',photo:'assets/runner-r2.jpg'},
+  {id:'r3',name:'ปัณ',photo:'assets/runner-r3.jpg'}
+];
+
 function cnkRunnerDemoSwitch(id){
-  if(typeof QA==='undefined'||!QA||!['r1','r2'].includes(id))return;
-  UI.cnkRunnerDemoIdentity=id;UI.cnkRunnerJobFilter='all';render(true);
+  if(UI.role!=='runner'||!cnkRunnerDemoProfiles.some(p=>p.id===id))return;
+  UI.cnkRunnerDemoIdentity=id;
+  UI.cnkRunnerProfilesOpen=false;
+  UI.cnkRunnerJobFilter='all';
+
+  render(true);
+}
+
+function cnkRunnerToggleProfiles(){
+  if(UI.role!=='runner')return;
+  UI.cnkRunnerProfilesOpen=!UI.cnkRunnerProfilesOpen;
+  render(true);
 }
 function cnkRunnerQaDemoJobs(){
   if(typeof QA==='undefined'||!QA)return [];
@@ -1146,17 +1216,157 @@ const jobs=jobItems(),active=DB.requests.filter(r=>
   !['declined','cancelled'].includes(r.status) &&
   ['accepted','on_way','arrived','handover'].includes(cnkRunnerPhase(r))
 );
+ 
   const earned=cnkRunnerIncomeJobs().reduce((n,r)=>n+(Number(r.fee)||0),0);
   const today=dateOffset(0),todays=jobs.filter(j=>cnkRunnerDate(j)===today);
+
+const isRunnerQA=UI.role==='runner';
+  const runnerId=cnkRunnerIdentity();
+  const demoProfile=cnkRunnerDemoProfiles.find(p=>p.id===runnerId);
+  const runnerName=isRunnerQA
+    ?(demoProfile?.name||'สิบทิศ')
+    :(DB.account?.name||DB.name||'Runner');
+  const runnerPhoto=isRunnerQA
+    ?(demoProfile?.photo||'')
+    :'assets/runner-profile.jpg';
+
   return `<div class="screen cnk-runner-screen"><div class="cnk-runner-wrap">
-    <header class="cnk-runner-header"><div><h1>สวัสดี Runner</h1><p>พร้อมรับงานคืนนี้แล้วหรือยัง</p></div>
-      <button class="cnk-runner-bell" aria-label="การแจ้งเตือน" onclick="App.openModal('notifications')">${ic('bell',20)}${DB.notifications.length?'<i></i>':''}</button></header>
-    ${typeof QA!=='undefined'&&QA?`<div class="cnk-runner-qa-helper"><span>โหมดทดลอง · งาน Runner 3 ประเภท</span><div class="cnk-runner-v4-qa-actions"><button type="button" onclick="App.cnkRunnerDemoSwitch('r1')" aria-pressed="${cnkRunnerIdentity()==='r1'}">A</button><button type="button" onclick="App.cnkRunnerDemoSwitch('r2')" aria-pressed="${cnkRunnerIdentity()==='r2'}">B</button><button type="button" onclick="App.cnkRunnerQaResetDemo()">เริ่มใหม่</button></div></div>`:''}
-    <div class="cnk-runner-earn"><small>รายได้ที่ปิดงานแล้ว (จำลอง)</small><strong>${baht(earned)}</strong><span class="cnk-runner-earn-decoration">${ic('chart',32)}</span></div>
-    <div class="cnk-runner-stats"><div><small>งานใหม่วันนี้</small><strong>${todays.length}</strong></div><div><small>กำลังดำเนินการ</small><strong>${active.length}</strong></div><div><small>คะแนนตัวอย่าง</small><strong>4.9<span>★</span></strong><em>ยังไม่มีรีวิวจริง</em></div></div>
-    <div class="cnk-runner-heading"><h2>งานแนะนำสำหรับคุณ</h2><button onclick="App.go('jobs')">ดูทั้งหมด ${ic('chevron',14)}</button></div>
-    ${jobs.length?jobs.slice(0,4).map(jobCard).join(''):`<div class="cnk-runner-empty"><strong>ยังไม่มีงานเปิดรับ</strong><p>${typeof QA!=='undefined'&&QA?'กดเริ่มทดลองใหม่เพื่อแสดงงานตัวอย่าง':'เมื่อมีคำขอจากลูกค้า งานจะปรากฏที่นี่'}</p><button onclick="App.go('jobs')">ดูรายการงาน</button></div>`}
-    <p class="cnk-runner-disclaimer">งานทดสอบและยอดรายได้ไม่มีการจองหรือชำระเงินจริง</p>
+
+    ${isRunnerQA?`
+      <section class="cnk-runner-profile-select" aria-label="โปรไฟล์ Runner สำหรับทดลอง">
+
+        <div class="cnk-runner-profile-select-head">
+          <strong>โปรไฟล์ Runner ที่กำลังใช้งาน</strong>
+
+          <button
+            type="button"
+            class="cnk-runner-profile-toggle ${UI.cnkRunnerProfilesOpen?'open':''}"
+            aria-label="${UI.cnkRunnerProfilesOpen?'ปิด':'เปิด'}ตัวเลือกโปรไฟล์ Runner"
+            aria-expanded="${!!UI.cnkRunnerProfilesOpen}"
+            onclick="App.cnkRunnerToggleProfiles()">
+            ${ic('chevron',20)}
+          </button>
+        </div>
+
+        ${UI.cnkRunnerProfilesOpen?`
+          <div class="cnk-runner-profile-menu">
+
+            <div class="cnk-runner-profile-options">
+              ${cnkRunnerDemoProfiles.map(p=>`
+                <button
+                  type="button"
+                  class="${runnerId===p.id?'selected':''}"
+                  aria-pressed="${runnerId===p.id}"
+                  onclick="App.cnkRunnerDemoSwitch('${p.id}')">
+
+                  ${ic('user',23)}
+                  <strong>${e(p.name)}</strong>
+                  <small>${p.id}</small>
+
+                </button>
+              `).join('')}
+            </div>
+
+            <div class="cnk-runner-profile-menu-foot">
+              <small>ตัวเลือกสำหรับโหมด QA เท่านั้น</small>
+              <button
+                ${typeof QA!=='undefined'&&QA?`
+  <button
+    type="button"
+    onclick="App.cnkRunnerQaResetDemo()">
+    เริ่มใหม่
+  </button>
+`:''}
+            </div>
+
+          </div>
+        `:''}
+
+      </section>
+    `:''}
+
+    <header class="cnk-runner-header cnk-runner-identity-card">
+
+      <span class="cnk-runner-identity-avatar">
+        <span>${e(runnerName.slice(0,1))}</span>
+
+        ${runnerPhoto?`
+          <img
+            src="${e(runnerPhoto)}"
+            alt=""
+            onerror="this.remove()">
+        `:''}
+      </span>
+
+      <div class="cnk-runner-identity-info">
+
+        <p class="cnk-runner-hello">สวัสดี,</p>
+
+        <h1>${e(runnerName)}</h1>
+
+        <div class="cnk-runner-identity-meta">
+          ${ic('shield',15)}
+          <span>${isRunnerQA?'Runner ทดลอง · '+e(runnerId||'r1'):'Runner Partner'}</span>
+        </div>
+
+      </div>
+
+      <button
+        class="cnk-runner-bell"
+        aria-label="การแจ้งเตือน"
+        onclick="App.openModal('notifications')">
+
+        ${ic('bell',20)}
+        ${DB.notifications.length?'<i></i>':''}
+
+      </button>
+
+    </header>
+
+    <div class="cnk-runner-earn">
+      <small>รายได้ที่ปิดงานแล้ว (จำลอง)</small>
+      <strong>${baht(earned)}</strong>
+      <span class="cnk-runner-earn-decoration">${ic('chart',32)}</span>
+    </div>
+
+    <div class="cnk-runner-stats">
+      <div>
+        <small>งานใหม่วันนี้</small>
+        <strong>${todays.length}</strong>
+      </div>
+      <div>
+        <small>กำลังดำเนินการ</small>
+        <strong>${active.length}</strong>
+      </div>
+      <div>
+        <small>คะแนนตัวอย่าง</small>
+        <strong>4.9<span>★</span></strong>
+        <em>ยังไม่มีรีวิวจริง</em>
+      </div>
+    </div>
+
+    <div class="cnk-runner-heading">
+      <h2>งานแนะนำสำหรับคุณ</h2>
+      <button onclick="App.go('jobs')">
+        ดูทั้งหมด ${ic('chevron',14)}
+      </button>
+    </div>
+
+    ${jobs.length
+      ?jobs.slice(0,4).map(jobCard).join('')
+      :`<div class="cnk-runner-empty">
+          <strong>ยังไม่มีงานเปิดรับ</strong>
+          <p>${typeof QA!=='undefined'&&QA
+            ?'กดเริ่มทดลองใหม่เพื่อแสดงงานตัวอย่าง'
+            :'เมื่อมีคำขอจากลูกค้า งานจะปรากฏที่นี่'}</p>
+          <button onclick="App.go('jobs')">ดูรายการงาน</button>
+        </div>`
+    }
+
+    <p class="cnk-runner-disclaimer">
+      งานทดสอบและยอดรายได้ไม่มีการจองหรือชำระเงินจริง
+    </p>
+
   </div></div>`;
 }
 function runnerJobs(){
@@ -1333,6 +1543,24 @@ if(UI.modal==='name')return head('Your profile',`<p class="modal-text">Change yo
 
 if (UI.modal === 'help') return head('ศูนย์ช่วยเหลือ', `
   <div class="stack">
+
+    <div class="subtle-card">
+      <strong>คู่มือการใช้งาน CHILL N’ KNOCK</strong>
+
+      <p class="hint" style="margin:8px 0 12px">
+        ทดลอง Guest, Runner และ Venue
+        พร้อมตัวอย่าง Matching และ Traffic Scenario
+      </p>
+
+      <a
+        class="btn full"
+        href="docs/CHILL_N_KNOCK_User_Guide.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="text-decoration:none">
+        เปิดคู่มือ PDF
+      </a>
+    </div>
 
     <div class="subtle-card">
       <strong>ส่งคำขอแล้วได้โต๊ะทันทีหรือไม่?</strong>
@@ -1728,7 +1956,7 @@ if (k === 'venue') {
           ${e(venueName)}
           <br>
           ${found
-            ? 'สถานะอนุมัติทดลอง · เมื่อเสร็จจะเข้าสู่ Dashboard ตัวอย่างร้าน ONYX'
+            ? 'สถานะอนุมัติทดลอง · เมื่อเสร็จจะเข้าสู่ Dashboard ของร้านที่สมัคร'
             : 'ยังไม่มีร้านนี้ในรายการ ต้องเพิ่มร้านก่อนเปิด Dashboard'
           }
           <br>
@@ -1821,11 +2049,31 @@ DB.applications[role] = {
 
 if (role === 'venue') {
   
-  // เปิดพื้นที่ร้าน ONYX สำหรับการทดสอบเท่านั้น
-  // ไม่ถือเป็นการยืนยันสิทธิ์ดูแลร้านจริง
-  DB.merchantVenue = 'onyx';
-  DB.applications.venue.venueId = 'onyx';
+    // จับคู่ชื่อร้านที่สมัครกับร้านในระบบต้นแบบ
+  const appliedVenueName = String(
+    UI.applyData.f0_0 || ''
+  ).trim();
+
+  const selectedVenue = venues.find(v =>
+    v.name.trim().toLocaleLowerCase('th') ===
+    appliedVenueName.toLocaleLowerCase('th')
+  );
+
+  DB.applications.venue.venueId =
+    selectedVenue ? selectedVenue.id : null;
+
   DB.applications.venue.previewOnly = true;
+
+  if (selectedVenue) {
+    DB.merchantVenue = selectedVenue.id;
+  } else {
+    // ร้านใหม่ที่ยังไม่มีในระบบ เก็บใบสมัครไว้ก่อน
+    // ไม่อนุมัติให้เข้า Dashboard ของร้านอื่น
+    save();
+    UI.venueApprovalStep = 1;
+    go('applied');
+    return;
+  }
 
   // คืนเฉพาะคำขอ ONYX ที่เป็นข้อมูลสาธิต
   // ไม่ลบคำขอที่ลูกค้าสร้างเอง
@@ -1906,7 +2154,20 @@ function go(page) {
     // จำตำแหน่ง Scroll ของหน้าที่กำลังออก
     UI.scrollMemory = UI.scrollMemory || {};
 
+
     UI.scrollMemory[UI.screen] = window.scrollY;
+
+    // จำตำแหน่งเลื่อนของหน้า "คืนของฉัน"
+    if (UI.role === 'user' && UI.screen === 'activity') {
+      const phone = document.querySelector('#app > .phone');
+
+      UI.cnkActivityBackScroll = {
+        y: window.scrollY || 0,
+        docY: document.scrollingElement?.scrollTop || 0,
+        phoneY: phone?.scrollTop || 0,
+        screenY: phone?.querySelector('.screen')?.scrollTop || 0
+      };
+    }
 
 if (UI.role === 'user' && UI.screen === 'home') {
   const phone = document.querySelector('#app > .phone');
@@ -2021,11 +2282,49 @@ if (
     }
   }
 
-  // หน้าอื่นยังใช้การ Render ตามระบบเดิม
+  
+  // กลับหน้าอื่นโดยคงพฤติกรรมเดิม
   const savedY = UI.scrollMemory?.[previous];
-
   render();
 
+  // คืนตำแหน่ง Scroll เฉพาะหน้า "คืนของฉัน"
+  if (
+    UI.role === 'user' &&
+    previous === 'activity' &&
+    UI.cnkActivityBackScroll
+  ) {
+    const pos = UI.cnkActivityBackScroll;
+    UI.cnkActivityBackScroll = null;
+
+    const restoreActivityScroll = () => {
+      const phone = document.querySelector('#app > .phone');
+
+      if (phone) {
+        phone.scrollTop = pos.phoneY;
+
+        const screen = phone.querySelector('.screen');
+        if (screen) screen.scrollTop = pos.screenY;
+      }
+
+      if (document.scrollingElement) {
+        document.scrollingElement.scrollTop = pos.docY;
+      }
+
+      window.scrollTo({
+        top: pos.y,
+        behavior: 'instant'
+      });
+    };
+
+    requestAnimationFrame(() => {
+      restoreActivityScroll();
+      requestAnimationFrame(restoreActivityScroll);
+    });
+
+    return;
+  }
+
+  // หน้าอื่นยังใช้ระบบย้อนกลับเดิม
   if (typeof savedY === 'number') {
     requestAnimationFrame(() => {
       window.scrollTo(0, savedY);
@@ -2130,7 +2429,7 @@ function openChat(id){UI.reqId=id;go('chat')}
 function openTicket(id){UI.ticketId=id;go('ticket-pass')}
 function openJob(id){UI.job=id;go('job-detail')}
 function openActive(id){UI.reqId=id;UI.proof='';go('active-detail')}
-const App={go,back,auth,authTab,submitAuth,demoSocial,startApply,nextApply,prevApply,addFriend,openDirections,switchRole,openVenue,openEvent,openTracking,openChat,openJob,openActive,cnkRunnerDemoSwitch,cnkRunnerStartGuidedDemo,cnkRunnerGuidedSendProgress,cnkRunnerQaResetDemo,cnkRunnerQaVenueApprove,cnkRunnerSubmitSystemProof,cnkRunnerSetJobFilter,cnkRunnerToggleJobFilters,cnkRunnerFilterService,cnkRunnerFilterMinFee,cnkRunnerSetActiveFilter,cnkRunnerMarkTravel,cnkRunnerMarkArrived,cnkRunnerPromptCancel,cnkRunnerCancelClose,cnkRunnerCancelConfirm,cnkRunnerQaResolveCancellation,cnkRunnerPreviewGuestStatus,cnkRunnerGuestReselect,cnkRunnerSaveProof,cnkRunnerSimulatePayout,startBooking,chooseService,formChange,reviewBooking,submitBooking,issueTicket,acceptJob,submitProgress,merchantDecision,askDecline,declineConfirmed,cancelConfirmed,sendMessage,profileAction,addReview,openMap,openModal,closeModal,setQuery,
+const App={go,back,auth,authTab,submitAuth,demoSocial,startApply,nextApply,prevApply,addFriend,openDirections,switchRole,openVenue,openEvent,openTracking,openChat,openJob,openActive,cnkRunnerDemoSwitch,cnkRunnerToggleProfiles,cnkRunnerStartGuidedDemo,cnkRunnerGuidedSendProgress,cnkRunnerQaResetDemo,cnkRunnerQaVenueApprove,cnkRunnerSubmitSystemProof,cnkRunnerSetJobFilter,cnkRunnerToggleJobFilters,cnkRunnerFilterService,cnkRunnerFilterMinFee,cnkRunnerSetActiveFilter,cnkRunnerMarkTravel,cnkRunnerMarkArrived,cnkRunnerPromptCancel,cnkRunnerCancelClose,cnkRunnerCancelConfirm,cnkRunnerQaResolveCancellation,cnkRunnerPreviewGuestStatus,cnkRunnerGuestReselect,cnkRunnerSaveProof,cnkRunnerSimulatePayout,startBooking,chooseService,formChange,reviewBooking,submitBooking,issueTicket,acceptJob,submitProgress,merchantDecision,askDecline,declineConfirmed,cancelConfirmed,sendMessage,profileAction,addReview,openMap,openModal,closeModal,setQuery,
 quick,shareVenue(id){copyLink(location.origin+location.pathname+'#venue-'+id)},shareEvent(id){copyLink(location.origin+location.pathname+'#event-'+id)},
 setArea(a){UI.area=a;render(true)},setGenre(g){UI.genre=g;render(true)},toggleMap(){UI.map=!UI.map;render(true)},setSort(x){UI.sort=x;render(true)},setPrice(p){UI.filterPrice=p;render(true)},resetFilters(){UI.area='All';UI.genre='All';UI.q='';UI.filterPrice=0;UI.sort='Recommended';render(true)},pickNeighborhood(a){UI.modal='';UI.area=a;UI.genre='All';UI.q='';go('discover')},
 setInfoTab(x){UI.infoTab=x;render(true)},

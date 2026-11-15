@@ -332,8 +332,30 @@ h1,h2,h3,h4,.body-title,.brand-name,.section-bar h2,
 .cnk-runner-row{width:100%;display:flex;gap:10px;align-items:center;padding:11px 10px;margin:9px 0;background:#fff;border:1px solid #ECD7DF;color:#3C2632;border-radius:13px;text-align:left}
 .cnk-runner-row.selected{background:#FFF2F6;border-color:#B92756}
 .cnk-runner-row:disabled{opacity:.63;cursor:not-allowed}
-.cnk-runner-avatar{width:48px;height:48px;flex:none;overflow:hidden;border-radius:50%;border:1px solid #DFC7D1}
-.cnk-runner-avatar svg{display:block;width:100%;height:100%}
+.cnk-runner-avatar{
+  position:relative;
+  width:48px;
+  height:48px;
+  flex:none;
+  overflow:hidden;
+  border-radius:50%;
+  border:1px solid #DFC7D1;
+}
+
+.cnk-runner-avatar svg{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+.cnk-runner-avatar img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
 .cnk-runner-data{display:grid;gap:3px;min-width:0;flex:1}
 .cnk-runner-data strong{font-size:13px}
 .cnk-runner-data small{font-size:10px;color:#846F79}
@@ -1847,6 +1869,183 @@ html {
 #app .cnk-runner-header p{font-size:11px;margin:4px 0 0;color:#947B86;display:none}
 #app .cnk-runner-bell{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;position:relative;background:#F8E9EE;color:#73263F;border:1px solid #EFD5DE;flex:none}
 #app .cnk-runner-bell i{position:absolute;right:7px;top:6px;width:6px;height:6px;background:#A31C4B;border-radius:50%}
+/* Runner Home: QA profile picker and greeting only. */
+#app .cnk-runner-profile-select{
+  background:#fff;
+  border:1px solid #E9DDE1;
+  border-radius:16px;
+  padding:12px 14px;
+  margin:0 0 12px;
+}
+
+#app .cnk-runner-profile-select-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+#app .cnk-runner-profile-select-head>strong{
+  font-size:13px;
+  font-weight:800;
+  line-height:1.45;
+  color:#34212A;
+}
+
+#app .cnk-runner-profile-toggle{
+  flex:none;
+  border:0;
+  background:transparent;
+  color:#6E6068;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+#app .cnk-runner-profile-toggle svg{
+  transform:rotate(90deg);
+  transition:transform .15s ease;
+}
+
+#app .cnk-runner-profile-toggle.open svg{
+  transform:rotate(-90deg);
+}
+
+#app .cnk-runner-profile-menu{
+  padding-top:12px;
+}
+
+#app .cnk-runner-profile-options{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+
+#app .cnk-runner-profile-options button{
+  min-width:0;
+  border:1px solid #E9DDE1;
+  background:#fff;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:11px 2px;
+  color:#3F3037;
+  cursor:pointer;
+}
+
+#app .cnk-runner-profile-options button.selected{
+  background:#F7F2F4;
+  border-color:#BDAAB3;
+}
+
+#app .cnk-runner-profile-options button strong{
+  font-size:12px;
+  font-weight:800;
+}
+
+#app .cnk-runner-profile-options button small{
+  font-size:10px;
+  color:#89777F;
+}
+
+#app .cnk-runner-profile-menu-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding-top:10px;
+}
+
+#app .cnk-runner-profile-menu-foot small{
+  color:#8B7780;
+  font-size:10px;
+}
+
+#app .cnk-runner-profile-menu-foot button{
+  border:1px solid #E9DDE1;
+  border-radius:9px;
+  background:#fff;
+  color:#92214A;
+  padding:6px 9px;
+  font-size:10px;
+  font-weight:750;
+  white-space:nowrap;
+}
+
+#app .cnk-runner-identity-card{
+  background:#fff;
+  border:1px solid #E9DDE1;
+  border-radius:16px;
+  padding:12px;
+  gap:10px;
+  margin:0 0 16px;
+}
+
+#app .cnk-runner-identity-avatar{
+  position:relative;
+  display:grid;
+  place-items:center;
+  flex:none;
+  width:62px;
+  height:62px;
+  border-radius:14px;
+  overflow:hidden;
+  background:#F0E7E9;
+  color:#8E3F59;
+  font-size:24px;
+  font-weight:800;
+}
+
+#app .cnk-runner-identity-avatar img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+#app .cnk-runner-identity-info{
+  flex:1;
+  min-width:0;
+}
+
+#app .cnk-runner-header .cnk-runner-hello{
+  display:block;
+  color:#8C7781;
+  font-size:12px;
+  line-height:1.4;
+  margin:0 0 3px;
+}
+
+#app .cnk-runner-identity-card h1{
+  font:800 23px/1.25 'Noto Sans Thai',sans-serif;
+  margin:0;
+  color:#32212A;
+  overflow-wrap:anywhere;
+}
+
+#app .cnk-runner-identity-meta{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:5px;
+  color:#796B73;
+  font-size:10px;
+  line-height:1.35;
+}
+
+#app .cnk-runner-identity-card .cnk-runner-bell{
+  background:transparent;
+  border:0;
+  color:#6E6068;
+  width:30px;
+  height:38px;
+}
 #app .cnk-runner-earn{border-radius:16px;padding:18px 17px;color:#fff;background:linear-gradient(115deg,#811C40,#BA3B65);position:relative;overflow:hidden;margin-bottom:11px;min-height:105px;box-shadow:0 6px 16px #79334B16}
 #app .cnk-runner-earn small{display:block;color:#FAE0E9;font-weight:700;font-size:10px;max-width:200px}
 #app .cnk-runner-earn strong{display:block;font-size:31px;line-height:1.2;margin-top:10px;font-weight:900}

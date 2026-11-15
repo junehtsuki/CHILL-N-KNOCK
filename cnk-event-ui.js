@@ -103,10 +103,33 @@
     const t=(DB.tickets||[]).find(x=>x.id===UI.ticketId);
     if(!t)return activity();
     const ev=E(t.event),v=V(ev.venue), end=ev.endTime||'02:00';
-    return `<div class="screen cnk-ts-screen">
-      <div class="cnk-ts-top"><div class="cnk-ts-icon">${ic('ticket',54)}<span>${ic('check',23)}</span></div>
-        <h1>ชำระเงินจำลองสำเร็จ !</h1><p>ขอบคุณที่ใช้ CHILL N’ KNOCK</p><span class="cnk-ts-demo">บัตรทดลอง · ไม่สามารถใช้เข้างานจริง</span></div>
-      <div class="cnk-ts-ticket"><div class="cnk-ts-banner">${image(ev)}<div><h2>${e(v.name)}</h2><b>${e(ev.name)}</b></div></div>
+    
+    return `<div class="screen cnk-ts-screen" style="position:relative">
+
+      <button
+        type="button"
+        class="cnk-ev-back"
+        style="position:absolute;top:18px;left:18px;z-index:3"
+        aria-label="ย้อนกลับ"
+        onclick="App.back()">
+        ${ic('back',22)}
+      </button>
+
+      <div class="cnk-ts-top" style="width:100%;text-align:center">
+
+        <div class="cnk-ts-icon">
+          ${ic('ticket',54)}
+          <span>${ic('check',23)}</span>
+        </div>
+
+        <h1>ชำระเงินจำลองสำเร็จ !</h1>
+        <p>ขอบคุณที่ใช้ CHILL N’ KNOCK</p>
+        <span class="cnk-ts-demo">
+          บัตรทดลอง · ไม่สามารถใช้เข้างานจริง
+        </span>
+
+      </div>
+        <div class="cnk-ts-ticket"><div class="cnk-ts-banner">${image(ev)}<div><h2>${e(v.name)}</h2><b>${e(ev.name)}</b></div></div>
         <div class="cnk-ts-details"><div class="cnk-ts-facts">
           <p>${ic('calendar',17)} ${e(thaiDate(t.date))}</p>
           <p>${ic('clock',17)} ${e(t.time||ev.time)}–${e(end)} น.</p>
