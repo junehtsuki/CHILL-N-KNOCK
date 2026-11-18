@@ -1,5 +1,5 @@
 /* Venue Partner only — screenshots' cream / burgundy design. No Guest/Runner styles. */
-#app .cnk-vp{background:#FFF9F7;color:#301D27;min-height:calc(100dvh - 60px);padding-bottom:90px;font-family:'Noto Sans Thai','DM Sans',sans-serif}
+#app .cnk-vp{background:#FFF9F7;color:#301D27;min-height:100dvh;padding-bottom:90px;font-family:'Noto Sans Thai','DM Sans',sans-serif}
 #app .cnk-vp-content{padding:16px 16px 28px;max-width:450px;margin:0 auto}
 #app .cnk-vp-header{display:flex;align-items:center;gap:10px;min-height:44px;margin:0 0 12px}
 #app .cnk-vp-header h1{font-family:'Kanit','Noto Sans Thai',sans-serif;font-size:23px;line-height:1.25;font-weight:800;margin:0;flex:1}

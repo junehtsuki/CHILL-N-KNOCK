@@ -14,11 +14,55 @@
   const venue = () => V(DB.merchantVenue);
   const rs = () => DB.requests.filter(r => r.venue === DB.merchantVenue); // includes Runner QA jobs awaiting venue review
   const vpDate = (date) => date ? new Date(date + 'T12:00:00').toLocaleDateString('th-TH', { day:'numeric',month:'short',year:'numeric' }) : '—';
+  
+  
   const pending = r => ['pending_venue','awaiting_venue'].includes(r.status);
-  const confirmed = r => ['confirmed','queue_verified'].includes(r.status) || (r.service === 'runner_pickup' && !!r.cnkBookingApproved);
-  const closed = r => ['declined','cancelled'].includes(r.status);
-  const serviceText = s => ({direct:'จองโต๊ะโดยตรง',runner_booking:'Runner ช่วยจองล่วงหน้า',runner_pickup:'Runner รับโต๊ะแทน',queue:'Runner ช่วยต่อคิว'})[s] || s;
-  const statusText = r => r.service === 'runner_pickup' && r.cnkBookingApproved ? 'ร้านยืนยันการจองแล้ว' : ({pending_venue:'รอตรวจสอบ',awaiting_venue:'รอตรวจสอบ',confirmed:'ยืนยันแล้ว',queue_verified:'ตรวจสอบคิวแล้ว',finding_runner:'รอ Runner',contacting:'Runner ติดต่อร้าน',queuing:'Runner ต่อคิว',cancelled:'ยกเลิก',declined:'ไม่อนุมัติ'})[r.status] || 'กำลังดำเนินการ';
+
+  // Runner จบ Journey และบันทึกรายได้จำลองแล้ว
+  const finished = r =>
+    !!r.cnkRunnerPaidAt && r.cnkRunnerStep === 'done';
+
+  const closed = r =>
+    ['declined','cancelled'].includes(r.status);
+
+  const confirmed = r =>
+    !pending(r) &&
+    !finished(r) &&
+    !closed(r) &&
+    (
+      ['confirmed','queue_verified'].includes(r.status) ||
+      (r.service === 'runner_pickup' && !!r.cnkBookingApproved)
+    );
+
+  const waiting = r =>
+    !finished(r) && !closed(r) && !confirmed(r);
+
+  const serviceText = s => ({
+    direct:'จองโต๊ะโดยตรง',
+    runner_booking:'Runner ช่วยจองล่วงหน้า',
+    runner_pickup:'Runner รับโต๊ะแทน',
+    queue:'Runner ช่วยต่อคิว'
+  })[s] || s;
+
+  const statusText = r =>
+    finished(r)
+      ? 'เสร็จสิ้น'
+      : r.service === 'runner_pickup' &&
+        r.cnkBookingApproved &&
+        !pending(r)
+        ? 'ร้านยืนยันการจองแล้ว'
+        : ({
+          pending_venue:'รอตรวจสอบ',
+          awaiting_venue:'รอตรวจสอบ',
+          confirmed:'ยืนยันแล้ว',
+          queue_verified:'ตรวจสอบคิวแล้ว',
+          finding_runner:'รอ Runner',
+          contacting:'Runner ติดต่อร้าน',
+          queuing:'Runner ต่อคิว',
+          cancelled:'ยกเลิก',
+          declined:'ไม่อนุมัติ'
+        })[r.status] || 'กำลังดำเนินการ';
+
   const normalizeZone = s => /vip/i.test(s||'') ? 'VIP' : /outdoor/i.test(s||'') ? 'Outdoor' : 'Main';
   const gridFor = zone => zone === 'VIP' ? ['V1','V2','V3','V4'] : zone === 'Outdoor' ? ['O1','O2','O3','O4','O5','O6'] : ['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4'];
   const infoFor = () => {
@@ -46,17 +90,23 @@
   const footnote = () => `<p class="cnk-vp-notice">ข้อมูลต้นแบบในเบราว์เซอร์ · การจอง การยืนยันโต๊ะ และการชำระเงินยังไม่เกิดขึ้นจริง</p>`;
   const layout = (body) => `<div class="screen cnk-vp ${DB.cnkVPFont==='large'?'cnk-vp-large':''}" data-vp-version="v3.1-onyx-preview"><div class="cnk-vp-content">${body}</div></div>`;
   const vSelect = () => `<button type="button" class="cnk-vp-venue-switch" onclick="App.vpToggleVenuePicker()" aria-expanded="${!!UI.vpVenuePicker}" aria-label="เลือกดูร้านตัวอย่าง">${safe(venue().name)} ${ic('chevron',15)}</button>
-    ${UI.vpVenuePicker ? `<div class="cnk-vp-venue-picker"><p class="cnk-vp-switch-help">เลือกร้านเพื่อดูข้อมูลสาธิตในเบราว์เซอร์นี้ · ไม่ใช่บัญชีร้านจริง</p><button type="button" class="cnk-vp-demo-reset" onclick="App.vpRestoreOnyxSamples()">คืนคำขอ ONYX ตัวอย่าง 3 รายการ</button>${[...venues].sort((a,b)=>(a.id==='onyx'?-1:b.id==='onyx'?1:0)).map(v => `<button type="button" onclick="App.vpSelectVenue('${v.id}')" class="${v.id===DB.merchantVenue?'active':''}">${safe(v.name)}${v.id==='onyx'?' · พรีวิว ONYX':''}</button>`).join('')}</div>` : ''}`;
+    ${UI.vpVenuePicker ? `<div class="cnk-vp-venue-picker"><p class="cnk-vp-switch-help">เลือกร้านเพื่อดูข้อมูลสาธิตในเบราว์เซอร์นี้ · ไม่ใช่บัญชีร้านจริง</p>${DB.merchantVenue==='onyx'?`
+  <button
+    type="button"
+    class="cnk-vp-demo-reset"
+    onclick="App.vpRestoreOnyxSamples()">
+    คืนคำขอ ONYX ตัวอย่าง 3 รายการ
+  </button>
+`:''}${[...venues].sort((a,b)=>(a.id==='onyx'?-1:b.id==='onyx'?1:0)).map(v => `<button type="button" onclick="App.vpSelectVenue('${v.id}')" class="${v.id===DB.merchantVenue?'active':''}">${safe(v.name)}${v.id==='onyx'?' ·':''}</button>`).join('')}</div>` : ''}`;
   const stat = (n,txt) => `<div class="cnk-vp-stat"><span>${safe(txt)}</span><b>${n}</b></div>`;
   const menuButton = (label,icon,screen) => `<button type="button" class="cnk-vp-menu-shortcut" onclick="App.vpGo('${screen}')">${ic(icon,22)}<span>${safe(label)}</span></button>`;
   // Reference-preview data for ONYX when no actual ONYX pending customer requests exist.
   // Explicitly flagged as sample and never substitutes for a real customer request.
   function seedOnyxDemo() {
     if (UI.role!=='venue' || DB.merchantVenue!=='onyx') return;
-    const demoIds=['CKN-VP004','CKN-VP005','CKN-VP006'];
-    // Never put fake requests next to actual pending customers.
-    if (DB.requests.some(r=>r.venue==='onyx' && r.owner!=='sample' && pending(r))) return;
-    if (DB.cnkVPDemoSeeded && demoIds.some(id=>DB.requests.some(r=>r.id===id))) return;
+
+    // Keep ONYX's three labeled demo requests alongside Guest requests.
+    // The ID check below prevents duplicates and preserves any existing progress.
     const seeds=[
       {id:'CKN-VP004',customerName:'leo',service:'runner_booking',guests:6,time:'20:30',seat:'Main',status:'awaiting_venue',runner:true},
       {id:'CKN-VP005',customerName:'beer',service:'runner_pickup',guests:4,time:'22:00',seat:'Outdoor',status:'pending_venue',runner:false,runnerChoice:'r1'},
@@ -101,7 +151,8 @@
     const who = r.customerName || r.ownerName || (r.owner === 'sample' ? 'ลูกค้าทดลอง' : (r.owner && r.owner !== 'guest' ? String(r.owner).split('@')[0] : 'ลูกค้า'));
     const suggestion = can && r.service !== 'queue' ? preferredTable(r) : '';
     return `<div class="cnk-vp-request">
-      <div class="cnk-vp-request-top"><div class="cnk-vp-avatar">${ic('user',18)}</div><div class="cnk-vp-request-main"><strong>${safe(who)}</strong><p>${safe(r.id)} · ${safe(serviceText(r.service))}</p><p>โต๊ะ ${Number(r.guests)||0} คน · ${safe(r.time || '—')}</p><p>โซน ${safe(r.seat || 'ตามที่ร้านจัดให้')}</p>${r.runnerChoice && r.runnerChoice !== 'none' ? `<p>Runner ที่เลือก: ${safe(({r1:'สิบทิศ',r2:'เบน',r3:'ปัณ'})[r.runnerChoice]||r.runnerChoice)}</p>` : ''}</div><span class="cnk-vp-status ${confirmed(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</span></div>
+      <div class="cnk-vp-request-top"><div class="cnk-vp-avatar">${ic('user',18)}</div><div class="cnk-vp-request-main"><strong>${safe(who)}</strong><p>${safe(r.id)} · ${safe(serviceText(r.service))}${r.vpSample===true || r.owner==='sample'?' · DEMO':''}</p>      <p>โต๊ะ ${Number(r.guests)||0} คน · ${safe(r.time || '—')}</p><p>โซน ${safe(r.seat || 'ตามที่ร้านจัดให้')}</p>${r.runnerChoice && r.runnerChoice !== 'none' ? `<p>Runner ที่เลือก: ${safe(({r1:'สิบทิศ',r2:'เบน',r3:'ปัณ'})[r.runnerChoice]||r.runnerChoice)}</p>` : ''}</div><span class="cnk-vp-status 
+${confirmed(r)||finished(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</span></div>
       <div class="cnk-vp-request-foot"><span>ขั้นต่ำร้าน: ${safe(infoFor().minimum || 'รอร้านระบุ')} ${suggestion ? `· แนะนำโต๊ะ ${safe(suggestion)} (ตัวอย่าง)` : ''}</span></div>
       ${r.cnkRunnerCancelPending?`<div class="cnk-vp-tip"><strong>Runner ขอถอนตัวจากงาน</strong><p>คำขอยังไม่ถูกยกเลิก โปรดพิจารณาผลกระทบต่อลูกค้าก่อนอนุมัติ</p><div class="cnk-vp-request-buttons"><button class="cnk-vp-secondary" onclick="App.vpResolveRunnerCancel('${safe(r.id)}',false)">ไม่อนุมัติ</button><button class="cnk-vp-primary" onclick="App.vpResolveRunnerCancel('${safe(r.id)}',true)">อนุมัติยกเลิก</button></div></div>`:''}
       ${can ? `<div class="cnk-vp-request-buttons"><button type="button" class="cnk-vp-primary" onclick="App.vpApprove('${safe(r.id)}')">ยืนยัน</button><button type="button" class="cnk-vp-secondary" onclick="App.vpAskDecline('${safe(r.id)}')">ไม่รับคำขอ</button></div>` : `<button type="button" class="cnk-vp-link" onclick="App.openChat('${safe(r.id)}')">${ic('chat',14)} แชตเกี่ยวกับคำขอ</button>`}
@@ -109,10 +160,15 @@
   }
   function home() {
     seedOnyxDemo();
-    const all=rs(), review=all.filter(pending), approved=all.filter(confirmed);
+    
+    const all=rs(), review=all.filter(waiting), approved=all.filter(confirmed);
+    const demoCount=all.filter(r=>r.vpSample===true || r.owner==='sample').length;
+    const guestCount=all.length-demoCount;
+
     return layout(`<header class="cnk-vp-header cnk-vp-homehead"><div class="cnk-vp-toprow">${vSelect()}</div><button class="cnk-vp-icon" onclick="App.openModal('notifications')" aria-label="แจ้งเตือน">${ic('bell',19)}</button></header>
       <div class="cnk-vp-kpis">${stat(all.length,'คำขอทั้งหมด')}${stat(review.length,'รอดำเนินการ')}${stat(approved.length,'ยืนยันแล้ว')}</div>
-      <section class="cnk-vp-section"><h2>ภาพรวมสัปดาห์นี้</h2><div class="cnk-vp-chart-card"><div><span>คำขอจองทั้งหมด</span><b>${all.length}</b><small>จากรายการในต้นแบบ</small></div><svg viewBox="0 0 165 78" aria-label="กราฟคำขอแบบภาพประกอบ"><path d="M0,55 Q25,12 48,47 T90,34 T125,17 T165,26" fill="none" stroke="#E57599" stroke-width="2.4"/><path d="M0,55 Q25,12 48,47 T90,34 T125,17 T165,26 V78 H0 Z" fill="#FBE1EA" opacity=".85"/></svg></div></section>
+      <section class="cnk-vp-section"><h2>ภาพรวมสัปดาห์นี้</h2><div class="cnk-vp-chart-card"><div><span>คำขอจองทั้งหมด</span><b>${all.length}</b>
+<small>Demo ${demoCount} · คำขอ Guest ${guestCount}</small></div><svg viewBox="0 0 165 78" aria-label="กราฟคำขอแบบภาพประกอบ"><path d="M0,55 Q25,12 48,47 T90,34 T125,17 T165,26" fill="none" stroke="#E57599" stroke-width="2.4"/><path d="M0,55 Q25,12 48,47 T90,34 T125,17 T165,26 V78 H0 Z" fill="#FBE1EA" opacity=".85"/></svg></div></section>
       <section class="cnk-vp-section"><h2>เมนูด่วน</h2><div class="cnk-vp-shortcuts">${menuButton('จัดการคำขอ','calendar','venue-requests')}${menuButton('จัดการโต๊ะ','users','venue-tables')}${menuButton('อีเวนต์','ticket','venue-events')}</div></section>
       ${review.length?`<section class="cnk-vp-section"><div class="cnk-vp-spread"><h2>คำขอที่รอดำเนินการ</h2><button type="button" onclick="App.vpGo('venue-requests')">ดูทั้งหมด ${ic('chevron',13)}</button></div>${review.slice().reverse().slice(0,1).map(card).join('')}</section>`:''}
       ${footnote()}`);
@@ -120,7 +176,12 @@
   function requests() {
     seedOnyxDemo();
     const items=rs(), tab=UI.vpRequestTab||'pending';
-    const groups={pending:items.filter(pending),confirmed:items.filter(confirmed),history:items.filter(r=>closed(r)||(!pending(r)&&!confirmed(r)))};
+
+    const groups={
+      pending:items.filter(waiting),
+      confirmed:items.filter(confirmed),
+      history:items.filter(r=>closed(r)||finished(r))
+    };
     const tabs=[['pending','รอดำเนินการ'],['confirmed','ยืนยันแล้ว'],['history','ประวัติ']];
     return layout(`${hdr('จัดการคำขอจองโต๊ะ')}<div class="cnk-vp-tabs">${tabs.map(([id,txt])=>`<button type="button" class="${id===tab?'active':''}" onclick="App.vpSetRequestTab('${id}')">${txt}${id==='pending'&&groups.pending.length?` (${groups.pending.length})`:''}</button>`).join('')}</div>
       <div class="cnk-vp-request-list">${groups[tab].length?groups[tab].slice().reverse().map(card).join(''):`<div class="cnk-vp-empty">ไม่มีคำขอในหมวดนี้<small>คำขอของ ${safe(venue().name)} จะแสดงที่นี่</small></div>`}</div>${footnote()}`);
@@ -317,17 +378,94 @@ help:['ศูนย์ช่วยเหลือ',`
     UI.vpVenuePicker=false;UI.vpRequestTab='pending';UI.vpEventTab='upcoming';UI.vpTrail=[];
     save();render(true);toast('กำลังดูร้าน '+V(id).name+' ในต้นแบบ');
   };
-  App.vpRestoreOnyxSamples = () => {
-    if (UI.role !== 'venue') return;
-    const sampleIds = new Set(['CKN-VP004','CKN-VP005','CKN-VP006']);
-    // Reset only these flagged demo entries; NEVER delete a customer-created request.
-    DB.requests = DB.requests.filter(r => !(r.vpSample === true && sampleIds.has(r.id)));
-    DB.cnkVPDemoSeeded = false;
-    DB.merchantVenue = 'onyx';
-    UI.vpVenuePicker=false; UI.vpRequestTab='pending'; UI.vpEventTab='upcoming';
-    seedOnyxDemo(); save(); render(true);
-    toast('คืนคำขอ ONYX ตัวอย่างแล้ว · ไม่ได้ลบคำขอจริง');
-  };
+  
+App.vpRestoreOnyxSamples = () => {
+  if(
+    UI.role!=='venue' ||
+    DB.merchantVenue!=='onyx'
+  ){
+    return toast(
+      'กรุณาเลือกดูร้าน ONYX ก่อนคืนข้อมูลตัวอย่าง'
+    );
+  }
+
+  if(!window.confirm(
+    'คืนคำขอ ONYX Demo ทั้ง 3 รายการเป็นสถานะเริ่มต้น?\n'+
+    'ประวัติการทดลองของ 3 คำขอจะถูกล้าง แต่คำขอจาก Guest และร้านอื่นจะคงเดิม'
+  ))return;
+
+  const ids=new Set([
+    'CKN-VP004',
+    'CKN-VP005',
+    'CKN-VP006'
+  ]);
+
+  const picked=DB.requests.filter(r=>
+    r.vpSample===true &&
+    r.venue==='onyx' &&
+    ids.has(r.id)
+  );
+
+  const pickedIds=new Set(
+    picked.map(r=>r.id)
+  );
+
+  // เก็บคำขอ Guest และงาน Demo ของ Runner ไว้
+  DB.requests=DB.requests.filter(
+    r=>!pickedIds.has(r.id)
+  );
+
+  // คืนเฉพาะโต๊ะที่ผูกกับคำขอ Demo ที่ถูกล้าง
+  const tableMap=DB.cnkVPTables?.onyx;
+
+  if(tableMap){
+    for(const request of picked){
+      const table=request.confirmedTable;
+
+      if(
+        table &&
+        tableMap[table]==='booked' &&
+        !DB.requests.some(r=>
+          r.venue==='onyx' &&
+          r.confirmedTable===table
+        )
+      ){
+        delete tableMap[table];
+      }
+    }
+  }
+
+  // ล้างแชทของคำขอ Demo ที่ถูกคืน
+  if(DB.chats && typeof DB.chats==='object'){
+    for(const id of pickedIds){
+      delete DB.chats[id];
+    }
+  }
+
+  // ล้างการแจ้งเตือนของคำขอตัวอย่างเหล่านี้
+  if(Array.isArray(DB.notifications)){
+    DB.notifications=DB.notifications.filter(n=>
+      ![...pickedIds].some(id=>
+        String(n.text||'').includes(id)
+      )
+    );
+  }
+
+  DB.cnkVPDemoSeeded=false;
+
+  UI.vpVenuePicker=false;
+  UI.vpRequestTab='pending';
+  UI.vpEventTab='upcoming';
+
+  seedOnyxDemo();
+  save();
+  render(true);
+
+  toast(
+    'คืน ONYX Demo แล้ว · คำขอ Guest และร้านอื่นยังอยู่'
+  );
+};
+
   App.vpSetRequestTab = id => {if (!['pending','confirmed','history'].includes(id)) return; UI.vpRequestTab=id;render(true);};
   App.vpSetTableZone = zone => {if (!['Main','VIP','Outdoor'].includes(zone))return;UI.vpTableZone=zone;render(true);};
   App.vpToggleTableHelp = () => {UI.vpTableHelp=!UI.vpTableHelp;render(true);};

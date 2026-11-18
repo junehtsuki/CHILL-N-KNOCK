@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fcf8f6">
+  <meta name="description" content="คู่มือ Table Runner CHILL N’ KNOCK แบบพลิกหน้า 15 หน้า จากคู่มือ PDF ฉบับจริง">
+  <title>Runner Guide · CHILL N’ KNOCK</title>
+  <link rel="stylesheet" href="runner-guide.css">
+</head>
+<body>
+  <div class="reader-app">
+    <header class="topbar">
+      <a class="back-link" href="../index.html" aria-label="กลับไป CHILL N’ KNOCK">
+        <span class="back-arrow" aria-hidden="true">‹</span><span>กลับไปแอป</span>
+      </a>
+      <div class="brand" aria-label="CHILL N' KNOCK Runner Guide">
+        <span class="brand-symbol" aria-hidden="true">✧</span>
+        <span>CHILL N’ KNOCK <small>RUNNER GUIDE</small></span>
+      </div>
+      <a class="pdf-link" href="runner-guide-original.pdf" target="_blank" rel="noopener" title="เปิดคู่มือ PDF ต้นฉบับ">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg>
+        <span>PDF ต้นฉบับ</span>
+      </a>
+    </header>
+
+    <main class="main">
+      <div class="heading">
+        <div class="heading-left">
+          <p class="eyebrow">THE GUIDE TO YOUR NIGHT</p>
+          <h1>คู่มือสำหรับ <em>Table Runner</em></h1>
+          <p class="subtitle">เปิดอ่านแบบพลิกหน้า · 15 หน้าแนวนอน 16:9 จากคู่มือที่ออกแบบไว้</p>
+        </div>
+        <label class="jump-label" for="pageJump"><span>ไปยังหน้า</span><select id="pageJump" aria-label="เลือกหน้าคู่มือ"></select></label>
+      </div>
+
+      <section class="reader-area" aria-label="คู่มือ Runner แบบพลิกหน้า">
+        <div class="book-ambience" aria-hidden="true"></div>
+        <div class="book-wrapper">
+          <div id="book" class="book" tabindex="0" role="group" aria-label="หน้าคู่มือ คลิกด้านซ้ายหรือขวาเพื่อพลิกหน้า หรือใช้ปุ่มลูกศร">
+            <img id="currentPage" class="current-page" src="runner-pages/page-01.webp" alt="คู่มือ Runner หน้า 1 จาก 15" draggable="false">
+            <div id="turnLayer" class="turn-layer" hidden aria-hidden="true">
+              <img id="underPage" class="under-page" alt="" draggable="false">
+              <div class="static-half" id="staticHalf"><img id="staticImage" alt="" draggable="false"></div>
+              <div id="flippingHalf" class="flipping-half">
+                <div class="leaf-face leaf-front"><img id="frontImage" alt="" draggable="false"><span class="leaf-shade"></span></div>
+                <div class="leaf-face leaf-back"><img id="backImage" alt="" draggable="false"><span class="leaf-shade"></span></div>
+              </div>
+            </div>
+            <span class="paper-gloss" aria-hidden="true"></span>
+            <div class="book-click-areas" aria-hidden="true"><div class="click-left" data-dir="prev"></div><div class="click-right" data-dir="next"></div></div>
+          </div>
+        </div>
+        <div class="below-book"><span>CHILL N’ KNOCK · RUNNER</span><span class="paper-page" id="paperCount">01 / 15</span></div>
+      </section>
+
+      <nav class="control-panel" aria-label="ควบคุมการพลิกหน้า">
+        <button type="button" class="nav-btn previous" id="prevPage" disabled><span aria-hidden="true">‹</span> หน้าก่อน</button>
+        <div class="center-controls">
+          <span id="pageIndicator" class="page-indicator" aria-live="polite">01 <span>/ 15</span></span>
+          <div class="progress-track" role="progressbar" id="progressTrack" aria-valuemin="1" aria-valuemax="15" aria-valuenow="1" aria-label="ความคืบหน้าคู่มือ"><div id="progressBar"></div></div>
+        </div>
+        <button type="button" class="nav-btn next" id="nextPage">หน้าถัดไป <span aria-hidden="true">›</span></button>
+      </nav>
+
+      <div class="reader-footer">
+        <p>กดลูกศร <kbd>←</kbd> <kbd>→</kbd> หรือปัดซ้าย–ขวาเพื่อพลิกหน้า</p>
+        <button type="button" class="zoom-button" id="openZoom" aria-label="ขยายหน้าคู่มือปัจจุบัน">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg> ขยายหน้าอ่าน
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="zoomDialog" class="zoom-dialog" aria-label="ขยายอ่านหน้าคู่มือ">
+    <div class="zoom-toolbar"><strong id="zoomTitle">Runner Guide · หน้า 01</strong><div><button type="button" id="toggleZoom">ขยาย 2×</button><button type="button" class="zoom-close" id="closeZoom" aria-label="ปิด">✕</button></div></div>
+    <div class="zoom-scroll"><img id="zoomImg" src="runner-pages/page-01.webp" alt="หน้าคู่มือแบบขยาย"></div>
+  </dialog>
+  <script src="runner-guide.js" defer></script>
+</body>
+</html>

@@ -3,7 +3,10 @@
    GitHub Pages / localStorage operate as ONE-BROWSER QA ONLY, not a live booking platform.
 */
 'use strict';
-const QA = new URLSearchParams(location.search).get('qa') === '1';
+
+const QA =
+  ['localhost','127.0.0.1'].includes(location.hostname) &&
+  new URLSearchParams(location.search).get('qa') === '1';
 const RELEASE_KEY='cnk_release_2026_11';
 const VENUE_DATA = [
  {id:'onyx',name:'ONYX',area:'RCA',kind:'ไนต์คลับ',genre:'EDM',tags:['EDM','DJ','VIP'],place:'Royal City Avenue (RCA), ห้วยขวาง กรุงเทพฯ',desc:'ไนต์คลับย่าน RCA ที่เน้น EDM และโชว์ DJ พร้อมแสง สี เสียงและโซน VIP หลายประเภท',source:'https://onyxbangkok.club/',image: 'assets/venues/onyx.jpg',color:'#88224a',verified:true},
@@ -819,13 +822,10 @@ const name=role==='runner'
   `;
 };
 
+
 App.signOut=function(){
   if(UI.role==='runner'){
-    DB.requests=DB.requests.filter(
-      r=>!(r.owner==='sample' && r.sourceJob)
-    );
-
-    UI.cnkRunnerDemoIdentity='r1';
+    // ล้างเฉพาะหน้าจอ ไม่ลบงานหรือรหัสรอบทดลอง
     UI.cnkRunnerQaBootChecked=true;
     UI.cnkRunnerActiveFilter='running';
     UI.cnkRunnerJobFilter='all';
@@ -840,11 +840,8 @@ App.signOut=function(){
     UI.proof='';
   }
 
- DB.cnkRunnerDemoRunId=null;
-
-DB.account=null;
-DB.sessionEmail=null;
-
+  DB.account=null;
+  DB.sessionEmail=null;
   DB.name='Guest';
   UI.role='user';
 
@@ -853,6 +850,7 @@ DB.sessionEmail=null;
   render();
   toast('ออกจากบัญชีทดลองแล้ว');
 };
+
 App.toggleLang=function(){DB.lang=DB.lang==='th'?'en':'th';save();render(true);toast(DB.lang==='th'?'ภาษาไทยเป็นภาษาเริ่มต้น':'English mode (some research content remains Thai)');};
 
 // Queue estimate and cancel rules are surfaced before a status change, not a fake cash refund.
@@ -1140,11 +1138,48 @@ media=function(src,accent='#6C2F48'){
  const safe=typeof src==='string'&&/^assets\/venues\/[a-z0-9_-]+\.(?:jpg|jpeg|png|webp)$/i.test(src)?src:(localCovers[src]||'assets/club.jpg');
  return `background-image:linear-gradient(180deg,${accent}22 0%,#160B1128 38%,#170A17CC 100%),url('${safe}');background-size:cover;background-position:center`;
 };
-App.resetAll=function(){DB=getBase();DB.releaseVersion=20261104;DB.accounts={};DB.sessionEmail=null;DB.lang='th';DB.merchantVenue='onyx';for(const v of venues)DB.policies[v.id]={direct:true,runner:true,queue:true};UI.role='user';UI.screen='home';UI.stack=[];UI.modal='';UI.tab='requests';UI.venue='onyx';save();render();toast('รีเซ็ตข้อมูลทดลองในเบราว์เซอร์แล้ว');};
-/* ============================================================
-   CONTENT FIX v1.1 — minimal overrides for the approved baseline
-   Detailed shop research is isolated in venue-research.js.
-   ============================================================ */
+
+App.resetAll=function(){
+  if(!QA){
+    return toast(
+      'Reset All ใช้ได้เฉพาะ QA บน Localhost'
+    );
+  }
+
+  if(!window.confirm(
+    'Reset All — ล้างข้อมูลทดลองทั้งระบบในเบราว์เซอร์นี้?\n'+
+    'คำขอ Guest, งาน Runner, รายได้, แชท, บัญชีทดลอง, '+
+    'ประวัติและข้อมูลร้านจะหายทั้งหมด\nไม่สามารถย้อนกลับได้'
+  ))return;
+
+  DB=getBase();
+  DB.releaseVersion=20261104;
+  DB.accounts={};
+  DB.sessionEmail=null;
+  DB.lang='th';
+  DB.merchantVenue='onyx';
+
+  for(const v of venues){
+    DB.policies[v.id]={
+      direct:true,
+      runner:true,
+      queue:true
+    };
+  }
+
+  UI.role='user';
+  UI.screen='home';
+  UI.stack=[];
+  UI.modal='';
+  UI.tab='requests';
+  UI.venue='onyx';
+
+  save();
+
+  // โหลดหน้าใหม่เพื่อล้างสถานะ UI ที่ค้างในหน่วยความจำ
+  window.location.reload();
+};
+
 const CNK_RES = window.CNK_RESEARCH || {};
 const CNK_NUMBER = (value) => Number.isFinite(value) ? '฿' + value.toLocaleString('th-TH') : 'สอบถามร้าน';
 const CNK_SAFE_URL = (value) => /^https:\/\/[a-z0-9.-]+(?:\/|$)/i.test(String(value||'')) ? String(value) : '';
