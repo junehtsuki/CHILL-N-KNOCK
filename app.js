@@ -1674,23 +1674,7 @@ if(UI.modal==='name')return head('Your profile',`<p class="modal-text">Change yo
 if (UI.modal === 'help') return head('ศูนย์ช่วยเหลือ', `
   <div class="stack">
 
-    <div class="subtle-card">
-      <strong>คู่มือการใช้งาน CHILL N’ KNOCK</strong>
-
-      <p class="hint" style="margin:8px 0 12px">
-        ทดลอง Guest, Runner และ Venue
-        พร้อมตัวอย่าง Matching และ Traffic Scenario
-      </p>
-
-      <a
-        class="btn full"
-        href="docs/CHILL_N_KNOCK_User_Guide.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="text-decoration:none">
-        เปิดคู่มือ PDF
-      </a>
-    </div>
+    ${cnkHelpCenterCards(UI.role)}
 
     <div class="subtle-card">
       <strong>ส่งคำขอแล้วได้โต๊ะทันทีหรือไม่?</strong>

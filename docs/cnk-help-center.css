@@ -1,0 +1,16 @@
+/* CHILL N’ KNOCK Help Center cards; scoped only to .cnk-help-* */
+.cnk-help-cards{border:1px solid #e5dbe0;border-radius:18px;background:#fffdfd;padding:0 14px;margin:0 0 16px;overflow:hidden}
+.cnk-help-row{display:grid;grid-template-columns:52px minmax(0,1fr) 18px;gap:14px;align-items:center;padding:19px 5px;color:#251c22!important;text-decoration:none!important;border:0;background:transparent;min-width:0}
+.cnk-help-row+.cnk-help-row{border-top:1px solid #e9e4e7}
+.cnk-help-icon{width:52px;height:52px;border-radius:15px;background:#fbe7ee;color:#a41d53;display:grid;place-items:center;flex:none}
+.cnk-help-icon svg{display:block;width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cnk-help-icon .cnk-play-fill{fill:currentColor;stroke:none}
+.cnk-help-copy{min-width:0;display:block}.cnk-help-copy strong{display:block;font:700 17px/1.5 'Kanit','Noto Sans Thai',sans-serif;color:#2b2025}
+.cnk-help-copy span{display:block;color:#696267;font:400 12px/1.7 'Noto Sans Thai',sans-serif;margin-top:2px}
+.cnk-help-copy small{display:block;color:#8a7881;font:400 11px/1.6 'Noto Sans Thai',sans-serif;margin-top:2px}
+.cnk-help-arrow{color:#6a6065;font:400 28px/1 'DM Sans',sans-serif;justify-self:end}
+.cnk-help-row:hover{background:#fff8fa}.cnk-help-row:focus-visible{outline:2px solid #a41d53;outline-offset:-3px;border-radius:10px}
+.cnk-help-caption{margin:0 0 10px;color:#9d7d8b;font-size:11px}
+/* Venue setting page shares the same two-row help component, not global card styles. */
+.cnk-vp-option-form .cnk-help-cards{margin:8px 0 16px}
+@media(max-width:420px){.cnk-help-cards{padding:0 10px;border-radius:15px}.cnk-help-row{grid-template-columns:43px minmax(0,1fr) 15px;gap:11px;padding:15px 2px}.cnk-help-icon{width:43px;height:43px;border-radius:12px}.cnk-help-icon svg{width:22px;height:22px}.cnk-help-copy strong{font-size:16px}.cnk-help-copy span{font-size:11px}.cnk-help-copy small{font-size:10px}.cnk-help-arrow{font-size:23px}}

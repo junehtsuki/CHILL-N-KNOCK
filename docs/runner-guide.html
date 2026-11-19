@@ -8,17 +8,13 @@
   <title>Runner Guide · CHILL N’ KNOCK</title>
   <link rel="stylesheet" href="runner-guide.css">
 </head>
-<body>
+<body data-guide-role="runner">
   <div class="reader-app">
     <header class="topbar">
-      <a class="back-link" href="../index.html" aria-label="กลับไป CHILL N’ KNOCK">
+      <a class="back-link" href="#" onclick="window.close(); return false;" aria-label="กลับไป CHILL N’ KNOCK">
         <span class="back-arrow" aria-hidden="true">‹</span><span>กลับไปแอป</span>
       </a>
-      <div class="brand" aria-label="CHILL N' KNOCK Runner Guide">
-        <span class="brand-symbol" aria-hidden="true">✧</span>
-        <span>CHILL N’ KNOCK <small>RUNNER GUIDE</small></span>
-      </div>
-      <a class="pdf-link" href="runner-guide-original.pdf" target="_blank" rel="noopener" title="เปิดคู่มือ PDF ต้นฉบับ">
+      <a id="pdfLink" class="pdf-link" href="runner-guide-original.pdf" hidden target="_blank" rel="noopener" title="เปิดคู่มือ PDF ต้นฉบับ">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg>
         <span>PDF ต้นฉบับ</span>
       </a>
@@ -46,6 +42,11 @@
                 <div class="leaf-face leaf-front"><img id="frontImage" alt="" draggable="false"><span class="leaf-shade"></span></div>
                 <div class="leaf-face leaf-back"><img id="backImage" alt="" draggable="false"><span class="leaf-shade"></span></div>
               </div>
+            </div>
+            <div id="guideEmpty" class="guide-empty" hidden>
+              <div class="empty-icon" aria-hidden="true">▤</div>
+              <h2 id="emptyTitle">กำลังเตรียมคู่มือ</h2>
+              <p id="emptyDescription">กรุณาเพิ่มภาพหน้าคู่มือ</p>
             </div>
             <span class="paper-gloss" aria-hidden="true"></span>
             <div class="book-click-areas" aria-hidden="true"><div class="click-left" data-dir="prev"></div><div class="click-right" data-dir="next"></div></div>

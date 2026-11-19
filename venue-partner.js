@@ -261,6 +261,7 @@ ${confirmed(r)||finished(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</sp
       notifications:['การแจ้งเตือน',`<div class="cnk-vp-settings-row"><strong>การแจ้งเตือนคำขอใหม่</strong><button class="cnk-vp-toggle ${conf.alerts!==false?'on':''}" onclick="App.vpToggleAlerts()" aria-pressed="${conf.alerts!==false}"><i></i></button></div><p class="cnk-vp-tip">การแจ้งเตือนอยู่ภายในต้นแบบ ยังไม่มี Push Notification ข้ามอุปกรณ์</p>`],
       font:['ขนาดตัวอักษร',`<div class="cnk-vp-font-choices"><button class="${DB.cnkVPFont!=='large'?'active':''}" onclick="App.vpFont('standard')">ปกติ</button><button class="${DB.cnkVPFont==='large'?'active':''}" onclick="App.vpFont('large')">ขนาดใหญ่</button></div>`],
 help:['ศูนย์ช่วยเหลือ',`
+  ${cnkHelpCenterCards('venue')}
   <div class="cnk-vp-info-card">
     <strong>ช่วยเหลือการใช้งาน Venue Partner</strong>
 
@@ -268,14 +269,7 @@ help:['ศูนย์ช่วยเหลือ',`
     <p>การจัดการโต๊ะ: แตะสถานะแล้วกดบันทึก</p>
     <p>อีเวนต์: เลือกโปสเตอร์ กรอกข้อมูล และสร้างอีเวนต์ในต้นแบบ</p>
 
-    <a
-      class="cnk-vp-primary cnk-vp-full"
-      href="docs/CHILL_N_KNOCK_User_Guide.pdf"
-      target="_blank"
-      rel="noopener noreferrer"
-      style="margin-top:12px;text-decoration:none">
-      เปิดคู่มือ PDF
-    </a>
+
   </div>`],      privacy:['ข้อมูลและความเป็นส่วนตัว',`<div class="cnk-vp-info-card"><strong>ข้อมูลภายในต้นแบบ</strong><p>คำขอ การยืนยัน อีเวนต์ และรูปที่อัปโหลดถูกเก็บในเบราว์เซอร์นี้ ไม่ได้แชร์ข้ามเครื่องหรือส่งข้อมูลไปยังระบบร้านจริง</p><p>ควรปกป้องข้อมูลลูกค้าและกำหนดสิทธิ์ก่อนเปิดบริการจริง</p></div>`],
       insights:['ภาพรวมการดำเนินงาน',`<div class="cnk-vp-info-card"><strong>คำขอทั้งหมด ${rs().length} รายการ</strong><p>รอดำเนินการ ${rs().filter(pending).length} รายการ · ยืนยันแล้ว ${rs().filter(confirmed).length} รายการ</p><p>ข้อมูลนี้เป็นตัวเลขจากเบราว์เซอร์ปัจจุบัน ไม่ใช่ยอดจองจริงจากร้าน</p></div>`]
     };

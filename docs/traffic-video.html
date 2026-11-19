@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#FCF8F6">
+  <meta name="description" content="CHILL N’ KNOCK — Traffic Simulation Video: Friday Night Rush">
+  <title>Traffic Simulation | CHILL N’ KNOCK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=DM+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#35212b;--rose:#9f1b4e;--rose2:#bc3a69;--muted:#816c78;--line:#eed5de;--bg:#fcf8f6}
+    *{box-sizing:border-box}
+    body{margin:0;background:#f2e9eb;color:var(--ink);font-family:'Noto Sans Thai',sans-serif}
+    .shell{max-width:670px;min-height:100vh;margin:0 auto;background:var(--bg);box-shadow:0 0 55px #50213910}
+    header{height:64px;border-bottom:1px solid var(--line);padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fffafa}
+    .back{text-decoration:none;color:var(--rose);font-size:13px;font-weight:700;display:flex;align-items:center;gap:9px}
+    .back span{font-family:Arial,sans-serif;font-size:26px;line-height:1}
+    header .brand{font:800 11px 'DM Sans',sans-serif;letter-spacing:1.5px;color:#8a5267}
+    main{padding:26px 22px 48px}
+    .eyebrow{font:700 11px 'DM Sans',sans-serif;letter-spacing:2px;color:var(--rose)}
+    h1{font:700 clamp(28px,6vw,40px)/1.3 Kanit,sans-serif;margin:8px 0 7px}
+    .sub{color:var(--muted);font-size:14px;line-height:1.7;margin:0 0 25px}
+    .player-panel{overflow:hidden;border-radius:19px;border:1px solid var(--line);background:white;box-shadow:0 12px 32px #43172a10}
+    .player{aspect-ratio:16/9;background:radial-gradient(circle at 70% 23%,#ae4464 0,#5f1d3a 45%,#281520 100%);display:grid;place-items:center;overflow:hidden}
+    .player iframe,.player video{display:block;width:100%;height:100%;border:0}
+    .placeholder{text-align:center;color:white;padding:24px}
+    .placeholder .play{width:76px;height:76px;border:1px solid #fff7;border-radius:50%;display:grid;place-items:center;margin:0 auto 15px;background:#ffffff19;font-size:29px}
+    .placeholder strong{display:block;font:700 21px 'Kanit',sans-serif}
+    .placeholder span{display:block;font:500 12px 'DM Sans',sans-serif;color:#f6d6e0;margin-top:5px;letter-spacing:.4px}
+    .player-info{padding:17px 18px 19px}
+    .player-info h2{font:600 20px Kanit,sans-serif;margin:0 0 5px}
+    .player-info p{font-size:13px;color:var(--muted);line-height:1.65;margin:0 0 8px}
+    .external{display:inline-flex;color:var(--rose);font-size:13px;font-weight:700;text-decoration:none;margin-top:5px}
+    .external[hidden]{display:none}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:22px 0}
+    .stat{border:1px solid var(--line);border-radius:13px;background:#fff;padding:13px 5px;text-align:center}
+    .stat strong{display:block;font:800 30px 'DM Sans',sans-serif;color:var(--rose)}
+    .stat span{display:block;font-size:11px;color:var(--muted);line-height:1.5}
+    .section-title{font:600 20px Kanit,sans-serif;margin:25px 0 11px}
+    .flow{display:grid;gap:10px}
+    .flow-item{display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:11px}
+    .flow-item .num{background:#fae4ec;border-radius:12px;color:var(--rose);font:700 12px 'DM Sans',sans-serif;min-height:43px;display:grid;place-items:center}
+    .flow-item strong{display:block;font-size:13px;margin:0 0 3px}
+    .flow-item p{color:var(--muted);font-size:12px;line-height:1.7;margin:0}
+    .notice{background:#fbeaf0;border:1px solid #efcfda;border-radius:14px;padding:16px;margin-top:24px;font-size:12px;line-height:1.8;color:#735763}
+    .notice strong{color:#921d4d}
+    .bottom-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .btn{flex:1;min-width:180px;text-align:center;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:700;text-decoration:none;background:var(--rose);color:white}
+    .btn.secondary{background:white;color:var(--rose);border:1px solid #eabfcf}
+    @media(max-width:400px){main{padding:20px 15px 32px}.stats{gap:6px}.stat strong{font-size:25px}.stat span{font-size:10px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header><a class="back" href="#" onclick="window.close(); return false;"><span aria-hidden="true">‹</span> กลับไปแอป</a><div class="brand">CHILL N’ KNOCK</div></header>
+  <main>
+    <div class="eyebrow">FINAL PRODUCT · DEMO VIDEO</div>
+    <h1>Traffic Simulation</h1>
+    <p class="sub">Friday Night Rush — จำลองคำขอจองโต๊ะจำนวนมากในหนึ่งชั่วโมง เพื่ออธิบายการทำงานของ Guest, Runner และ Venue Partner</p>
+    <section class="player-panel" aria-label="วิดีโอสาธิต Traffic">
+      <div id="player" class="player">
+        <div class="placeholder"><div class="play" aria-hidden="true">▶</div><strong>Friday Night Rush</strong><span>VIDEO COMING SOON</span></div>
+      </div>
+      <div class="player-info">
+        <h2>10 โต๊ะ · 3 บทบาท · 1 ชั่วโมง</h2>
+        <p>สาธิตคำขอจองตรงและคำขอผ่าน Runner แล้วสรุปปัจจัยที่ต้องพัฒนาก่อนรองรับการใช้งานจริง</p>
+        <a id="watchOnYoutube" class="external" hidden target="_blank" rel="noopener noreferrer">ดูบน YouTube ↗</a>
+      </div>
+    </section>
+    <div class="stats" aria-label="ตัวเลขสถานการณ์จำลอง">
+      <div class="stat"><strong>10</strong><span>โต๊ะใน Scenario</span></div>
+      <div class="stat"><strong>70</strong><span>คนสมมติ (7 คน/โต๊ะ)</span></div>
+      <div class="stat"><strong>3</strong><span>บทบาทของระบบ</span></div>
+    </div>
+    <h2 class="section-title">สิ่งที่จะเห็นในวิดีโอ</h2>
+    <div class="flow">
+      <div class="flow-item"><span class="num">01</span><div><strong>Guest ส่งคำขอ</strong><p>จำลองคำขอผ่านแอปที่ร้าน THAY ได้แก่ จองตรง 4 รายการ Runner ช่วยจอง 2 รายการ Runner รับโต๊ะแทน 2 รายการ และ Runner ช่วยต่อคิว 2 รายการ</p></div></div>
+      <div class="flow-item"><span class="num">02</span><div><strong>Runner รับงานตามที่เลือก</strong><p>สาธิตการมอบหมายคำขอและการเปลี่ยนสถานะ รวมถึงการเลือกโปรไฟล์ Runner ที่ถูกต้อง</p></div></div>
+      <div class="flow-item"><span class="num">03</span><div><strong>Venue ตรวจคำขอ</strong><p>ตรวจวัน เวลา โซนโต๊ะ และการยืนยันจากร้าน ก่อนสรุปสถานะที่ Guest เห็น</p></div></div>
+      <div class="flow-item"><span class="num">04</span><div><strong>วิเคราะห์ Traffic และข้อจำกัด</strong><p>ชี้ความเสี่ยงงานซ้ำ โต๊ะซ้อน และข้อมูลไม่ซิงก์ข้ามเครื่อง พร้อมแนวคิดฐานข้อมูลกลางและการทดสอบโหลดในอนาคต</p></div></div>
+    </div>
+    <aside class="notice"><strong>หมายเหตุ:</strong> นี่คือ Scenario Simulation ที่ทำรายการจำลองตามลำดับในเบราว์เซอร์เดียว ไม่ใช่ผลการทดสอบผู้ใช้ 70 คนเข้าใช้งานพร้อมกันจริง และยังไม่มีการจองหรือรับเงินจริง</aside>
+    <div class="bottom-links">
+<a class="btn secondary" href="#" onclick="window.close(); return false;">กลับไปแอป</a><a class="btn" href="../index.html">ทดลองแอป</a></div>
+  </main>
+</div>
+<script>
+  // วาง YouTube Video ID 11 ตัวอักษรเมื่อพร้อม หรือเพิ่มไฟล์ traffic-final.mp4 ไว้ในโฟลเดอร์ docs
+  // หากยังไม่มีวิดีโอ จะแสดงข้อความ VIDEO COMING SOON โดยไม่ลิงก์เสีย
+  const TRAFFIC_YOUTUBE_ID = 'FYohPRmk7gk';
+  const id = TRAFFIC_YOUTUBE_ID.trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(id)) {
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id);
+    iframe.title = 'CHILL N’ KNOCK Traffic Simulation — Friday Night Rush';
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    const player = document.getElementById('player');
+    player.replaceChildren(iframe);
+    const link = document.getElementById('watchOnYoutube');
+    link.href = 'https://www.youtube.com/watch?v=' + encodeURIComponent(id);
+    link.hidden = false;
+  } else {
+    // Local video path is optional. A missing file remains an honest placeholder.
+    fetch('traffic-final.mp4', {method:'HEAD', cache:'no-store'}).then(response => {
+      const type=(response.headers.get('content-type')||'').toLowerCase();
+      if (!response.ok || type.includes('text/html')) return;
+      const video=document.createElement('video');
+      video.src='traffic-final.mp4';
+      video.controls=true;
+      video.preload='metadata';
+      video.playsInline=true;
+      video.setAttribute('aria-label','วิดีโอ Traffic Simulation');
+      document.getElementById('player').replaceChildren(video);
+    }).catch(()=>{});
+  }
+</script>
+</body>
+</html>
