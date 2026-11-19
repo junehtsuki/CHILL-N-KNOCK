@@ -427,3 +427,52 @@ html,body{background:#faf7f2}.phone{background:var(--bg)}.screen{color:var(--ink
 input, textarea, select {
   font-size: 16px !important;
 }
+
+/* Venue registration — mobile dropdown only */
+.cnk-venue-name-picker {
+  position: relative;
+  z-index: 5;
+}
+
+.cnk-venue-name-picker .cnk-venue-name-list {
+  display: none;
+  position: absolute;
+  top: calc(100% - 16px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #e4c9d2;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(53, 27, 39, .17);
+  -webkit-overflow-scrolling: touch;
+}
+
+.cnk-venue-name-picker.is-open .cnk-venue-name-list {
+  display: block;
+}
+
+.cnk-venue-name-picker .cnk-venue-name-option {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  text-align: left;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #30212a;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.cnk-venue-name-picker .cnk-venue-name-option:active,
+.cnk-venue-name-picker .cnk-venue-name-option:focus-visible {
+  background: #fbe5ed;
+}
+
+.cnk-venue-name-picker .cnk-venue-name-option[hidden] {
+  display: none;
+}

@@ -1864,28 +1864,65 @@ function partnerApply() {
     `;
 
     // ชื่อร้าน: เลือกจากรายชื่อเดิมหรือพิมพ์ชื่อใหม่
-    if (kind === 'venue' && type === 'venue-name') {
-      return `${label}
-        <input
-          name="${key}"
-          class="field"
-          list="venue-options"
-          required
-          value="${e(saved || '')}"
-          placeholder="เลือกหรือพิมพ์ชื่อร้าน">
+    
+if (kind === 'venue' && type === 'venue-name') {
+  return `${label}
+    <div class="cnk-venue-name-picker"
+      onfocusout="setTimeout(() => {
+        if (!this.contains(document.activeElement)) {
+          this.classList.remove('is-open');
+        }
+      }, 180)">
 
-        <datalist id="venue-options">
-          ${venues.map(v => `
-            <option value="${e(v.name)}"></option>
-          `).join('')}
-        </datalist>
+      <input
+        type="text"
+        name="${key}"
+        class="field"
+        required
+        autocomplete="off"
+        value="${e(saved || '')}"
+        placeholder="เลือกหรือพิมพ์ชื่อร้าน"
+        onfocus="this.parentElement.classList.add('is-open')"
+        oninput="
+          const q = this.value.trim().toLocaleLowerCase();
+          this.parentElement
+            .querySelectorAll('.cnk-venue-name-option')
+            .forEach(b => {
+              b.hidden = !b.textContent
+                .toLocaleLowerCase()
+                .includes(q);
+            });
+          this.parentElement.classList.add('is-open');
+        ">
 
-        <p class="hint">
-          ร้านที่ยังไม่มีในระบบส่งสมัครได้
-          แต่ต้องเพิ่มข้อมูลร้านก่อนจึงจะเปิด Dashboard ได้
-        </p>
-      `;
-    }
+      <div class="cnk-venue-name-list"
+        role="listbox"
+        aria-label="รายชื่อร้านในระบบ">
+
+        ${venues.map(v => `
+          <button
+            type="button"
+            class="cnk-venue-name-option"
+            onclick="
+              const picker = this.closest('.cnk-venue-name-picker');
+              const input = picker.querySelector('input');
+              input.value = this.textContent.trim();
+              picker.classList.remove('is-open');
+              input.blur();
+            "
+          >${e(v.name)}</button>
+        `).join('')}
+
+      </div>
+    </div>
+
+    <p class="hint">
+      ร้านที่ยังไม่มีในระบบส่งสมัครได้
+      แต่ต้องเพิ่มข้อมูลร้านก่อนจึงจะเปิด Dashboard ได้
+    </p>
+  `;
+}
+
 
     // เลือกบริการได้หลายข้อ เฉพาะร้านพาร์ตเนอร์
     if (kind === 'venue' && type.startsWith('multi:')) {
