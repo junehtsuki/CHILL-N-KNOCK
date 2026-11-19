@@ -88,7 +88,7 @@
     <div class="cnk-vp-header-right">${action || `<button type="button" class="cnk-vp-icon" onclick="App.openModal('notifications')" aria-label="แจ้งเตือน">${ic('bell',18)}</button>`}</div>
   </header>`;
   const footnote = () => `<p class="cnk-vp-notice">ข้อมูลต้นแบบในเบราว์เซอร์ · การจอง การยืนยันโต๊ะ และการชำระเงินยังไม่เกิดขึ้นจริง</p>`;
-  const layout = (body) => `<div class="screen cnk-vp ${DB.cnkVPFont==='large'?'cnk-vp-large':''}" data-vp-version="v3.1-onyx-preview"><div class="cnk-vp-content">${body}</div></div>`;
+  const layout = (body) => `<div class="screen cnk-vp ${DB.cnkVPFont==='large'?'cnk-vp-large':DB.cnkVPFont==='xlarge'?'cnk-vp-xlarge':''}" data-vp-version="v3.1-onyx-preview"><div class="cnk-vp-content">${body}</div></div>`;
   const vSelect = () => `<button type="button" class="cnk-vp-venue-switch" onclick="App.vpToggleVenuePicker()" aria-expanded="${!!UI.vpVenuePicker}" aria-label="เลือกดูร้านตัวอย่าง">${safe(venue().name)} ${ic('chevron',15)}</button>
     ${UI.vpVenuePicker ? `<div class="cnk-vp-venue-picker"><p class="cnk-vp-switch-help">เลือกร้านเพื่อดูข้อมูลสาธิตในเบราว์เซอร์นี้ · ไม่ใช่บัญชีร้านจริง</p>${DB.merchantVenue==='onyx'?`
   <button
@@ -241,7 +241,16 @@ ${confirmed(r)||finished(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</sp
       <section class="cnk-vp-profile-hero"><img src="${safe(DB.merchantVenue==='onyx'?'assets/venues/onyx.jpg':(v.image||'assets/venues/onyx.jpg'))}" onerror="this.onerror=null;this.src='assets/venues/onyx.jpg'" alt="ภาพ ${safe(v.name)}"><div><small>VENUE PARTNER</small><strong>${safe(v.name)}</strong><span>รหัสร้านในต้นแบบ · VN-014</span></div><span class="cnk-vp-profile-enabled">${ic('check',12)} เปิดใช้งานทดลอง</span></section>
       <div class="cnk-vp-profile-summary"><span>${ic('pin',15)}<b>ที่ตั้งร้าน</b><small>${safe(v.area||'ไม่ระบุ')}</small></span><span>${ic('clock',15)}<b>เวลาเปิด–ปิด</b><small>${safe(conf.hours||'ยังไม่ได้ตั้งค่า')}</small></span><span>${ic('chat',15)}<b>เบอร์ติดต่อ</b><small>${safe(conf.phone||'ยังไม่ได้ตั้งค่า')}</small></span></div>
       <h2 class="cnk-vp-profile-heading">จัดการร้าน</h2><div class="cnk-vp-profile-rows">${venueRow('คำขอจองโต๊ะ','calendar','venue-requests',pend+' รายการ')}${venueRow('การจัดการคิว','users','venue-queue')}${venueRow('นโยบายและบริการของร้าน','sliders','venue-policies')}${venueRow('ภาพรวมการดำเนินงาน','chart','venue-insights')}</div>
-      <h2 class="cnk-vp-profile-heading">การตั้งค่าบัญชี</h2><div class="cnk-vp-profile-rows">${venueRow('แก้ไขข้อมูลส่วนตัว','user','venue-personal')}${venueRow('การแจ้งเตือน','bell','venue-notifications')}${venueRow('ขนาดตัวอักษร','fontT','venue-font')}${venueRow('ศูนย์ช่วยเหลือ','help','venue-help')}${venueRow('ข้อมูลและความเป็นส่วนตัว','shield','venue-privacy')}</div>
+      <h2 class="cnk-vp-profile-heading">การตั้งค่าบัญชี</h2><div class="cnk-vp-profile-rows">${venueRow('แก้ไขข้อมูลส่วนตัว','user','venue-personal')}${venueRow('การแจ้งเตือน','bell','venue-notifications')}
+<button
+  type="button"
+  class="cnk-vp-profile-row"
+  onclick="App.openModal('cnk-vp-font')">
+  <span class="cnk-vp-profile-icon">${ic('fontT',17)}</span>
+  <span>ขนาดตัวอักษร</span>
+  ${ic('chevron',16)}
+</button>
+${venueRow('ศูนย์ช่วยเหลือ','help','venue-help')}${venueRow('ข้อมูลและความเป็นส่วนตัว','shield','venue-privacy')}</div>
       <button type="button" class="cnk-vp-logout" onclick="App.vpLogout()">${ic('logout',17)} ออกจากระบบ</button>${footnote()}`);
   }
   function policyPage() {
@@ -259,7 +268,6 @@ ${confirmed(r)||finished(r)?'ok':closed(r)?'off':''}">${safe(statusText(r))}</sp
       payout:['บัญชีรับเงิน (Payout)',`<div class="cnk-vp-info-card"><strong>ยังไม่มีการโอนเงินจริง</strong><p>ยอดค่าบริการจาก Runner และเงินประกันเป็นข้อมูลต้นแบบ ยังไม่เชื่อมบัญชีธนาคารจริง</p></div>`],
       personal:['แก้ไขข้อมูลส่วนตัว',`<label>ชื่อที่แสดง<input id="vp-personal-name" maxlength="50" value="${safe(DB.name||'Venue Partner')}"></label><button class="cnk-vp-primary cnk-vp-full" onclick="App.vpSavePersonal()">บันทึก</button>`],
       notifications:['การแจ้งเตือน',`<div class="cnk-vp-settings-row"><strong>การแจ้งเตือนคำขอใหม่</strong><button class="cnk-vp-toggle ${conf.alerts!==false?'on':''}" onclick="App.vpToggleAlerts()" aria-pressed="${conf.alerts!==false}"><i></i></button></div><p class="cnk-vp-tip">การแจ้งเตือนอยู่ภายในต้นแบบ ยังไม่มี Push Notification ข้ามอุปกรณ์</p>`],
-      font:['ขนาดตัวอักษร',`<div class="cnk-vp-font-choices"><button class="${DB.cnkVPFont!=='large'?'active':''}" onclick="App.vpFont('standard')">ปกติ</button><button class="${DB.cnkVPFont==='large'?'active':''}" onclick="App.vpFont('large')">ขนาดใหญ่</button></div>`],
 help:['ศูนย์ช่วยเหลือ',`
   ${cnkHelpCenterCards('venue')}
   <div class="cnk-vp-info-card">
@@ -292,7 +300,6 @@ help:['ศูนย์ช่วยเหลือ',`
       case 'venue-payout': return optionPage('payout');
       case 'venue-personal': return optionPage('personal');
       case 'venue-notifications': return optionPage('notifications');
-      case 'venue-font': return optionPage('font');
       case 'venue-help': return optionPage('help');
       case 'venue-privacy': return optionPage('privacy');
       case 'venue-insights': return optionPage('insights');
@@ -319,8 +326,51 @@ help:['ศูนย์ช่วยเหลือ',`
 
   // Venue-only request decision sheets; Guest and Runner keep their original modal handler.
   const previousModal=modal;
-  modal=function () {
+  
+modal=function () {
+    if(UI.role==='venue' && UI.modal==='cnk-vp-font'){
+      const current = DB.cnkVPFont || 'standard';
+
+      const choices = [
+        ['standard', 'มาตรฐาน'],
+        ['large', 'ใหญ่'],
+        ['xlarge', 'ใหญ่มาก']
+      ];
+
+      return `
+        <div class="overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="ขนาดตัวอักษร"
+          onclick="if(event.target===this)App.closeModal()">
+
+          <div class="sheet cnk-font-sheet">
+            <div class="handle"></div>
+
+            <div class="sheet-heading">
+              <h2>ขนาดตัวอักษร</h2>
+              <button class="close"
+                onclick="App.closeModal()"
+                aria-label="ปิด">×</button>
+            </div>
+
+            ${choices.map(([id,label]) => `
+              <button type="button"
+                class="cnk-font-choice ${current===id?'selected':''}"
+                aria-pressed="${current===id}"
+                onclick="App.vpFont('${id}')">
+
+                <span>${label}</span>
+                <span>${current===id?'●':'○'}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     if(UI.role==='venue' && UI.vpDeclineId){
+
       const r=requestById(UI.vpDeclineId);
       return `<div class="cnk-vp-action-backdrop" role="dialog" aria-modal="true" aria-label="ไม่รับคำขอ">
         <div class="cnk-vp-action-modal"><div class="cnk-vp-action-symbol denied">${ic('x',28)}</div><h2>ไม่รับคำขอ</h2>
@@ -645,7 +695,17 @@ App.vpDeleteEvent = id => {
   App.vpSaveVenueInfo=()=>{const v=infoFor();v.hours=($('#vp-hours')?.value||'').trim().slice(0,35);v.phone=($('#vp-phone')?.value||'').trim().slice(0,25);save();toast('บันทึกข้อมูลร้านแล้ว');};
   App.vpSavePersonal=()=>{const v=($('#vp-personal-name')?.value||'').trim();if(!v)return toast('กรุณาระบุชื่อ');DB.name=v;save();toast('บันทึกชื่อแล้ว');};
   App.vpToggleAlerts=()=>{const v=infoFor();v.alerts=v.alerts===false;save();render(true);};
-  App.vpFont=size=>{DB.cnkVPFont=size==='large'?'large':'standard';save();render(true);};
+  
+App.vpFont = size => {
+  if (!['standard', 'large', 'xlarge'].includes(size)) return;
+
+  DB.cnkVPFont = size;
+  save();
+
+  UI.modal = '';
+  render(true);
+};
+
   App.vpLogout=()=>{UI.vpTrail=[];if(typeof App.signOut==='function')App.signOut();else App.switchRole('user');};
   // Restore venue-created events after refresh so User's Events and Venue events use the same source.
   for (const ev of (DB.cnkVPEvents||[])) if (ev && ev.id && !events.some(x=>x.id===ev.id)) events.push(ev);

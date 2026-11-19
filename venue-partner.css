@@ -144,12 +144,23 @@
 #app .cnk-vp-profile-icon{height:27px;width:27px;background:#FDE7EE;color:#B02357;border-radius:8px;display:grid;place-items:center}
 #app .cnk-vp-logout{display:flex;align-items:center;gap:8px;background:#fff;color:#B02053;border:1px solid #F1E3E8;border-radius:11px;padding:12px;width:100%;font-weight:750;font-size:12px;margin-top:16px}
 #app .cnk-vp-option-form{margin-top:9px}
-#app .cnk-vp-font-choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-#app .cnk-vp-font-choices button{background:#fff;color:#7B5467;border:1px solid #E8CCD7;border-radius:10px;padding:12px}
-#app .cnk-vp-font-choices button.active{background:#8C1944;color:#fff}
 #app .cnk-vp-large .cnk-vp-profile-row,#app .cnk-vp-large .cnk-vp-settings-row{font-size:14px}
 #app .cnk-vp-large .cnk-vp-request-main p{font-size:12px}
 #app .cnk-vp-large .cnk-vp-section h2{font-size:18px}
+
+#app .cnk-vp-xlarge .cnk-vp-profile-row,
+#app .cnk-vp-xlarge .cnk-vp-settings-row {
+  font-size: 16px;
+}
+
+#app .cnk-vp-xlarge .cnk-vp-request-main p {
+  font-size: 14px;
+}
+
+#app .cnk-vp-xlarge .cnk-vp-section h2 {
+  font-size: 21px;
+}
+
 #app .cnk-vp-action-backdrop{position:fixed;inset:0;background:#27122272;z-index:95;display:flex;align-items:center;justify-content:center;padding:20px}
 #app .cnk-vp-action-modal{width:min(100%,340px);border-radius:24px;background:#FFFBFA;border:1px solid #EDD5DE;box-shadow:0 24px 80px #2A142537;padding:24px 20px 20px;text-align:center;color:#34212C;display:grid;gap:12px}
 #app .cnk-vp-action-symbol{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;margin:0 auto}
