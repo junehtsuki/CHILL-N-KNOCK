@@ -33,13 +33,26 @@
     }
     return null;
   }
+  
   async function discover(){
-    for(let n=1;n<=maxPages;n++){
-      const path=await findPage(n);
-      if(!path)break;
-      files.set(n,path);
+    // จำนวนหน้าคู่มือ Final ทั้ง 3 บทบาท
+    const pageCounts = {
+      guest: 10,
+      runner: 15,
+      venue: 14
+    };
+
+    const count = pageCounts[ROLE] || 15;
+
+    for(let n = 1; n <= count; n++){
+      files.set(
+        n,
+        `${c.folder}/page-${String(n).padStart(2,'0')}.webp`
+      );
     }
-    TOTAL=files.size;
+
+    TOTAL = files.size;
+
     track.setAttribute('aria-valuemax',String(Math.max(1,TOTAL)));
     for(let i=1;i<=TOTAL;i++){
       const option=document.createElement('option');
